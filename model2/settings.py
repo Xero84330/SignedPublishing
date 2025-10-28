@@ -24,7 +24,7 @@ print(f"SECRET_KEY from env: {SECRET_KEY}")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", default=True)
 
-ALLOWED_HOSTS = [*]
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
