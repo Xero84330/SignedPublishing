@@ -1,0 +1,82 @@
+{% extends 'author/abase.html' %}
+
+{% block body %}
+  <div class="max-w-7xl mx-auto p-6 relative">
+    <h1 class="text-2xl font-bold mb-6">Moderator Dashboard</h1>
+
+    <!-- Top Books Section -->
+    <section class="mb-8">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-xl font-bold">Top Books</h2>
+        <a href="{% url 'add_book_page' %}?category=TOP" class="bg-amber-500 text-white px-3 py-1 rounded hover:bg-amber-600">Add Book</a>
+      </div>
+      <div class="flex overflow-x-auto space-x-3 py-2">
+        {% for hb in top_books %}
+          <div class="relative w-32 sm:w-36 rounded-lg shadow-md overflow-hidden group">
+            {% if hb.book.coverimage %}
+              <img src="{{ hb.book.coverimage.url }}" class="w-full aspect-[2/3] object-cover" />
+            {% else %}
+              <img src="https://via.placeholder.com/180x270/FBBF24/FFFFFF?text=No+Cover" class="w-full aspect-[2/3] object-cover" />
+            {% endif %}
+            <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/70 to-transparent"></div>
+            <div class="absolute bottom-1 left-0 right-0 px-1 text-white text-sm font-semibold text-center">{{ hb.book.bname }}</div>
+            <a href="{% url 'delete_highlight' hb.id %}" class="absolute top-1 right-1 bg-red-500 text-white px-1 text-xs rounded hover:bg-red-600">Delete</a>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Featured Books Section -->
+    <section class="mb-8">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-xl font-bold">Featured Books</h2>
+        <a href="{% url 'add_book_page' %}?category=FEATURED" class="bg-amber-500 text-white px-3 py-1 rounded hover:bg-amber-600">Add Book</a>
+      </div>
+      <div class="flex overflow-x-auto space-x-3 py-2">
+        {% for hb in featured_books %}
+          <div class="relative w-32 sm:w-36 rounded-lg shadow-md overflow-hidden group">
+            {% if hb.book.coverimage %}
+              <img src="{{ hb.book.coverimage.url }}" class="w-full aspect-[2/3] object-cover" />
+            {% else %}
+              <img src="https://via.placeholder.com/180x270/FBBF24/FFFFFF?text=No+Cover" class="w-full aspect-[2/3] object-cover" />
+            {% endif %}
+            <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/70 to-transparent"></div>
+            <div class="absolute bottom-1 left-0 right-0 px-1 text-white text-sm font-semibold text-center">{{ hb.book.bname }}</div>
+            <a href="{% url 'delete_highlight' hb.id %}" class="absolute top-1 right-1 bg-red-500 text-white px-1 text-xs rounded hover:bg-red-600">Delete</a>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- News Section -->
+    <section class="mb-8">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-xl font-bold">News</h2>
+        <a href="{% url 'add_news' %}" class="bg-amber-500 text-white px-3 py-1 rounded hover:bg-amber-600">Add News</a>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-2">
+        {% for item in news_items %}
+          <div class="border rounded shadow p-3 flex flex-col relative">
+            <!-- added relative -->
+            <a href="{% url 'delete_news' item.id %}" class="absolute top-1 right-1 bg-red-500 text-white px-1 text-xs rounded hover:bg-red-600">Delete</a>
+
+            {% if item.image %}
+              <img src="{{ item.image.url }}" class="w-full h-48 object-cover mb-2 rounded" />
+            {% endif %}
+            <h3 class="font-semibold text-lg mb-1">{{ item.title }}</h3>
+            <p class="text-sm text-gray-700">{{ item.content|truncatewords:30 }}</p>
+            <div class="text-xs text-gray-500 mt-2">
+              Added by:{% if item.added_by %}
+                {{ item.added_by.username }}
+              {% else %}
+                Unknown
+              {% endif %}
+            </div>
+          </div>
+        {% empty %}
+          <p class="col-span-full text-center text-gray-600">No news available.</p>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+{% endblock %}

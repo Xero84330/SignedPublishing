@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/output.css' %}" />
+    <title>Add New Book</title> {# Updated title #}
+  </head>
+
+  <body class="bg-orange-50 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-orange-200 p-8 relative"> {# Increased rounded, stronger shadow, increased padding #}
+      <!-- Close Button -->
+      <a href="{% url 'create' %}" class="absolute top-5 right-5 text-amber-500 hover:text-amber-700 text-3xl font-light focus:outline-none transition-transform hover:rotate-90"> &times; </a> {# Changed 'X' to '&times;', increased size, light font, added hover rotate #}
+
+      <!-- Header -->
+      <h2 class="text-3xl font-extrabold text-center text-amber-800 mb-8 pb-4 border-b border-orange-100">Add New Book</h2> {# Increased text size, bolder font, increased mb, added bottom border #}
+
+      <form id="bookForm" action="{% url 'addbook' %}" enctype="multipart/form-data" method="POST" class="space-y-6 text-amber-950"> {# Increased space-y #}
+        {% csrf_token %}
+        <!-- Book Name -->
+        <div>
+          <label class="block mb-2 font-semibold text-lg" for="bookName">Book Name</label> {# Increased mb, font weight, text size #}
+          <input type="text" id="bookName" name="bname" required class="w-full p-3 rounded-xl border border-orange-300 focus:outline-none focus:ring-3 focus:ring-amber-400 focus:border-transparent transition-all duration-200 shadow-sm" placeholder="Enter book title" /> {# Increased padding, rounded, focus ring, added shadow, placeholder #}
+        </div>
+
+        <!-- Book Type -->
+        <div>
+          <label class="block mb-2 font-semibold text-lg" for="type">Type</label> {# Increased mb, font weight, text size #}
+          <select id="type" name="btype" required class="w-full p-3 rounded-xl border border-orange-300 focus:outline-none focus:ring-3 focus:ring-amber-400 focus:border-transparent transition-all duration-200 shadow-sm appearance-none bg-white pr-10 custom-select-arrow"> {# Increased padding, rounded, focus ring, added shadow, appearance-none for custom arrow #}
+            <option value="">Select type</option>
+            <option value="novel">Novel</option>
+            <option value="comic">Comic</option>
+            <option value="shortstory">Short Story</option>
+          </select>
+        </div>
+
+        <!-- Genre -->
+        <div>
+          <label class="block mb-2 font-semibold text-lg" for="genre">Genre</label> {# Increased mb, font weight, text size #}
+          <input type="text" id="genre" name="genre" placeholder="e.g., Fantasy, Sci-Fi, Thriller" required class="w-full p-3 rounded-xl border border-orange-300 focus:outline-none focus:ring-3 focus:ring-amber-400 focus:border-transparent transition-all duration-200 shadow-sm" /> {# Increased padding, rounded, focus ring, added shadow, improved placeholder #}
+        </div>
+
+        <!-- Age Rating -->
+        <div>
+          <label class="block mb-2 font-semibold text-lg" for="ageRating">Age Rating</label> {# Increased mb, font weight, text size #}
+          <select id="ageRating" name="agerating" required class="w-full p-3 rounded-xl border border-orange-300 focus:outline-none focus:ring-3 focus:ring-amber-400 focus:border-transparent transition-all duration-200 shadow-sm appearance-none bg-white pr-10 custom-select-arrow"> {# Increased padding, rounded, focus ring, added shadow, appearance-none for custom arrow #}
+            <option value="">Select age rating</option>
+            <option value="All Ages">All Ages</option>
+            <option value="13+">13+</option>
+            <option value="16+">16+</option>
+            <option value="18+">18+</option>
+          </select>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block mb-2 font-semibold text-lg" for="description">Description</label> {# Increased mb, font weight, text size #}
+          <textarea id="description" name="description" rows="4" required class="w-full p-3 rounded-xl border border-orange-300 focus:outline-none focus:ring-3 focus:ring-amber-400 focus:border-transparent resize-y transition-all duration-200 shadow-sm" placeholder="Write a brief description of the book..."></textarea> {# Increased padding, rows, rounded, focus ring, resize-y, added shadow, placeholder #}
+        </div>
+
+        <!-- Cover Image Upload Box (9:16 ratio) -->
+        <div>
+          <label class="block mb-3 font-semibold text-lg">Cover Image (Max 500KB)</label> {# Increased mb, font weight, text size #}
+
+          <div id="dropArea" class="relative w-48 aspect-[9/16] flex flex-col items-center justify-center border-2 border-dashed border-orange-400 rounded-xl cursor-pointer bg-orange-50 hover:bg-orange-100 transition-all duration-200 overflow-hidden group mx-auto p-4"> {# Increased width, stronger border, rounded-xl, added group, centered, padding #}
+            <svg class="w-12 h-12 text-amber-600 mb-2 group-hover:text-amber-800 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> {# Added SVG icon, hover color #}
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span id="uploadText" class="text-center text-amber-700 font-medium group-hover:text-amber-900 transition-colors">Click or Drop Image Here</span> {# Added font weight, hover color #}
+            <input type="file" name="coverimage" id="imageInput" accept="image/*" class="absolute w-full h-full opacity-0 cursor-pointer z-10" /> {# Added z-index #}
+            <img id="previewImg" class="absolute w-full h-full object-cover hidden inset-0 rounded-xl" /> {# Added rounded #}
+          </div>
+
+          <!-- Progress Bar -->
+          <div id="progressContainer" class="w-48 mt-3 hidden mx-auto"> {# Increased width, mt, centered #}
+            <div class="h-2.5 bg-orange-200 rounded-full"> {# Increased height #}
+              <div id="progressBar" class="h-2.5 bg-amber-600 rounded-full transition-all duration-100 ease-out" style="width: 0%"></div> {# Increased height, added transition #}
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <p id="errorMsg" class="text-red-500 text-sm mt-2 text-center hidden">File too large. Max 500KB allowed.</p> {# Increased mt, centered text #}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center pt-4"> {# Increased pt #}
+          <button type="submit" class="bg-amber-600 text-white font-bold py-3 px-8 rounded-full hover:bg-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-amber-300">Add Book</button> {# Bolder font, increased padding, rounded-full, stronger shadow, added hover transform, focus ring #}
+        </div>
+      </form>
+    </div>
+
+    <!-- Script for image upload -->
+    <script>
+      const imageInput = document.getElementById('imageInput')
+      const dropArea = document.getElementById('dropArea')
+      const previewImg = document.getElementById('previewImg')
+      const uploadText = document.getElementById('uploadText')
+      const errorMsg = document.getElementById('errorMsg')
+      const progressContainer = document.getElementById('progressContainer')
+      const progressBar = document.getElementById('progressBar')
+      
+      imageInput.addEventListener('change', handleFile)
+      
+      function handleFile() {
+        const file = imageInput.files[0]
+        if (!file) {
+          // Reset preview and text if no file selected after a file was present
+          previewImg.classList.add('hidden');
+          uploadText.classList.remove('hidden');
+          progressContainer.classList.add('hidden');
+          errorMsg.classList.add('hidden');
+          return;
+        }
+      
+        if (file.size > 500 * 1024) {
+          // 500KB
+          errorMsg.classList.remove('hidden')
+          progressContainer.classList.add('hidden')
+          previewImg.classList.add('hidden')
+          uploadText.classList.remove('hidden')
+          progressBar.style.width = '0%'; // Reset progress bar
+          return
+        }
+      
+        errorMsg.classList.add('hidden')
+        progressContainer.classList.remove('hidden')
+        progressBar.style.width = '0%'; // Reset progress for new upload
+      
+        // Simulate upload progress
+        let progress = 0
+        const interval = setInterval(() => {
+          progress += 10
+          progressBar.style.width = progress + '%'
+      
+          if (progress >= 100) {
+            clearInterval(interval)
+            // Show image preview
+            const reader = new FileReader()
+            reader.onload = (e) => {
+              previewImg.src = e.target.result
+              previewImg.classList.remove('hidden')
+              uploadText.classList.add('hidden')
+            }
+            reader.readAsDataURL(file)
+          }
+        }, 50)
+      }
+      
+      dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault()
+        dropArea.classList.add('bg-orange-100', 'border-amber-500') {# Added border color on drag over #}
+      })
+      
+      dropArea.addEventListener('dragleave', () => {
+        dropArea.classList.remove('bg-orange-100', 'border-amber-500') {# Removed border color on drag leave #}
+      })
+      
+      dropArea.addEventListener('drop', (e) => {
+        e.preventDefault()
+        dropArea.classList.remove('bg-orange-100', 'border-amber-500') {# Removed border color on drop #}
+        imageInput.files = e.dataTransfer.files
+        handleFile()
+      })
+
+      // Optional: Add a custom arrow for select elements for a more consistent look
+      // This typically requires adding a small CSS snippet, not directly Tailwind.
+      // Example:
+      /*
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .custom-select-arrow {
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23d97706'%3e%3cpath d='M7 7l3-3 3 3m0 6l-3 3-3-3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+          background-repeat: no-repeat;
+          background-position: right 0.75rem center;
+          background-size: 1.25rem 1.25rem;
+        }
+      `;
+      document.head.appendChild(style);
+      */
+    </script>
+  </body>
+</html>

@@ -1,0 +1,545 @@
+{% load socialaccount %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+  </head>
+
+  {% if messages %}
+    <div id="toast-container" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50">
+      {% for message in messages %}
+        <div class="px-4 py-3 rounded-lg shadow-lg text-sm font-medium
+          {% if message.tags == 'error' %}
+            
+              
+              
+              
+              
+            bg-red-600 text-white
+
+
+
+
+
+          {% elif message.tags == 'success' %}
+            
+              
+              
+              
+              
+            bg-green-600 text-white
+
+
+
+
+
+          {% else %}
+            
+              
+              
+              
+              
+            bg-gray-800 text-white
+
+
+
+
+
+          {% endif %}
+          transition transform opacity-100 duration-500">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <body class="flex items-center justify-center min-h-screen bg-orange-50">
+    <div class="w-full max-w-sm p-8 space-y-6 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl shadow-xl border border-amber-900">
+      <div class="relative flex flex-col items-center">
+        <h2 class="text-3xl font-extrabold text-amber-950 text-center">
+          {% if user.is_authenticated %}
+            Update Profile
+          {% else %}
+            Sign Up
+          {% endif %}
+        </h2>
+        <a href="{% url 'home' %}" class="absolute top-0 right-0 text-amber-950 hover:text-orange-500 text-2xl font-bold">&times;</a>
+
+        <!-- PFP Preview -->
+        <div class="mt-4 relative">
+          <img id="pfp-preview" src="{{ user.profile_picture.url|default:'/media/profile_pics/default_pfp.png' }}" alt="Profile Picture" class="w-24 h-24 rounded-full border-2 border-amber-900 object-cover mx-auto" />
+          <label for="profile_picture" class="absolute bottom-0 right-0 bg-amber-900 text-white p-1 rounded-full cursor-pointer hover:bg-amber-800">✏️</label>
+        </div>
+      </div>
+
+      <form id="profileForm" action="#" method="POST" enctype="multipart/form-data" class="space-y-5" novalidate>
+        {% csrf_token %}
+
+        <!-- Hidden file input -->
+        <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="hidden" />
+
+        <!-- Username -->
+        <div>
+          <label for="username" class="block text-sm font-medium text-amber-950">Username</label>
+          <input type="text" id="username" name="username" required value="{{ user.username|default:'' }}" class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900" placeholder="Choose a username" />
+        </div>
+
+        <!-- Email + Verify -->
+        <div id="emailSection">
+          <div class="flex items-center gap-2">
+            <input type="email" id="email" name="email" required data-original-email="{{ user.email|default:'' }}" class="flex-1 w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="Enter your email" value="{{ user.email|default:'' }}" />
+            <button type="button" id="sendOtpBtn" class="px-3 py-2 bg-amber-900 text-white rounded-lg hover:bg-amber-800">Verify</button>
+          </div>
+
+          <!-- OTP Inline Field -->
+          <div id="otpContainer" class="hidden mt-3 space-y-2">
+            <input type="text" id="otpInput" maxlength="6" class="w-full px-4 py-2 border rounded-lg border-amber-900 focus:outline-none text-center tracking-widest text-xl" placeholder="Enter OTP" />
+            <p id="otpError" class="text-red-600 text-sm hidden">Invalid OTP. Try again.</p>
+            <div class="flex justify-between items-center text-sm">
+              <button type="button" id="verifyOtpBtn" class="bg-amber-900 text-white px-3 py-1 rounded-lg hover:bg-amber-800">Verify OTP</button>
+              <button type="button" id="resendOtpBtn" class="text-amber-900 hover:text-orange-600" disabled>Resend OTP</button>
+              <span id="otpTimer" class="text-gray-600"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden flag set by JS when OTP verified -->
+        <!-- Default to 1 for authenticated users (update flow) so form is enabled by default -->
+        <input type="hidden"
+          id="email_verified"
+          name="email_verified"
+          value="{% if user.is_authenticated %}
+            1
+          {% else %}
+            0
+          {% endif %}" />
+
+        <!-- Bio -->
+        <div>
+          <label for="bio" class="block text-sm font-medium text-amber-950">Bio</label>
+          <textarea id="bio" name="bio" rows="3" class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900" placeholder="Write a short bio (optional)">{{ user.bio|default:'' }}</textarea>
+        </div>
+
+        {% if not user.is_authenticated %}
+          <!-- Password -->
+          <div>
+            <label for="password" class="block text-sm font-medium text-amber-950">Password</label>
+            <input type="password" id="password" name="password" class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900" placeholder="Enter password" />
+          </div>
+
+          <!-- Confirm Password -->
+          <div>
+            <label for="confirm-password" class="block text-sm font-medium text-amber-950">Confirm Password</label>
+            <input type="password" id="confirm-password" name="confirm-password" class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900" placeholder="Re-enter password" />
+            <p id="pwMismatch" class="text-red-600 text-sm mt-1 hidden">Passwords do not match.</p>
+          </div>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+  <!-- Gender -->
+  <div>
+    <label for="gender" class="block text-sm font-medium text-amber-950">Gender</label>
+    <select id="gender" name="gender"
+      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
+      <option value="" {% if not user.gender %}selected{% endif %}>Select gender</option>
+      <option value="male" {% if user.gender == "male" %}selected{% endif %}>Male</option>
+      <option value="female" {% if user.gender == "female" %}selected{% endif %}>Female</option>
+      <option value="other" {% if user.gender == "other" %}selected{% endif %}>Other</option>
+      <option value="prefer_not" {% if user.gender == "prefer_not" %}selected{% endif %}>Prefer not to say</option>
+    </select>
+  </div>
+
+  <!-- Date of Birth -->
+  <div>
+    <label for="date_of_birth" class="block text-sm font-medium text-amber-950">Date of Birth</label>
+    <input type="date" id="date_of_birth" name="date_of_birth"
+      value="{{ user.date_of_birth|date:'Y-m-d' }}"
+      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm" />
+  </div>
+
+  <!-- Country -->
+  <div>
+    <label for="country" class="block text-sm font-medium text-amber-950">Country</label>
+    <input type="text" id="country" name="country" value="{{ user.country|default:'' }}"
+      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900"
+      placeholder="Enter your country" />
+  </div>
+{% else %}
+  <!-- Gender -->
+  <div>
+    <label for="gender" class="block text-sm font-medium text-amber-950">Gender</label>
+    <select id="gender" name="gender"
+      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
+      <option value="">Select gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+      <option value="prefer_not">Prefer not to say</option>
+    </select>
+  </div>
+
+  <!-- Date of Birth -->
+  <div>
+    <label for="date_of_birth" class="block text-sm font-medium text-amber-950">Date of Birth</label>
+    <input type="date" id="date_of_birth" name="date_of_birth"
+      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm" />
+  </div>
+
+  <!-- Country -->
+  <div>
+    <label for="country" class="block text-sm font-medium text-amber-950">Country</label>
+    <input type="text" id="country" name="country"
+      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900"
+      placeholder="Enter your country" />
+  </div>
+{% endif %}
+
+
+        <!-- Submit (disabled styling & tooltip handled via JS) -->
+        <div class="relative">
+          <button id="submitBtn" type="submit" class="w-full px-4 py-3 text-white bg-amber-900 rounded-xl transform transition-all shadow-md focus:outline-none">
+            {% if user.is_authenticated %}
+              Update Profile
+            {% else %}
+              Sign Up
+            {% endif %}
+          </button>
+
+          <!-- Tooltip for disabled state -->
+          <div id="submitTooltip" class="hidden absolute right-2 top-0 mt-12 text-xs bg-amber-950 text-white px-2 py-1 rounded">Fill all required fields and verify email.</div>
+        </div>
+      </form>
+
+      {% if not user.is_authenticated %}
+        <p class="text-sm text-center text-amber-950">
+          <a href="{% provider_login_url 'google' %}" class="font-semibold text-amber-950 hover:text-orange-500 transition-colors">Continue with Google</a>
+        </p>
+      {% endif %}
+
+      <p class="text-sm text-center text-amber-950">
+        Already have an account?
+        <a href="{% url 'login' %}" class="font-semibold text-amber-950 hover:text-orange-500 transition-colors">Log In</a>
+      </p>
+    </div>
+
+    <!-- PFP Preview + OTP + Validation Script -->
+    <script>
+      // --- Elements ---
+      const pfpInput = document.getElementById('profile_picture')
+      const pfpPreview = document.getElementById('pfp-preview')
+      
+      const sendOtpBtn = document.getElementById('sendOtpBtn')
+      const verifyOtpBtn = document.getElementById('verifyOtpBtn')
+      const resendOtpBtn = document.getElementById('resendOtpBtn')
+      const otpInput = document.getElementById('otpInput')
+      const otpContainer = document.getElementById('otpContainer')
+      const otpError = document.getElementById('otpError')
+      const otpTimer = document.getElementById('otpTimer')
+      
+      const emailInput = document.getElementById('email')
+      const usernameInput = document.getElementById('username')
+      const submitBtn = document.getElementById('submitBtn')
+      const submitTooltip = document.getElementById('submitTooltip')
+      const emailVerifiedInput = document.getElementById('email_verified')
+      const form = document.getElementById('profileForm')
+      
+      // password fields only exist for signup
+      const passwordInput = document.getElementById('password')
+      const confirmPasswordInput = document.getElementById('confirm-password')
+      const pwMismatchText = document.getElementById('pwMismatch')
+      
+      // original email to detect changes (update flow)
+      const originalEmail = emailInput ? emailInput.dataset.originalEmail || '' : ''
+      
+      let countdown = null
+      
+      // --- PFP client resize & compression (kept from your original) ---
+      if (pfpInput) {
+        pfpInput.addEventListener('change', async (e) => {
+          const file = e.target.files[0]
+          if (!file) return
+      
+          const img = new Image()
+          img.src = URL.createObjectURL(file)
+      
+          img.onload = async () => {
+            const canvas = document.createElement('canvas')
+            const ctx = canvas.getContext('2d')
+      
+            // Max width/height
+            const MAX_DIM = 400
+            let width = img.width
+            let height = img.height
+      
+            if (width > height) {
+              if (width > MAX_DIM) {
+                height *= MAX_DIM / width
+                width = MAX_DIM
+              }
+            } else {
+              if (height > MAX_DIM) {
+                width *= MAX_DIM / height
+                height = MAX_DIM
+              }
+            }
+      
+            canvas.width = width
+            canvas.height = height
+            ctx.drawImage(img, 0, 0, width, height)
+      
+            let quality = 0.9
+            let blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', quality))
+      
+            // Reduce quality until ≤200KB
+            while (blob.size > 200 * 1024 && quality > 0.1) {
+              quality -= 0.05
+              blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', quality))
+            }
+      
+            // Update preview
+            pfpPreview.src = URL.createObjectURL(blob)
+      
+            // Replace the original input file with compressed one
+            const dataTransfer = new DataTransfer()
+            dataTransfer.items.add(new File([blob], file.name, { type: 'image/jpeg' }))
+            pfpInput.files = dataTransfer.files
+          }
+        })
+      }
+      
+      // --- OTP send/verify logic (uses your backend endpoints) ---
+      // helper to get CSRF token from the template-inserted string
+      const CSRF_TOKEN = '{{ csrf_token }}'
+      
+      sendOtpBtn.addEventListener('click', async () => {
+        const email = emailInput.value.trim()
+        if (!email) {
+          alert('Please enter your email first')
+          return
+        }
+      
+        // If email hasn't changed in update flow and is already considered verified, skip sending
+        // (we consider email_verified default 1 for authenticated users — server controls final check)
+        // but if it changed since original or user is signing up, send OTP as normal.
+        if (originalEmail && originalEmail === email && emailVerifiedInput.value === '1') {
+          // nothing to do
+          return
+        }
+      
+        sendOtpBtn.disabled = true
+        sendOtpBtn.textContent = 'Sending...'
+      
+        try {
+          const res = await fetch("{% url 'send_otp' %}", {
+            method: 'POST',
+            headers: { 'X-CSRFToken': CSRF_TOKEN, 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ email })
+          })
+          const data = await res.json()
+      
+          if (data.success) {
+            otpContainer.classList.remove('hidden')
+            otpError.classList.add('hidden')
+            otpInput.value = ''
+            startTimer()
+            // mark as not verified until verification completes
+            emailVerifiedInput.value = '0'
+            updateSubmitState()
+          } else {
+            alert(data.message || 'Failed to send OTP')
+          }
+        } catch (err) {
+          console.error(err)
+          alert('Network error while sending OTP')
+        } finally {
+          sendOtpBtn.disabled = false
+          sendOtpBtn.textContent = 'Verify'
+        }
+      })
+      
+      verifyOtpBtn.addEventListener('click', async () => {
+        const email = emailInput.value.trim()
+        const otp = otpInput.value.trim()
+        if (!otp) {
+          otpError.textContent = 'Please enter OTP.'
+          otpError.classList.remove('hidden')
+          return
+        }
+      
+        verifyOtpBtn.disabled = true
+        verifyOtpBtn.textContent = 'Verifying...'
+      
+        try {
+          const res = await fetch("{% url 'verify_email_otp' %}", {
+            method: 'POST',
+            headers: { 'X-CSRFToken': CSRF_TOKEN, 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ email, otp })
+          })
+      
+          const data = await res.json()
+      
+          if (data.success) {
+            otpError.classList.add('hidden')
+            otpInput.classList.remove('border-red-500')
+            sendOtpBtn.textContent = 'Verified ✅'
+            sendOtpBtn.disabled = true
+            sendOtpBtn.classList.add('bg-green-700')
+            otpContainer.classList.add('hidden')
+            clearInterval(countdown)
+            resendOtpBtn.disabled = true
+            otpTimer.textContent = ''
+            emailVerifiedInput.value = '1'
+            updateSubmitState()
+          } else {
+            otpError.textContent = data.message || 'Invalid OTP. Try again.'
+            otpError.classList.remove('hidden')
+            otpInput.classList.add('border-red-500')
+            emailVerifiedInput.value = '0'
+            updateSubmitState()
+          }
+        } catch (err) {
+          console.error(err)
+          alert('Network error while verifying OTP')
+        } finally {
+          verifyOtpBtn.disabled = false
+          verifyOtpBtn.textContent = 'Verify OTP'
+        }
+      })
+      
+      resendOtpBtn.addEventListener('click', () => {
+        // stop previous timer and trigger send again
+        if (countdown) clearInterval(countdown)
+        sendOtpBtn.click()
+      })
+      
+      function startTimer() {
+        let seconds = 120
+        resendOtpBtn.disabled = true
+        otpTimer.textContent = `Resend in 2:00`
+        if (countdown) clearInterval(countdown)
+        countdown = setInterval(() => {
+          seconds--
+          const m = String(Math.floor(seconds / 60)).padStart(1, '0')
+          const s = String(seconds % 60).padStart(2, '0')
+          otpTimer.textContent = `Resend in ${m}:${s}`
+          if (seconds <= 0) {
+            clearInterval(countdown)
+            resendOtpBtn.disabled = false
+            otpTimer.textContent = 'You can resend now.'
+          }
+        }, 1000)
+      }
+      
+      // --- Validation & submit enable/disable logic ---
+      // Utility: returns true when signup form requirements are satisfied
+      function isSignupValid() {
+        const usernameOk = usernameInput && usernameInput.value.trim().length > 0
+        const emailOk = emailInput && emailInput.value.trim().length > 0
+        const emailVerified = emailVerifiedInput && emailVerifiedInput.value === '1'
+        const pwOk = passwordInput && confirmPasswordInput && passwordInput.value.length > 0 && confirmPasswordInput.value.length > 0
+        const passwordsMatch = passwordInput && confirmPasswordInput && passwordInput.value === confirmPasswordInput.value
+      
+        return usernameOk && emailOk && emailVerified && pwOk && passwordsMatch
+      }
+      
+      // For update flow: allow submit by default, but if email was changed require verification
+      function isUpdateValid() {
+        const usernameOk = usernameInput && usernameInput.value.trim().length > 0
+        const emailChanged = emailInput && emailInput.value.trim() !== (originalEmail || '').trim()
+        if (!usernameOk) return false
+        if (emailChanged) {
+          return emailVerifiedInput && emailVerifiedInput.value === '1'
+        }
+        return true
+      }
+      
+      function updateSubmitState() {
+        // Determine mode
+        const isAuth = "{{ user.is_authenticated|yesno:'1,0' }}" === '1'
+      
+        let ok = false
+        if (isAuth) {
+          ok = isUpdateValid()
+        } else {
+          ok = isSignupValid()
+        }
+      
+        if (ok) {
+          submitBtn.disabled = false
+          submitBtn.classList.remove('opacity-60', 'cursor-not-allowed')
+          submitBtn.classList.add('bg-amber-900') // ensure normal color
+          submitTooltip.classList.add('hidden')
+        } else {
+          submitBtn.disabled = true
+          // visually disable
+          submitBtn.classList.add('opacity-60', 'cursor-not-allowed', 'bg-amber-700')
+          submitTooltip.classList.remove('hidden')
+          // choose tooltip message per mode
+          if (isAuth) {
+            const emailChanged = emailInput && emailInput.value.trim() !== (originalEmail || '').trim()
+            submitTooltip.textContent = emailChanged ? 'Verify the new email before updating.' : 'Fill all required fields.'
+          } else {
+            // signup
+            const pwExists = passwordInput && confirmPasswordInput && passwordInput.value && confirmPasswordInput.value
+            if (!pwExists) submitTooltip.textContent = 'Enter and confirm password.'
+            else if (passwordInput.value !== confirmPasswordInput.value) submitTooltip.textContent = 'Passwords do not match.'
+            else if (!emailVerifiedInput || emailVerifiedInput.value !== '1') submitTooltip.textContent = 'Verify your email.'
+            else submitTooltip.textContent = 'Fill all required fields and verify email.'
+          }
+        }
+      }
+      
+      // Run checks on input changes
+      const inputsToWatch = [usernameInput, emailInput, passwordInput, confirmPasswordInput]
+      inputsToWatch.forEach((inp) => {
+        if (!inp) return
+        inp.addEventListener('input', () => {
+          // hide pw mismatch if fixed
+          if (passwordInput && confirmPasswordInput && pwMismatchText) {
+            if (passwordInput.value && confirmPasswordInput.value && passwordInput.value !== confirmPasswordInput.value) {
+              pwMismatchText.classList.remove('hidden')
+            } else {
+              pwMismatchText.classList.add('hidden')
+            }
+          }
+      
+          // if email changed from original, mark email_verified 0 so user must verify new email
+          if (emailInput && originalEmail && emailInput.value.trim() !== originalEmail.trim()) {
+            // only reset if originally it was verified by default (authenticated) or previously verified
+            emailVerifiedInput.value = '0'
+            sendOtpBtn.disabled = false
+            sendOtpBtn.textContent = 'Verify'
+            sendOtpBtn.classList.remove('bg-green-700')
+          }
+      
+          updateSubmitState()
+        })
+      })
+      
+      // Show tooltip visually on hover only when disabled
+      submitBtn.addEventListener('mouseenter', () => {
+        if (submitBtn.disabled) submitTooltip.classList.remove('hidden')
+      })
+      submitBtn.addEventListener('mouseleave', () => submitTooltip.classList.add('hidden'))
+      
+      // Prevent accidental submit if disabled
+      form.addEventListener('submit', (e) => {
+        if (submitBtn.disabled) {
+          e.preventDefault()
+          updateSubmitState()
+          return false
+        }
+        // else proceed (normal form submission). Optionally you could do AJAX submit here.
+      })
+      
+      // initial state
+      document.addEventListener('DOMContentLoaded', () => {
+        updateSubmitState()
+      })
+      
+      // If DOMContentLoaded already fired
+      updateSubmitState()
+    </script>
+  </body>
+</html>

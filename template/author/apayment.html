@@ -1,0 +1,96 @@
+{% extends 'author/abase.html' %}
+{% block body %}
+<!-- Payment Section -->
+<section
+  class="max-w-6xl mx-auto mt-10 px-4 md:px-6 py-8 bg-white shadow-xl rounded-2xl transform transition-all duration-300 hover:scale-[1.005] hover:shadow-2xl">
+  <h1 class="text-3xl md:text-4xl font-extrabold text-amber-950 mb-8 text-center border-b pb-4 border-orange-100">
+    Payments Overview</h1>
+
+  <div class="flex flex-col md:flex-row items-center md:items-stretch gap-6 lg:gap-8">
+    <!-- Chart Area -->
+    <div
+      class="w-full md:w-2/3 bg-orange-50 rounded-xl p-6 lg:p-8 flex flex-col items-center justify-center shadow-lg transform transition-all duration-300 hover:scale-[1.01] hover:shadow-xl">
+      <h2 class="text-xl md:text-2xl font-bold text-amber-950 mb-5">Monthly Earnings</h2>
+      <canvas id="paymentChart" class="w-full h-64 md:h-80 mb-4"></canvas>
+      <p class="text-amber-800 font-semibold text-center text-base md:text-lg">Payment data is not available right now.
+        Please check back later!</p>
+    </div>
+
+    <!-- Info Panel -->
+    <div
+      class="w-full md:w-1/3 bg-orange-50 rounded-xl p-6 lg:p-8 flex flex-col gap-5 items-center justify-between shadow-lg transform transition-all duration-300 hover:scale-[1.01] hover:shadow-xl">
+      <h2 class="text-2xl font-bold text-amber-950 border-b pb-3 border-orange-100 w-full text-center">Summary</h2>
+      <p class="text-gray-700 text-center leading-relaxed text-base">Your detailed payment history and earning insights
+        will appear here once the data becomes available. We're working to get this to you soon!</p>
+      <button
+        class="bg-amber-900 text-white px-8 py-3 rounded-full hover:bg-amber-800 transition-all duration-300 text-base font-semibold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50">Refresh
+        Data</button>
+    </div>
+  </div>
+</section>
+
+<!-- Chart.js Script -->
+{% comment %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> {% endcomment %}
+<script>
+  const ctx = document.getElementById('paymentChart').getContext('2d')
+  const paymentChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [
+        {
+          label: 'Payments',
+          data: [0, 0, 0, 0, 0, 0], // Placeholder zeroes
+          backgroundColor: 'rgba(251, 191, 36, 0.8)', // Slightly more opaque amber-500
+          borderColor: 'rgba(251, 191, 36, 1)', // Amber-500
+          borderWidth: 1,
+          borderRadius: 6, // Slightly more rounded bars
+          hoverBackgroundColor: 'rgba(251, 191, 36, 1)' // Solid amber on hover
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {
+        duration: 1000, // Animation duration in milliseconds
+        easing: 'easeOutQuart' // Easing function for animation
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          titleFont: { size: 14, weight: 'bold' },
+          bodyFont: { size: 12 },
+          padding: 10,
+          cornerRadius: 8
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1,
+            color: '#6b7280' // Gray-500
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.05)',
+            borderColor: 'rgba(0, 0, 0, 0.1)'
+          }
+        },
+        x: {
+          ticks: {
+            color: '#6b7280' // Gray-500
+          },
+          grid: {
+            display: false,
+            borderColor: 'rgba(0, 0, 0, 0.1)'
+          }
+        }
+      }
+    }
+  })
+</script>
+{% endblock %}

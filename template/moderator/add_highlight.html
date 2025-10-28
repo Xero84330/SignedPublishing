@@ -1,0 +1,82 @@
+{% extends 'author/abase.html' %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-6">
+  Add Book to 
+  {% if selected_category == "TOP" %}
+    Top Books
+  {% elif selected_category == "FEATURED" %}
+    Featured Books
+  {% else %}
+    Highlights
+  {% endif %}
+</h1>
+
+
+  <!-- Search Filters -->
+  <form method="get" class="flex flex-wrap gap-3 mb-4 items-end">
+    <div class="flex flex-col">
+      <label class="text-sm font-semibold">Search by Book Name</label>
+      <input type="text" name="q" value="{{ search_query }}" placeholder="Enter book name" class="border p-2 rounded" />
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm font-semibold">Search by Author</label>
+      <select name="author_id" class="border p-2 rounded">
+        <option value="">All Authors</option>
+        {% for author in authors %}
+          <option value="{{ author.id }}" {% if selected_author == author.id %}selected{% endif %}>{{ author.username }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm font-semibold">Search by Book ID</label>
+      <input type="number" name="book_id" value="{{ book_id }}" placeholder="Book ID" class="border p-2 rounded" />
+    </div>
+
+    <button type="submit" class="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600 mt-5">Search</button>
+  </form>
+
+  <!-- Book List -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    {% for book in books %}
+      <div class="border rounded shadow p-2 flex flex-col items-center">
+        {% if book.coverimage %}
+          <img src="{{ book.coverimage.url }}" class="w-32 h-48 object-cover mb-2" />
+        {% else %}
+          <img src="https://via.placeholder.com/180x270/FBBF24/FFFFFF?text=No+Cover" class="w-32 h-48 object-cover mb-2" />
+        {% endif %}
+        <div class="text-center font-semibold">{{ book.bname }}</div>
+        <div class="text-sm text-gray-600">Author: {{ book.user.username }}</div>
+
+        <form method="post" action="{% url 'add_highlight' %}" class="mt-2 w-full">
+          {% csrf_token %}
+          <input type="hidden" name="book_id" value="{{ book.id }}">
+          
+          {% if selected_category %}
+            <!-- If category is pre-selected, force it -->
+            <input type="hidden" name="category" value="{{ selected_category }}">
+          {% else %}
+            <!-- Otherwise show dropdown -->
+            <div class="flex gap-2 mb-2">
+              <select name="category" class="flex-1 border p-1 rounded">
+                <option value="TOP">Top Books</option>
+                <option value="FEATURED">Featured Books</option>
+              </select>
+              <input type="number" name="order" value="1" min="1" class="w-16 border p-1 rounded">
+            </div>
+          {% endif %}
+
+          <button type="submit" class="w-full bg-amber-500 text-white py-1 rounded hover:bg-amber-600">
+            Add to Highlights
+          </button>
+        </form>
+      </div>
+    {% empty %}
+      <p class="col-span-full text-center text-gray-600">No books found. Try adjusting your search.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

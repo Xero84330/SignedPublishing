@@ -1,0 +1,200 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+  <title>{{ chapter.title }} | {{ book.bname }}</title>
+</head>
+
+<body class="bg-orange-50 text-amber-950 font-sans">
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-20 bg-white/90 backdrop-blur border-b shadow-sm">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+      <a href="{% url 'book' book.id %}"
+        class="flex items-center gap-1 text-amber-900 font-medium hover:text-amber-700 transition">← Back to Book</a>
+    </div>
+  </nav>```
+  <!-- Sidebar -->
+  <aside id="chapterSidebar" class="fixed top-0 right-0 h-full w-64 bg-white shadow-xl z-30 hidden">
+    <div class="flex justify-between items-center px-4 py-3 border-b">
+      <h2 class="text-lg font-bold">Chapters</h2>
+      <button id="closeSidebar" class="text-gray-600 hover:text-black">✕</button>
+    </div>
+    <ul class="p-4 space-y-3 text-amber-900 overflow-y-auto h-[calc(100%-3rem)]">
+      {% for c in chapters %}
+      <li>
+        <a href="{% url 'read' book.id c.id %}"
+          class="block hover:text-amber-700 {% if c.id == chapter.id %}font-bold text-amber-800{% endif %}">{{ c.title
+          }}</a>
+      </li>
+      {% empty %}
+      <li class="text-gray-500">No chapters available yet</li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <div id="overlay" class="hidden fixed inset-0 bg-black/40 z-20"></div>
+
+  <!-- Chapter -->
+  <main class="max-w-4xl mx-auto px-4 md:px-6 py-10 bg-white shadow-lg rounded-2xl my-10">
+    <h2 class="text-2xl md:text-3xl font-extrabold mb-6 text-center">{{ chapter.title }}</h2>
+
+    <div class="flex items-center justify-center mb-8 gap-4">
+      <button id="likeBtn" class="flex items-center gap-2 text-amber-900 hover:text-amber-700 transition"
+        data-chapter-id="{{ chapter.id }}">
+        <span id="likeIcon">🤍</span>
+        <span id="likeCount">{{ chapter.likes }}</span>
+      </button>
+    </div>
+
+    <div class="text-base md:text-lg leading-relaxed space-y-6 text-gray-800">{{ chapter.content|safe }}</div>
+
+    <!-- Navigation -->
+    <div class="mt-10 flex justify-between items-center">
+      {% if prev_chapter %}
+      <a href="{% url 'read' book.id prev_chapter.id %}"
+        class="w-10 h-10 flex items-center justify-center bg-amber-900 text-white rounded-full hover:bg-amber-800 transition shadow-md">←</a>
+      {% else %}
+      <span class="w-10 h-10"></span>
+      {% endif %}
+
+      <button id="chapterToggle"
+        class="px-6 py-2 bg-amber-900 text-white rounded-full hover:bg-amber-800 transition shadow-md">Chapters</button>
+
+      {% if next_chapter %}
+      <a href="{% url 'read' book.id next_chapter.id %}"
+        class="w-10 h-10 flex items-center justify-center bg-amber-900 text-white rounded-full hover:bg-amber-800 transition shadow-md">→</a>
+      {% else %}
+      <span class="w-10 h-10"></span>
+      {% endif %}
+    </div>
+
+    <!-- Comments -->
+    <section class="mt-14 border-t pt-8">
+      <h3 class="text-xl font-bold mb-6">Comments (<span id="commentCount">{{ chapter.comments_count }}</span>)</h3>
+
+      <div id="commentsList" class="space-y-4">
+        {% for comment in chapter.comments.all %}
+        <div class="bg-gray-100 rounded-lg p-4 shadow-sm">
+          <p class="text-sm text-gray-900 font-medium">{{ comment.user.username }}</p>
+          <p class="text-gray-700 text-sm mt-1">{{ comment.content }}</p>
+          <p class="text-xs text-gray-500 mt-1">{{ comment.created_at|date:'M d, Y H:i' }}</p>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 text-sm">No comments yet. Be the first!</p>
+        {% endfor %}
+      </div>
+
+      {% if user.is_authenticated %}
+      <div class="mt-6 flex gap-2">
+        <input id="commentInput" type="text" placeholder="Write a comment..."
+          class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+        <button id="postCommentBtn"
+          class="bg-amber-900 text-white px-5 py-2 rounded-lg hover:bg-amber-800 transition shadow">Post</button>
+      </div>
+      {% else %}
+      <p class="text-sm text-gray-500 mt-4">
+        Please <a href="{% url 'login' %}" class="text-amber-700 font-semibold hover:underline">log in</a> to comment.
+      </p>
+      {% endif %}
+    </section>
+  </main>
+
+  <footer class="bg-amber-950 text-white text-center py-5 text-sm">&copy; 2025 Signed & Stamped Publishing House
+  </footer>
+
+  <!-- Sidebar JS -->
+  <script>
+    const sidebar = document.getElementById('chapterSidebar')
+    const toggleBtn = document.getElementById('chapterToggle')
+    const closeBtn = document.getElementById('closeSidebar')
+    const overlay = document.getElementById('overlay')
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.remove('hidden')
+      overlay.classList.remove('hidden')
+    })
+    closeBtn.addEventListener('click', () => {
+      sidebar.classList.add('hidden')
+      overlay.classList.add('hidden')
+    })
+    overlay.addEventListener('click', () => {
+      sidebar.classList.add('hidden')
+      overlay.classList.add('hidden')
+    })
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const viewedKey = 'viewed_chapter_{{ chapter.id }}'
+      if (!sessionStorage.getItem(viewedKey)) {
+        setTimeout(() => {
+          fetch("{% url 'increment_chapter_view' chapter.id %}", {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+          }).then(() => console.log('View counted'))
+        }, 10000)
+        sessionStorage.setItem(viewedKey, true)
+      }
+    })
+
+    // Like Chapter
+    likeBtn?.addEventListener('click', async () => {
+      likeBtn.disabled = true
+      const chapterId = likeBtn.dataset.chapterId
+
+      try {
+        const res = await fetch(`/chapter/${chapterId}/toggle-like/`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        })
+        const data = await res.json()
+        if (data.liked) {
+          document.getElementById('likeIcon').textContent = '❤️'
+        } else {
+          document.getElementById('likeIcon').textContent = '🤍'
+        }
+        document.getElementById('likeCount').textContent = data.likes
+      } finally {
+        likeBtn.disabled = false
+      }
+    })
+
+
+    // Add Comment
+    const postBtn = document.getElementById('postCommentBtn')
+    postBtn?.addEventListener('click', () => {
+      const content = document.getElementById('commentInput').value.trim()
+      if (!content) return alert('Please write something!')
+
+      fetch(`/chapter/{{ chapter.id }}/add-comment/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({ content })
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            const newComment = document.createElement('div')
+            newComment.className = 'bg-gray-100 rounded-lg p-4 shadow-sm animate-fade-in'
+            newComment.innerHTML = `
+                  <p class="text-sm text-gray-900 font-medium">${data.user}</p>
+                  <p class="text-gray-700 text-sm mt-1">${data.content}</p>
+                  <p class="text-xs text-gray-500 mt-1">${data.created_at}</p>
+                `
+            const list = document.getElementById('commentsList')
+            list.prepend(newComment)
+            document.getElementById('commentInput').value = ''
+            document.getElementById('commentCount').textContent = data.comments_count
+          }
+        })
+    })
+  </script>```
+</body>
+
+</html>
