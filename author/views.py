@@ -6,146 +6,84 @@ import calendar
 from datetime import datetime, timedelta
 from django.db.models import Sum
 from django.shortcuts import render, get_object_or_404
-from .models import Book, Chapter, Comment, ChapterViewLog, ChapterLikeLog
+from .models import Book, Chapter, Comment
 from library.models import Collection
 from django.utils import timezone
 from moderator.models import News
-
 
 def statistics(request, book_id):
     book = get_object_or_404(Book, id=book_id, user=request.user)
     today = timezone.now().date()
     yesterday = today - timedelta(days=1)
 
-    # --- TODAY'S STATS (using logs) ---
-    today_views = ChapterViewLog.objects.filter(
-        chapter__Book=book,
-        viewed_at__date=today
-    ).count()
+    # --- Basic Stats ---
+    today_views = Chapter.objects.filter(Book=book, created_at__date=today).aggregate(total=Sum("views"))["total"] or 0
+    yesterday_views = Chapter.objects.filter(Book=book, created_at__date=yesterday).aggregate(total=Sum("views"))["total"] or 0
 
-    today_likes = ChapterLikeLog.objects.filter(
-        chapter__Book=book,
-        liked_at__date=today
-    ).count()
+    today_likes = Chapter.objects.filter(Book=book, created_at__date=today).aggregate(total=Sum("likes"))["total"] or 0
+    yesterday_likes = Chapter.objects.filter(Book=book, created_at__date=yesterday).aggregate(total=Sum("likes"))["total"] or 0
 
-    today_comments = Comment.objects.filter(
-        chapter__Book=book,
-        created_at__date=today
-    ).count()
+    today_comments = Comment.objects.filter(chapter__Book=book, created_at__date=today).count()
+    yesterday_comments = Comment.objects.filter(chapter__Book=book, created_at__date=yesterday).count()
 
-    today_bookmarks = Collection.objects.filter(
-        book=book,
-        added_at__date=today
-    ).count()
+    # --- Favorites ---
+    today_bookmarks = Collection.objects.filter(book=book, added_at__date=today).count()
+    # If you want total favorites, just use:
+    total_bookmarks = book.favorites.count()
 
-    # --- YESTERDAY'S STATS ---
-    yesterday_views = ChapterViewLog.objects.filter(
-        chapter__Book=book,
-        viewed_at__date=yesterday
-    ).count()
-
-    yesterday_likes = ChapterLikeLog.objects.filter(
-        chapter__Book=book,
-        liked_at__date=yesterday
-    ).count()
-
-    yesterday_comments = Comment.objects.filter(
-        chapter__Book=book,
-        created_at__date=yesterday
-    ).count()
-
-    # --- TOTAL BOOKMARKS (real count) ---
-    total_bookmarks = Collection.objects.filter(book=book).count()
-
-    # --- GROWTH CALCULATION ---
-    def calc_growth(today_val, yesterday_val):
-        if yesterday_val == 0:
-            return 100 if today_val > 0 else 0
-        return round(((today_val - yesterday_val) / yesterday_val) * 100, 1)
+    # --- Growth calculation ---
+    def calc_growth(today, yesterday):
+        if yesterday == 0:
+            return 100 if today > 0 else 0
+        return round(((today - yesterday) / yesterday) * 100, 1)
 
     view_growth = calc_growth(today_views, yesterday_views)
     like_growth = calc_growth(today_likes, yesterday_likes)
     comment_growth = calc_growth(today_comments, yesterday_comments)
 
-    # --- LAST 7 DAYS DATA (for charts) ---
-    daily_labels = []
-    daily_views = []
-    daily_likes = []
-    daily_comments = []
-    daily_bookmarks = []
-    daily_engagement = []
+    # --- Daily Data for Last 7 Days ---
+    daily_labels, daily_views, daily_likes, daily_comments, daily_bookmarks, daily_engagement = [], [], [], [], [], []
 
-    update_dates = [
-        chap.created_at.day
-        for chap in book.chapters.all()
-        if chap.created_at.month == today.month and chap.created_at.year == today.year
-    ]
-
-    for i in range(6, -1, -1):  # 7 days, today first
-        day = today - timedelta(days=i)
+    for i in range(7):
+        day = today - timedelta(days=6 - i)
         label = day.strftime("%b %d")
-
-        views = ChapterViewLog.objects.filter(
-            chapter__Book=book,
-            viewed_at__date=day
-        ).count()
-
-        likes = ChapterLikeLog.objects.filter(
-            chapter__Book=book,
-            liked_at__date=day
-        ).count()
-
-        comments = Comment.objects.filter(
-            chapter__Book=book,
-            created_at__date=day
-        ).count()
-
-        bookmarks = Collection.objects.filter(
-            book=book,
-            added_at__date=day
-        ).count()
-
+        views_sum = Chapter.objects.filter(Book=book, created_at__date=day).aggregate(Sum("views"))["views__sum"] or 0
+        likes_sum = Chapter.objects.filter(Book=book, created_at__date=day).aggregate(Sum("likes"))["likes__sum"] or 0
+        comments_sum = Comment.objects.filter(chapter__Book=book, created_at__date=day).count()
+        bookmarks_sum = Collection.objects.filter(book=book, added_at__date=day).count()
         daily_labels.append(label)
-        daily_views.append(views)
-        daily_likes.append(likes)
-        daily_comments.append(comments)
-        daily_bookmarks.append(bookmarks)
-        daily_engagement.append(views + likes + comments + bookmarks)
+        daily_views.append(views_sum)
+        daily_likes.append(likes_sum)
+        daily_comments.append(comments_sum)
+        daily_bookmarks.append(bookmarks_sum)
+        daily_engagement.append(views_sum + likes_sum + comments_sum + bookmarks_sum)
 
-    # --- ENGAGEMENT SUMMARY ---
     engagement_data = {
-        "views": today_views,
-        "likes": today_likes,
-        "comments": today_comments,
-        "bookmarks": today_bookmarks,
+     "views": today_views,
+     "comments": today_comments,
+     "bookmarks": today_bookmarks,
     }
 
-    # --- TOP CHAPTERS ---
-    top_chapters = book.chapters.annotate(
-        total_interactions=Sum('views') + Sum('likes')
-    ).order_by('-total_interactions')[:5]
 
-    # --- CONTEXT ---
+    # --- Context ---
     context = {
         "book": book,
         "today_views": today_views,
         "today_likes": today_likes,
         "today_comments": today_comments,
-        "today_bookmarks": today_bookmarks,
-        "total_bookmark": total_bookmarks,  # Fixed!
         "view_growth": view_growth,
         "like_growth": like_growth,
         "comment_growth": comment_growth,
         "total_engagement": sum(engagement_data.values()),
-        "top_chapters": top_chapters,
+        "top_chapters": book.chapters.order_by("-views", "-likes")[:5],
         "daily_labels": daily_labels,
+        "today_bookmarks": today_bookmarks,
         "daily_views": daily_views,
         "daily_likes": daily_likes,
         "daily_comments": daily_comments,
         "daily_bookmarks": daily_bookmarks,
         "daily_engagement": daily_engagement,
         "engagement_data": engagement_data,
-        "update_dates": update_dates,
     }
 
     return render(request, "author/astats.html", context)
