@@ -1,315 +1,300 @@
 {% extends 'author/abase.html' %}
 {% load static %}
 {% block body %}
-{{ daily_labels|json_script:'daily-labels-data' }}
-{{ daily_views|json_script:'daily-views-data' }}
-{{ daily_bookmarks|json_script:'daily-bookmarks-data' }}
-{{ daily_comments|json_script:'daily-comments-data' }}
-{{ daily_engagement|json_script:'daily-engagement-data' }}
-{{ update_dates|json_script:'update-dates-data' }}
+  {{ daily_labels|json_script:'daily-labels-data' }}
+  {{ daily_views|json_script:'daily-views-data' }}
+  {{ daily_bookmarks|json_script:'daily-bookmarks-data' }}
+  {{ daily_comments|json_script:'daily-comments-data' }}
+  {{ daily_engagement|json_script:'daily-engagement-data' }}
+  {{ update_dates|json_script:'update-dates-data' }}
 
 
-<!-- HERO SECTION -->
-<section
-  class="bg-gradient-to-br from-amber-50 to-orange-100 shadow-xl rounded-2xl p-6 flex flex-col lg:flex-row gap-8 items-center mb-8">
-  <div class="flex-shrink-0 w-40 md:w-56 h-auto">
-    {% if book.coverimage %}
-    <img src="{{ book.coverimage.url }}" alt="Book Cover"
-      class="w-full h-56 md:h-72 object-cover rounded-xl shadow-lg border-4 border-white" />
-    {% else %}
-    <img src="{% static 'images/book_cover_placeholder.jpg' %}" alt="Book Cover"
-      class="w-full h-56 md:h-72 object-cover rounded-xl shadow-lg border-4 border-white" />
-    {% endif %}
-  </div>
+  <!-- HERO SECTION -->
+  <section class="bg-gradient-to-br from-amber-50 to-orange-100 shadow-xl rounded-2xl p-6 flex flex-col lg:flex-row gap-8 items-center mb-8">
+    <div class="flex-shrink-0 w-40 md:w-56 h-auto">
+      {% if book.coverimage %}
+        <img src="{{ book.coverimage.url }}" alt="Book Cover" class="w-full h-56 md:h-72 object-cover rounded-xl shadow-lg border-4 border-white" />
+      {% else %}
+        <img src="{% static 'images/book_cover_placeholder.jpg' %}" alt="Book Cover" class="w-full h-56 md:h-72 object-cover rounded-xl shadow-lg border-4 border-white" />
+      {% endif %}
+    </div>
 
-  <div class="flex-1 flex flex-col justify-center text-center lg:text-left">
-    <h1 class="text-4xl md:text-5xl font-extrabold text-amber-900 mb-3 leading-tight">{{ book.bname }}</h1>
-    <p class="text-lg text-gray-700 mb-6 max-w-2xl mx-auto lg:mx-0 line-clamp-4">{{ book.description|truncatewords:50 }}
-    </p>
+    <div class="flex-1 flex flex-col justify-center text-center lg:text-left">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-amber-900 mb-3 leading-tight">{{ book.bname }}</h1>
+      <p class="text-lg text-gray-700 mb-6 max-w-2xl mx-auto lg:mx-0 line-clamp-4">{{ book.description|truncatewords:50 }}</p>
 
-    <div
-      class="flex flex-wrap justify-center lg:justify-start gap-x-10 gap-y-4 text-gray-800 text-base md:text-lg font-semibold mt-4">
-      <div class="flex items-center">
-        <span class="text-blue-500 text-2xl mr-2">👁️</span>{{ book.views }} Views
-      </div>
-      <div class="flex items-center">
-        <span class="text-pink-500 text-2xl mr-2">🔖</span>{{ total_bookmark }} Bookmarks
-      </div>
-      <div class="flex items-center">
-        <span class="text-yellow-500 text-2xl mr-2">⭐</span>{{ book.rating|floatformat:1 }} Rating
-      </div>
-      <div class="flex items-center">
-        <span class="text-green-600 text-2xl mr-2">📚</span>{{ book.chapters.count }} Chapters
+      <div class="flex flex-wrap justify-center lg:justify-start gap-x-10 gap-y-4 text-gray-800 text-base md:text-lg font-semibold mt-4">
+        <div class="flex items-center">
+          <span class="text-blue-500 text-2xl mr-2">👁️</span>{{ book.views }} Views
+        </div>
+        <div class="flex items-center">
+          <span class="text-pink-500 text-2xl mr-2">🔖</span>{{ book.favorites.count }} Bookmarks
+        </div>
+        <div class="flex items-center">
+          <span class="text-yellow-500 text-2xl mr-2">⭐</span>{{ book.rating|floatformat:1 }} Rating
+        </div>
+        <div class="flex items-center">
+          <span class="text-green-600 text-2xl mr-2">📚</span>{{ book.chapters.count }} Chapters
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Calendar -->
-  <div class="w-full lg:w-56 bg-white p-5 rounded-xl shadow-inner border border-gray-100 self-start mt-6 lg:mt-0">
-    <h3 class="font-bold text-amber-800 mb-3 text-lg text-center">Update Calendar</h3>
-    <div id="calendar" class="grid grid-cols-7 gap-1 text-xs"></div>
-    <p class="text-[0.65rem] text-center text-gray-500 mt-2">Amber cells = chapter updates.</p>
-  </div>
-</section>
-
-<!-- STATS SUMMARY -->
-<section class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-8">
-  <div class="bg-white shadow rounded-xl p-4 transition-transform hover:scale-[1.02]">
-    <h4 class="text-gray-500 text-sm">Views (Today)</h4>
-    <p class="text-xl font-bold text-amber-700">{{ today_views }}</p>
-    <p class="text-xs text-green-500">+{{ view_growth }}% vs yesterday</p>
-  </div>
-  <div class="bg-white shadow rounded-xl p-4 transition-transform hover:scale-[1.02]">
-    <h4 class="text-gray-500 text-sm">Likes (Today)</h4>
-    <p class="text-xl font-bold text-red-500">{{ today_likes }}</p>
-    <p class="text-xs text-green-500">+{{ like_growth }}% vs yesterday</p>
-  </div>
-  <div class="bg-white shadow rounded-xl p-4 transition-transform hover:scale-[1.02]">
-    <h4 class="text-gray-500 text-sm">Comments (Today)</h4>
-    <p class="text-xl font-bold text-blue-500">{{ today_comments }}</p>
-    <p class="text-xs text-green-500">+{{ comment_growth }}% vs yesterday</p>
-  </div>
-  <div class="bg-white shadow rounded-xl p-4 transition-transform hover:scale-[1.02]">
-    <h4 class="text-gray-500 text-sm">Engagement (Overall)</h4>
-    <p class="text-xl font-bold text-green-600">{{ total_engagement }}</p>
-  </div>
-</section>
-
-<!-- CHARTS -->
-<section class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-  <div class="bg-white shadow-xl rounded-2xl p-5">
-    <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span
-        class="text-indigo-500 text-2xl mr-2">📊</span> Daily Views</h3>
-    <div class="h-64">
-      <canvas id="viewsChart" width="400" height="200"></canvas>
+    <!-- Calendar -->
+    <div class="w-full lg:w-56 bg-white p-5 rounded-xl shadow-inner border border-gray-100 self-start mt-6 lg:mt-0">
+      <h3 class="font-bold text-amber-800 mb-3 text-lg text-center">Update Calendar</h3>
+      <div id="calendar" class="grid grid-cols-7 gap-1 text-xs"></div>
+      <p class="text-[0.65rem] text-center text-gray-500 mt-2">Amber cells = chapter updates.</p>
     </div>
-  </div>
+  </section>
 
-  <div class="bg-white shadow-xl rounded-2xl p-5">
-    <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span
-        class="text-orange-400 text-2xl mr-2">🔖</span> Daily Bookmarks</h3>
-    <div class="h-64">
-      <canvas id="bookmarksChart" width="400" height="200"></canvas>
+  <!-- STATS SUMMARY -->
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-8">
+    <div class="bg-white shadow rounded-xl p-4 transition-transform hover:scale-[1.02]">
+      <h4 class="text-gray-500 text-sm">Views (Today)</h4>
+      <p class="text-xl font-bold text-amber-700">{{ today_views }}</p>
+      <p class="text-xs text-green-500">+{{ view_growth }}% vs yesterday</p>
     </div>
-  </div>
-
-  <div class="bg-white shadow-xl rounded-2xl p-5">
-    <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span
-        class="text-blue-400 text-2xl mr-2">💬</span> Daily Comments</h3>
-    <div class="h-64">
-      <canvas id="commentsChart" width="400" height="200"></canvas>
+    <div class="bg-white shadow rounded-xl p-4 transition-transform hover:scale-[1.02]">
+      <h4 class="text-gray-500 text-sm">Likes (Today)</h4>
+      <p class="text-xl font-bold text-red-500">{{ today_likes }}</p>
+      <p class="text-xs text-green-500">+{{ like_growth }}% vs yesterday</p>
     </div>
-  </div>
-
-  <div class="bg-white shadow-xl rounded-2xl p-5">
-    <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span
-        class="text-green-500 text-2xl mr-2">📈</span> Daily Engagement</h3>
-    <div class="h-64">
-      <canvas id="engagementChart" width="400" height="200"></canvas>
+    <div class="bg-white shadow rounded-xl p-4 transition-transform hover:scale-[1.02]">
+      <h4 class="text-gray-500 text-sm">Comments (Today)</h4>
+      <p class="text-xl font-bold text-blue-500">{{ today_comments }}</p>
+      <p class="text-xs text-green-500">+{{ comment_growth }}% vs yesterday</p>
     </div>
-  </div>
-</section>
+    <div class="bg-white shadow rounded-xl p-4 transition-transform hover:scale-[1.02]">
+      <h4 class="text-gray-500 text-sm">Engagement (Overall)</h4>
+      <p class="text-xl font-bold text-green-600">{{ total_engagement }}</p>
+    </div>
+  </section>
 
-<!-- ENGAGEMENT PIE CHART -->
-<section class="bg-white shadow-xl rounded-2xl p-6 mt-6">
-  <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span
-      class="text-purple-400 text-2xl mr-2">🥧</span> Engagement Breakdown</h3>
-  <div class="h-72 flex justify-center">
-    <canvas id="engagementPie" width="400" height="200"></canvas>
-  </div>
-</section>
+  <!-- CHARTS -->
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <div class="bg-white shadow-xl rounded-2xl p-5">
+      <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span class="text-indigo-500 text-2xl mr-2">📊</span> Daily Views</h3>
+      <div class="h-64">
+        <canvas id="viewsChart" width="400" height="200"></canvas>
+      </div>
+    </div>
 
-{% if top_chapters %}
-<section class="bg-white shadow-xl rounded-2xl p-6 mt-6">
-  <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span
-      class="text-yellow-500 text-2xl mr-2">📖</span> Top Chapters</h3>
+    <div class="bg-white shadow-xl rounded-2xl p-5">
+      <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span class="text-orange-400 text-2xl mr-2">🔖</span> Daily Bookmarks</h3>
+      <div class="h-64">
+        <canvas id="bookmarksChart" width="400" height="200"></canvas>
+      </div>
+    </div>
 
-  <div class="overflow-x-auto">
-    <table class="w-full text-left border-collapse min-w-max">
-      <thead>
-        <tr class="bg-orange-100 text-amber-950 text-sm uppercase tracking-wider">
-          <th class="py-3 px-5">S.No</th>
-          <th class="py-3 px-5">Chapter Title</th>
-          <th class="py-3 px-5">Views</th>
-          <th class="py-3 px-5">Likes</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for chapter in top_chapters %}
-        <tr class="border-b border-gray-100 text-gray-700 hover:bg-orange-50 transition-colors">
-          <td class="py-3 px-5 font-semibold">{{ forloop.counter }}</td>
-          <td class="py-3 px-5">{{ chapter.title|default:'Untitled' }}</td>
-          <td class="py-3 px-5">{{ chapter.views|default:0 }}</td>
-          <td class="py-3 px-5">{{ chapter.likes|default:0 }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</section>
-{% endif %}
+    <div class="bg-white shadow-xl rounded-2xl p-5">
+      <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span class="text-blue-400 text-2xl mr-2">💬</span> Daily Comments</h3>
+      <div class="h-64">
+        <canvas id="commentsChart" width="400" height="200"></canvas>
+      </div>
+    </div>
 
-<footer class="bg-amber-950 text-white text-center py-5 text-sm mt-8 rounded-t-xl">
-  <p>&copy; 2025 Signed & Stamped Publishing House. All rights reserved.</p>
-</footer>
+    <div class="bg-white shadow-xl rounded-2xl p-5">
+      <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span class="text-green-500 text-2xl mr-2">📈</span> Daily Engagement</h3>
+      <div class="h-64">
+        <canvas id="engagementChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </section>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // --- Helper to safely parse JSON from hidden <script> tags ---
-    const getJson = (id) => {
-      const el = document.getElementById(id)
-      try {
-        return el ? JSON.parse(el.textContent) : []
-      } catch (err) {
-        console.error(`Error parsing JSON for ${id}:`, err)
-        return []
-      }
-    }
+  <!-- ENGAGEMENT PIE CHART -->
+  <section class="bg-white shadow-xl rounded-2xl p-6 mt-6">
+    <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span class="text-purple-400 text-2xl mr-2">🥧</span> Engagement Breakdown</h3>
+    <div class="h-72 flex justify-center">
+      <canvas id="engagementPie" width="400" height="200"></canvas>
+    </div>
+  </section>
 
-    // --- Load all datasets ---
-    const labels = getJson('daily-labels-data')
-    const views = getJson('daily-views-data')
-    const bookmarks = getJson('daily-bookmarks-data')
-    const comments = getJson('daily-comments-data')
-    const engagement = getJson('daily-engagement-data')
-    const updateDates = getJson('update-dates-data')
+  {% if top_chapters %}
+    <section class="bg-white shadow-xl rounded-2xl p-6 mt-6">
+      <h3 class="font-bold text-amber-950 mb-4 text-xl md:text-2xl border-b pb-2 flex items-center"><span class="text-yellow-500 text-2xl mr-2">📖</span> Top Chapters</h3>
 
-    // --- Chart Colors ---
-    const colors = {
-      yellow: '#FBBF24',
-      yellowLight: 'rgba(251,191,36,0.3)',
-      red: '#EF4444',
-      redLight: 'rgba(239,68,68,0.3)',
-      blue: '#3B82F6',
-      blueLight: 'rgba(59,130,246,0.3)',
-      green: '#10B981',
-      greenLight: 'rgba(16,185,129,0.3)',
-      purple: '#8B5CF6',
-      purpleLight: 'rgba(139,92,246,0.3)'
-    }
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-max">
+          <thead>
+            <tr class="bg-orange-100 text-amber-950 text-sm uppercase tracking-wider">
+              <th class="py-3 px-5">S.No</th>
+              <th class="py-3 px-5">Chapter Title</th>
+              <th class="py-3 px-5">Views</th>
+              <th class="py-3 px-5">Likes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for chapter in top_chapters %}
+              <tr class="border-b border-gray-100 text-gray-700 hover:bg-orange-50 transition-colors">
+                <td class="py-3 px-5 font-semibold">{{ forloop.counter }}</td>
+                <td class="py-3 px-5">{{ chapter.title|default:'Untitled' }}</td>
+                <td class="py-3 px-5">{{ chapter.views|default:0 }}</td>
+                <td class="py-3 px-5">{{ chapter.likes|default:0 }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  {% endif %}
 
-    // --- Shared Chart Options ---
-    const options = {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: 'rgba(0,0,0,0.7)',
-          titleColor: '#fff',
-          bodyColor: '#fff',
-          cornerRadius: 5,
-          padding: 10
+  <footer class="bg-amber-950 text-white text-center py-5 text-sm mt-8 rounded-t-xl">
+    <p>&copy; 2025 Signed & Stamped Publishing House. All rights reserved.</p>
+  </footer>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- Helper to safely parse JSON from hidden <script> tags ---
+      const getJson = (id) => {
+        const el = document.getElementById(id)
+        try {
+          return el ? JSON.parse(el.textContent) : []
+        } catch (err) {
+          console.error(`Error parsing JSON for ${id}:`, err)
+          return []
         }
-      },
-      scales: {
-        y: { beginAtZero: true, ticks: { color: '#6b7280' }, grid: { color: 'rgba(0,0,0,0.08)', drawBorder: false } },
-        x: { ticks: { color: '#6b7280' }, grid: { display: false } }
       }
-    }
-
-    // --- Function to create a chart ---
-    const createChart = (id, type, label, data, borderColor, backgroundColor) => {
-      const ctx = document.getElementById(id)
-      if (ctx) {
-        new Chart(ctx, {
-          type,
+    
+      // --- Load all datasets ---
+      const labels = getJson('daily-labels-data')
+      const views = getJson('daily-views-data')
+      const bookmarks = getJson('daily-bookmarks-data')
+      const comments = getJson('daily-comments-data')
+      const engagement = getJson('daily-engagement-data')
+      const updateDates = getJson('update-dates-data')
+    
+      // --- Chart Colors ---
+      const colors = {
+        yellow: '#FBBF24',
+        yellowLight: 'rgba(251,191,36,0.3)',
+        red: '#EF4444',
+        redLight: 'rgba(239,68,68,0.3)',
+        blue: '#3B82F6',
+        blueLight: 'rgba(59,130,246,0.3)',
+        green: '#10B981',
+        greenLight: 'rgba(16,185,129,0.3)',
+        purple: '#8B5CF6',
+        purpleLight: 'rgba(139,92,246,0.3)'
+      }
+    
+      // --- Shared Chart Options ---
+      const options = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.7)',
+            titleColor: '#fff',
+            bodyColor: '#fff',
+            cornerRadius: 5,
+            padding: 10
+          }
+        },
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#6b7280' }, grid: { color: 'rgba(0,0,0,0.08)', drawBorder: false } },
+          x: { ticks: { color: '#6b7280' }, grid: { display: false } }
+        }
+      }
+    
+      // --- Function to create a chart ---
+      const createChart = (id, type, label, data, borderColor, backgroundColor) => {
+        const ctx = document.getElementById(id)
+        if (ctx) {
+          new Chart(ctx, {
+            type,
+            data: {
+              labels,
+              datasets: [
+                {
+                  label,
+                  data,
+                  borderColor,
+                  backgroundColor,
+                  borderWidth: type === 'line' ? 3 : 1,
+                  fill: type === 'line',
+                  tension: type === 'line' ? 0.4 : 0,
+                  borderRadius: type === 'bar' ? 6 : 0
+                }
+              ]
+            },
+            options
+          })
+        }
+      }
+    
+      // --- Create individual charts ---
+      createChart('viewsChart', 'line', 'Views', views, colors.yellow, colors.yellowLight)
+      createChart('bookmarksChart', 'bar', 'Bookmarks', bookmarks, colors.red, colors.redLight)
+      createChart('commentsChart', 'line', 'Comments', comments, colors.blue, colors.blueLight)
+      createChart('engagementChart', 'bar', 'Engagement', engagement, colors.green, colors.greenLight)
+    
+      // --- Engagement Pie Chart ---
+      const pieCtx = document.getElementById('engagementPie')
+      if (pieCtx) {
+        new Chart(pieCtx, {
+          type: 'pie',
           data: {
-            labels,
+            labels: ['Views', 'Bookmarks', 'Comments', 'Engagement'],
             datasets: [
               {
-                label,
-                data,
-                borderColor,
-                backgroundColor,
-                borderWidth: type === 'line' ? 3 : 1,
-                fill: type === 'line',
-                tension: type === 'line' ? 0.4 : 0,
-                borderRadius: type === 'bar' ? 6 : 0
+                data: [views.reduce((a, b) => a + b, 0), bookmarks.reduce((a, b) => a + b, 0), comments.reduce((a, b) => a + b, 0), engagement.reduce((a, b) => a + b, 0)],
+                backgroundColor: [colors.yellow, colors.red, colors.blue, colors.green]
               }
             ]
           },
-          options
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { position: 'bottom' } }
+          }
         })
       }
-    }
-
-    // --- Create individual charts ---
-    createChart('viewsChart', 'line', 'Views', views, colors.yellow, colors.yellowLight)
-    createChart('bookmarksChart', 'bar', 'Bookmarks', bookmarks, colors.red, colors.redLight)
-    createChart('commentsChart', 'line', 'Comments', comments, colors.blue, colors.blueLight)
-    createChart('engagementChart', 'bar', 'Engagement', engagement, colors.green, colors.greenLight)
-
-    // --- Engagement Pie Chart ---
-    // --- Engagement Pie Chart ---
-    const pieCtx = document.getElementById('engagementPie')
-    if (pieCtx) {
-      new Chart(pieCtx, {
-        type: 'pie',
-        data: {
-          labels: ['Views', 'Bookmarks', 'Comments', 'Likes'],
-          datasets: [{
-            data: [
-              {{ today_views }},
-          {{ today_bookmarks }},
-          {{ today_comments }},
-    { { today_likes } }
-        ],
-    backgroundColor: [colors.yellow, colors.red, colors.blue, colors.purple]
-  }]
-    },
-    options: {
-    responsive: true,
-    maintainAspectRatio: true,
-    plugins: { legend: { position: 'bottom' } }
-  }
-  })
-}
-
-  // --- Calendar Rendering ---
-  const calendar = document.getElementById('calendar')
-  if (calendar) {
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = today.getMonth()
-    const firstDay = new Date(year, month, 1).getDay()
-    const daysInMonth = new Date(year, month + 1, 0).getDate()
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-    calendar.innerHTML = ''
-    days.forEach((d) => {
-      const c = document.createElement('div')
-      c.className = 'text-center font-bold text-gray-600'
-      c.textContent = d
-      calendar.appendChild(c)
-    })
-
-    for (let i = 0; i < firstDay; i++) {
-      calendar.appendChild(document.createElement('div'))
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const cell = document.createElement('div')
-      cell.className = 'w-7 h-7 flex items-center justify-center rounded-full text-[0.65rem]'
-      cell.textContent = day
-      if (updateDates.includes(day)) {
-        cell.classList.add('bg-amber-400', 'text-white', 'font-bold')
-      } else if (day === today.getDate()) {
-        cell.classList.add('bg-orange-100', 'text-amber-900', 'font-bold', 'border', 'border-orange-300')
-      } else {
-        cell.classList.add('text-gray-500')
+    
+      // --- Calendar Rendering ---
+      const calendar = document.getElementById('calendar')
+      if (calendar) {
+        const today = new Date()
+        const year = today.getFullYear()
+        const month = today.getMonth()
+        const firstDay = new Date(year, month, 1).getDay()
+        const daysInMonth = new Date(year, month + 1, 0).getDate()
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    
+        calendar.innerHTML = ''
+        days.forEach((d) => {
+          const c = document.createElement('div')
+          c.className = 'text-center font-bold text-gray-600'
+          c.textContent = d
+          calendar.appendChild(c)
+        })
+    
+        for (let i = 0; i < firstDay; i++) {
+          calendar.appendChild(document.createElement('div'))
+        }
+    
+        for (let day = 1; day <= daysInMonth; day++) {
+          const cell = document.createElement('div')
+          cell.className = 'w-7 h-7 flex items-center justify-center rounded-full text-[0.65rem]'
+          cell.textContent = day
+          if (updateDates.includes(day)) {
+            cell.classList.add('bg-amber-400', 'text-white', 'font-bold')
+          } else if (day === today.getDate()) {
+            cell.classList.add('bg-orange-100', 'text-amber-900', 'font-bold', 'border', 'border-orange-300')
+          } else {
+            cell.classList.add('text-gray-500')
+          }
+          calendar.appendChild(cell)
+        }
+    
+        const totalCells = firstDay + daysInMonth
+        const remainingCells = (7 - (totalCells % 7)) % 7
+        for (let i = 0; i < remainingCells; i++) {
+          calendar.appendChild(document.createElement('div'))
+        }
       }
-      calendar.appendChild(cell)
-    }
-
-    const totalCells = firstDay + daysInMonth
-    const remainingCells = (7 - (totalCells % 7)) % 7
-    for (let i = 0; i < remainingCells; i++) {
-      calendar.appendChild(document.createElement('div'))
-    }
-  }
-  })
-</script>
+    })
+  </script>
 {% endblock %}
