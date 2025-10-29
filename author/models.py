@@ -78,22 +78,27 @@ class Chapter(models.Model):
         return f"{self.order}. {self.title}"
 
     def increment_views(self):
-        self.views += 1
-        self.save(update_fields=["views"])
+        self.views = models.F('views') + 1
+        self.save(update_fields=['views'])
+        ChapterViewLog.objects.create(chapter=self)
 
     def toggle_like(self, user):
-        """Add or remove a like from a user."""
-        if user in self.liked_by.all():
+        if self.liked_by.filter(id=user.id).exists():
             self.liked_by.remove(user)
             self.likes = models.F('likes') - 1
+            ChapterLikeLog.objects.filter(chapter=self, user=user).delete()
             liked = False
         else:
             self.liked_by.add(user)
             self.likes = models.F('likes') + 1
+            ChapterLikeLog.objects.create(chapter=self, user=user)
             liked = True
-        self.save(update_fields=["likes"])
-        self.refresh_from_db(fields=["likes"])
+
+        self.save(update_fields=['likes'])
+        self.refresh_from_db(fields=['likes'])
         return liked
+    
+    
 
 
 class Comment(models.Model):
@@ -159,3 +164,28 @@ class Review(models.Model):
         self.book.rating = round(avg_rating, 2)
         self.book.total_ratings = total_ratings
         self.book.save(update_fields=['rating', 'total_ratings'])
+
+class ChapterViewLog(models.Model):
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='view_logs')
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [models.Index(fields=['viewed_at'])]
+        # Optional: prevent duplicate views from same IP/user in short time
+        # But not required for basic counting
+
+    def __str__(self):
+        return f"View: {self.chapter} @ {self.viewed_at}"
+
+
+class ChapterLikeLog(models.Model):
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='like_logs')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    liked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [models.Index(fields=['liked_at'])]
+        unique_together = ('chapter', 'user')  # Prevent double-liking
+
+    def __str__(self):
+        return f"Like by {self.user} on {self.chapter}"
