@@ -7,6 +7,7 @@ urlpatterns = [
     path('create/', login_required(views.create, login_url='login'), name='create'),
     path('create/payment', login_required(views.payment, login_url='login'), name='payment'),
     path('create/addbook', login_required(views.addbook, login_url='login'), name='addbook'),
+    path('create/editbook/<int:book_id>/', login_required(views.editbook, login_url='login'), name='editbook'),
     path('create/addchapter/<int:book_id>/', login_required(views.addchapter, login_url='login'), name='addchapter'),
     path('create/abookpage/<int:book_id>/', login_required(views.abookpage, login_url='login'), name='abookpage'),
     path("create/<int:pk>/delete_chapter/", login_required(views.delete_chapter, login_url='login'), name="delete_chapter"),

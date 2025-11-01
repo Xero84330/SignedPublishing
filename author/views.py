@@ -16,7 +16,10 @@ def statistics(request, book_id):
     today = timezone.now().date()
     yesterday = today - timedelta(days=1)
 
-    # --- Basic Stats ---
+    # Read range param from URL (?range=30)
+    range_days = int(request.GET.get("range", 7))  # default 7
+    
+    # Basic stats
     today_views = Chapter.objects.filter(Book=book, created_at__date=today).aggregate(total=Sum("views"))["total"] or 0
     yesterday_views = Chapter.objects.filter(Book=book, created_at__date=yesterday).aggregate(total=Sum("views"))["total"] or 0
 
@@ -26,12 +29,8 @@ def statistics(request, book_id):
     today_comments = Comment.objects.filter(chapter__Book=book, created_at__date=today).count()
     yesterday_comments = Comment.objects.filter(chapter__Book=book, created_at__date=yesterday).count()
 
-    # --- Favorites ---
     today_bookmarks = Collection.objects.filter(book=book, added_at__date=today).count()
-    # If you want total favorites, just use:
-    total_bookmarks = book.favorites.count()
 
-    # --- Growth calculation ---
     def calc_growth(today, yesterday):
         if yesterday == 0:
             return 100 if today > 0 else 0
@@ -41,16 +40,18 @@ def statistics(request, book_id):
     like_growth = calc_growth(today_likes, yesterday_likes)
     comment_growth = calc_growth(today_comments, yesterday_comments)
 
-    # --- Daily Data for Last 7 Days ---
+    # Dynamic range stats
     daily_labels, daily_views, daily_likes, daily_comments, daily_bookmarks, daily_engagement = [], [], [], [], [], []
 
-    for i in range(7):
-        day = today - timedelta(days=6 - i)
+    for i in range(range_days):
+        day = today - timedelta(days=(range_days - 1 - i))
         label = day.strftime("%b %d")
+
         views_sum = Chapter.objects.filter(Book=book, created_at__date=day).aggregate(Sum("views"))["views__sum"] or 0
         likes_sum = Chapter.objects.filter(Book=book, created_at__date=day).aggregate(Sum("likes"))["likes__sum"] or 0
         comments_sum = Comment.objects.filter(chapter__Book=book, created_at__date=day).count()
         bookmarks_sum = Collection.objects.filter(book=book, added_at__date=day).count()
+
         daily_labels.append(label)
         daily_views.append(views_sum)
         daily_likes.append(likes_sum)
@@ -59,13 +60,22 @@ def statistics(request, book_id):
         daily_engagement.append(views_sum + likes_sum + comments_sum + bookmarks_sum)
 
     engagement_data = {
-     "views": today_views,
-     "comments": today_comments,
-     "bookmarks": today_bookmarks,
+        "views": today_views,
+        "comments": today_comments,
+        "bookmarks": today_bookmarks,
     }
 
+    start_month = today.replace(day=1)
+    next_month = (start_month + timedelta(days=32)).replace(day=1)
 
-    # --- Context ---
+    update_dates = list(
+        Chapter.objects.filter(
+            Book=book,
+            created_at__gte=start_month,
+            created_at__lt=next_month
+        ).values_list("created_at__day", flat=True)
+    )
+
     context = {
         "book": book,
         "today_views": today_views,
@@ -84,9 +94,12 @@ def statistics(request, book_id):
         "daily_bookmarks": daily_bookmarks,
         "daily_engagement": daily_engagement,
         "engagement_data": engagement_data,
+        "update_dates": update_dates,
+        "range": range_days,  # send to template
     }
 
     return render(request, "author/astats.html", context)
+
 
 
 def create(request):
@@ -110,16 +123,15 @@ def abookpage(request, book_id):
         'chapters':chapters,
     })
 
-def addbook(request): 
+def addbook(request):
     if request.method == 'POST':
-        bname = request.POST.get('bname')
-        btype = request.POST.get('btype')
-        genre = request.POST.get('genre')
-        agerating = request.POST.get('agerating')
+        bname       = request.POST.get('bname')
+        btype       = request.POST.get('btype')
+        genre       = request.POST.get('genre')
+        agerating   = request.POST.get('agerating')
         description = request.POST.get('description')
-        coverimage = request.FILES.get('coverimage')
+        coverimage  = request.FILES.get('coverimage')
 
-        # Tie the book to the logged-in user
         Book.objects.create(
             user=request.user,
             bname=bname,
@@ -129,13 +141,43 @@ def addbook(request):
             description=description,
             coverimage=coverimage
         )
-        messages.success(request, f'Book "{bname}" has been created successfully!')
+        messages.success(request, f'Book "{bname}" created!')
         return redirect('create')
 
-    # Show books belonging to logged-in user
+    # Show the list of books for the user (unchanged)
     user_books = Book.objects.filter(user=request.user)
-    return render(request, 'author/addbook.html', {'books': user_books})
+    return render(request, 'author/addbook.html', {
+        'books': user_books,
+        'mode': 'add',          # <-- add this
+    })
 
+
+def editbook(request, book_id):
+    book = get_object_or_404(Book, id=book_id, user=request.user)
+    
+    # CRITICAL FIX: Reload the image field so .url works
+    book.refresh_from_db()
+
+    if request.method == 'POST':
+        book.btype       = request.POST.get('btype')
+        book.genre       = request.POST.get('genre')
+        book.agerating   = request.POST.get('agerating')
+        book.description = request.POST.get('description')
+
+        cover = request.FILES.get('coverimage')
+        if cover:
+            book.coverimage = cover
+
+        book.save()
+        messages.success(request, f'Book "{book.bname}" updated!')
+        return redirect('create')
+
+    user_books = Book.objects.filter(user=request.user)
+    return render(request, 'author/addbook.html', {
+        'book': book,
+        'books': user_books,
+        'mode': 'edit',
+    })
 
 def addchapter(request, book_id):
     book = get_object_or_404(Book, id=book_id)
@@ -157,9 +199,7 @@ def addchapter(request, book_id):
 
     return render(request, "author/addchapter.html", {"book": book})
 
-from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect
-from .models import Chapter
+
 
 def delete_chapter(request, pk):
     chapter = get_object_or_404(Chapter, pk=pk)

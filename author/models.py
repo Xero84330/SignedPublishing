@@ -28,7 +28,6 @@ class Book(models.Model):
 
     # --- STATS ---
     views = models.PositiveIntegerField(default=0)
-    favorites = models.ManyToManyField(User, related_name="favorite_books", blank=True)
     rating = models.FloatField(default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
     total_ratings = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
