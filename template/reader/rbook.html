@@ -1,5 +1,39 @@
 {% extends 'reader/rbase.html' %}
+{% load static %}
+{% block meta %}
+<title>{{ book.title }} | Signed Publishing – Read Stories, Novels, and eBooks</title>
+<meta name="description" content="{{ book.title }} by {{ book.author.username }} — {{ book.synopsis|truncatechars:150 }}">
+<meta name="keywords" content="{{ book.genre }}, {{ book.author.username }}, Signed Publishing, novels, eBooks, online reading">
+<meta property="og:title" content="{{ book.title }} | {{ book.author.username }}">
+<meta property="og:description" content="{{ book.synopsis|truncatechars:150 }}">
+<meta property="og:url" content="https://www.signedpublishing.com/book/{{ book.id }}/">
+<meta property="og:image" content="{{ book.coverimage.url }}">
+<meta name="twitter:image" content="{{ book.coverimage.url }}">
+<meta name="twitter:title" content="{{ book.title }} | Signed Publishing">
+<meta name="twitter:description" content="{{ book.synopsis|truncatechars:150 }}">
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Book",
+  "name": "{{ book.bname }}",
+  "author": "{{ book.user.username }}",
+  "image": "{{ book.coverimage.url }}",
+  "genre": "{{ book.genre }}",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ book.rating|default:4.5 }}",
+    "reviewCount": "{{ book.reviews.count }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Signed Publishing",
+    "url": "https://www.signedpublishing.com/"
+  }
+}
+</script>
+
+{% endblock %}
 {% block body %}
   {# KEPT: Original font-serif and color theme as requested #}
   <div class="font-serif antialiased text-gray-800 bg-gray-50 min-h-screen">

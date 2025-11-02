@@ -1,4 +1,16 @@
 {% extends 'reader/rbase.html' %}
+{% load static %}
+{% block meta %}
+<title>Home | Signed Publishing – Read Stories, Novels, and eBooks</title>
+<meta name="description" content="Signed Publishing — a creative hub for authors and readers. Explore trending books, contests, and new writers from around the world.">
+<meta name="keywords" content="Signed Publishing, books, authors, readers, online publishing, writing contests, magazine, web novels, ebooks">
+<meta property="og:title" content="Signed Publishing | Where Authors and Readers Connect">
+<meta property="og:description" content="Join a thriving platform where creativity meets opportunity — explore, publish, and discover new stories.">
+<meta property="og:url" content="https://www.signedpublishing.com/">
+<meta property="og:image" content="{% static 'images/Brown_Full_logo.png' %}">
+<meta name="twitter:title" content="Signed Publishing | Books, Contests & Authors">
+<meta name="twitter:description" content="Explore trending books and writing contests on Signed Publishing.">
+{% endblock %}
 {% block body %}
 <!-- Desktop + Tablet Section -->
 <section class="hidden sm:flex flex-row justify-center items-center p-6 gap-6 mb-10"> {# Added mb-10 for consistent spacing #}

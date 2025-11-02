@@ -1,5 +1,18 @@
 {% extends 'reader/rbase.html' %}
-
+{% load static %}
+{% block meta %}
+<title>Browse Books | Signed Publishing – Read Stories, Novels, and eBooks</title>
+<meta name="description" content="Browse all books published on Signed Publishing — discover novels, short stories, and eBooks by independent authors.">
+<meta name="keywords" content="browse books, discover stories, read online, eBooks, independent authors, Signed Publishing library">
+<meta property="og:title" content="Browse Books | Signed Publishing">
+<meta property="og:description" content="Explore hundreds of books from emerging and established authors on Signed Publishing.">
+<meta property="og:url" content="https://www.signedpublishing.com/browse/">
+<meta property="og:image" content="{% static 'images/Brown_Full_logo.png' %}">
+<meta name="twitter:title" content="Browse Books | Signed Publishing">
+<meta name="twitter:description" content="Discover amazing stories and talented authors in every genre.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.signedpublishing.com/browse/">
+{% endblock %}
 {% block body %}
   <section class="p-4 sm:p-6 bg-orange-50 min-h-screen">
     <div class="max-w-7xl mx-auto">

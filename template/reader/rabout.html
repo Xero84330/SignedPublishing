@@ -1,5 +1,16 @@
 {% extends 'reader/rbase.html' %}
-
+{% load static %}
+{% block meta %}
+<title>About Us | Signed Publishing – Read Stories, Novels, and eBooks</title>
+<meta name="description" content="Learn about Signed Publishing — our mission, our team, and how we support emerging authors worldwide.">
+<meta name="keywords" content="about Signed Publishing, publishing team, author community, writing support, literary platform">
+<meta property="og:title" content="About Signed Publishing | Empowering Authors Worldwide">
+<meta property="og:description" content="We are a community built for writers, readers, and storytellers. Discover how Signed Publishing helps bring stories to life.">
+<meta property="og:url" content="https://www.signedpublishing.com/about/">
+<meta property="og:image" content="{% static 'images/Brown_Full_logo.png' %}">
+<meta name="twitter:title" content="About Signed Publishing">
+<meta name="twitter:description" content="Empowering writers to share their stories with the world.">
+{% endblock %}
 {% block body %}
 <section
   class="relative max-w-5xl mx-auto my-8 sm:my-12 px-4 sm:px-6 py-8 sm:py-10 bg-orange-100 rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">

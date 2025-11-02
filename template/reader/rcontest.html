@@ -1,5 +1,16 @@
 {% extends 'reader/rbase.html' %}
-
+{% load static %}
+{% block meta %}
+<title>Contests | Signed Publishing – Read Stories, Novels, and eBooks</title>
+<meta name="description" content="Join writing contests on Signed Publishing. Compete, showcase your talent, and win exciting publishing opportunities.">
+<meta name="keywords" content="writing contests, author competitions, publish your story, online writing, creative contests">
+<meta property="og:title" content="Writing Contests | Signed Publishing">
+<meta property="og:description" content="Showcase your talent and get discovered. Participate in ongoing writing contests on Signed Publishing.">
+<meta property="og:url" content="https://www.signedpublishing.com/contest/">
+<meta property="og:image" content="{% static 'images/Brown_Full_logo.png' %}">
+<meta name="twitter:title" content="Writing Contests | Signed Publishing">
+<meta name="twitter:description" content="Join exciting writing contests and stand a chance to get published.">
+{% endblock %}
 {% block body %}
   <!-- Contest Coming Soon Section -->
   <section class="relative flex flex-col justify-center items-center min-h-[70vh] bg-orange-50 p-6 text-center overflow-hidden">
