@@ -59,6 +59,7 @@ def about(request):
 def book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     chapters = book.chapters.order_by('order')
+    top_books = HighlightedBook.objects.filter(category='TOP').select_related('book').order_by('order')[:15]
 
     book.views = models.F('views') + 1
     book.save(update_fields=["views"])
@@ -85,7 +86,8 @@ def book(request, book_id):
         'collection_books': collection_books,
         'total_likes': total_likes, 
         "rating_range": range(1, 6),
-        'history': history,  # Pass this to the template
+        'history': history,  
+        'top_books': top_books,
     })
 
 
@@ -95,6 +97,7 @@ def read(request, book_id, chapter_id):
     chapter = get_object_or_404(Chapter, id=chapter_id, Book=book)  
     prev_chapter = Chapter.objects.filter(Book=book, order__lt=chapter.order).order_by('-order').first()
     next_chapter = Chapter.objects.filter(Book=book, order__gt=chapter.order).order_by('order').first()
+   
 
     # -----------------------------
     # Update Library History

@@ -1,18 +1,18 @@
 {% extends 'reader/rbase.html' %}
 {% load static %}
 {% block meta %}
-<title>{{ book.title }} | Signed Publishing – Read Stories, Novels, and eBooks</title>
-<meta name="description" content="{{ book.title }} by {{ book.author.username }} — {{ book.synopsis|truncatechars:150 }}">
-<meta name="keywords" content="{{ book.genre }}, {{ book.author.username }}, Signed Publishing, novels, eBooks, online reading">
-<meta property="og:title" content="{{ book.title }} | {{ book.author.username }}">
-<meta property="og:description" content="{{ book.synopsis|truncatechars:150 }}">
-<meta property="og:url" content="https://www.signedpublishing.com/book/{{ book.id }}/">
-<meta property="og:image" content="{{ book.coverimage.url }}">
-<meta name="twitter:image" content="{{ book.coverimage.url }}">
-<meta name="twitter:title" content="{{ book.title }} | Signed Publishing">
-<meta name="twitter:description" content="{{ book.synopsis|truncatechars:150 }}">
+  <title>{{ book.title }} | Signed Publishing – Read Stories, Novels, and eBooks</title>
+  <meta name="description" content="{{ book.title }} by {{ book.author.username }} — {{ book.synopsis|truncatechars:150 }}" />
+  <meta name="keywords" content="{{ book.genre }}, {{ book.author.username }}, Signed Publishing, novels, eBooks, online reading" />
+  <meta property="og:title" content="{{ book.title }} | {{ book.author.username }}" />
+  <meta property="og:description" content="{{ book.synopsis|truncatechars:150 }}" />
+  <meta property="og:url" content="https://www.signedpublishing.com/book/{{ book.id }}/" />
+  <meta property="og:image" content="{{ book.coverimage.url }}" />
+  <meta name="twitter:image" content="{{ book.coverimage.url }}" />
+  <meta name="twitter:title" content="{{ book.title }} | Signed Publishing" />
+  <meta name="twitter:description" content="{{ book.synopsis|truncatechars:150 }}" />
 
-<script type="application/ld+json">
+  <script type="application/ld+json">
 {
   "@context": "https://schema.org/",
   "@type": "Book",
@@ -32,160 +32,135 @@
   }
 }
 </script>
-
 {% endblock %}
 {% block body %}
-  {# KEPT: Original font-serif and color theme as requested #}
-  <div class="font-serif antialiased text-gray-800 bg-gray-50 min-h-screen">
-    <main class="max-w-6xl mx-auto py-12 px-6 lg:px-8">
-      <article class="bg-white shadow-xl rounded-2xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl border border-gray-100"> {# Added subtle border for crispness #}
-        <div class="lg:flex">
-          <!-- Book Cover Section -->
-          {# KEPT: Original gradient colors #}
-          <aside class="lg:w-1/3 p-8 bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center border-r border-gray-100">
-            {% if book.coverimage %}
-              <img src="{{ book.coverimage.url }}" alt="Book Cover" class="w-64 md:w-80 aspect-[2/3] object-cover rounded-lg shadow-xl border border-gray-200 transform hover:scale-105 transition-transform duration-500 ease-in-out" />
-            {% else %}
-              <div class="w-64 md:w-80 aspect-[2/3] flex items-center justify-center bg-gray-200 rounded-lg shadow-lg text-gray-500 text-lg font-semibold border border-gray-300">No Cover</div>
-            {% endif %}
-          </aside>
+  <div class="font-sans antialiased text-gray-800 bg-gray-100 min-h-screen">
+    <main class="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <article class="bg-white shadow-lg rounded-2xl sm:rounded-3xl overflow-hidden transform transition-all duration-300 hover:shadow-xl border border-gray-100">
+        <div class="lg:flex rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
 
-          <!-- Book Details Section -->
-          <section class="lg:w-2/3 p-8 md:p-10 flex flex-col justify-between">
-            <div>
-              {# KEPT: Original text colors #}
-              <h1 class="text-4xl md:text-5xl font-extrabold text-amber-950 leading-tight mb-4 tracking-tight">{{ book.bname }}</h1>
+  <!-- Book Cover -->
+  <aside class="lg:w-1/3 p-4 sm:p-6 bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center">
+    {% if book.coverimage %}
+      <img src="{{ book.coverimage.url }}" alt="Book Cover"
+        class="w-44 sm:w-56 md:w-64 aspect-[2/3] object-cover rounded-lg shadow-md border border-gray-200 transition-transform duration-300 hover:scale-105" />
+    {% else %}
+      <div class="w-44 sm:w-56 md:w-64 aspect-[2/3] bg-gray-100 rounded-lg shadow text-gray-500 flex items-center justify-center font-medium">
+        No Cover
+      </div>
+    {% endif %}
+  </aside>
 
-              {% if book.user or book.genre %}
-                <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mb-6 text-lg text-gray-600">
-                  {% if book.user %}
-                    <span class="font-semibold text-amber-800">By {{ book.user.username }}</span>
-                  {% endif %}
-                  {% if book.genre %}
-                    {# KEPT: Original genre tag colors #}
-                    <span class="text-sm px-3 py-1 bg-orange-100 rounded-full italic text-amber-700 border border-orange-200">{{ book.genre }}</span>
-                  {% endif %}
-                </div>
-              {% endif %}
+  <!-- Details -->
+  <section class="lg:w-2/3 p-4 sm:p-6 md:p-8 flex flex-col justify-between">
 
-              <!-- Stats -->
-              <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8 text-gray-600 text-base">
-                {# KEPT: Original icon colors #}
-                <span class="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  <span>{{ book.views }} views</span>
-                </span>
-                <span class="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                  </svg>
-                  <span id="like-count">{{ total_likes }} likes</span>
-                </span>
-                <span class="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                  </svg>
-                  <span>{{ book.rating|floatformat:1 }}/5 Rating</span>
-                </span>
-              </div>
+    <!-- Top Info -->
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 mb-2">{{ book.bname }}</h1>
 
-              <!-- Description -->
-              {% if book.description %}
-                {# KEPT: Original prose colors #}
-                <div class="prose prose-amber max-w-none text-gray-700 mb-8 leading-relaxed text-base md:text-lg custom-scrollbar max-h-52 overflow-y-auto pr-3">
-                  <p>{{ book.description }}</p>
-                </div>
-              {% endif %}
-            </div>
+      <div class="flex flex-wrap items-center gap-2 mb-3 text-gray-700 text-sm sm:text-base">
+        {% if book.user %}
+          <span class="font-semibold text-amber-700">By {{ book.user.username }}</span>
+        {% endif %}
+        {% if book.genre %}
+          <span class="text-xs px-2 py-0.5 bg-orange-100 rounded-full italic text-amber-700 border border-orange-200">{{ book.genre }}</span>
+        {% endif %}
+      </div>
 
-            <!-- Action Buttons -->
-            <div class="mt-8 flex flex-wrap gap-4">
-              {% if book.chapters.exists %}
-                {% if history and history.last_read_chapter %}
-                  {# KEPT: Original button colors #}
-                  <a href="{% url 'read' book.id history.last_read_chapter.id %}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-bold rounded-full shadow-lg text-white bg-amber-700 hover:bg-amber-800 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>Continue Reading
-                  </a>
-                {% else %}
-                  {# KEPT: Original button colors #}
-                  <a href="{% url 'read' book.id book.chapters.first.id %}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-bold rounded-full shadow-lg text-white bg-amber-700 hover:bg-amber-800 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13.5m0-13.5c-3.132 0-6.286.721-9 2.093V19c2.714 1.372 5.868 2.093 9 2.093s6.286-.721 9-2.093V8.346c-2.714-1.372-5.868-2.093-9-2.093zM12 6.253c3.132 0 6.286.721 9 2.093M12 6.253V1.87M5.772 17.892C5.356 16.48 5 15.012 5 13.5c0-1.512.356-2.98.772-4.392" />
-                    </svg>Read Now
-                  </a>
-                {% endif %}
-              {% else %}
-                {# KEPT: Original button colors #}
-                <button class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-bold rounded-full shadow-lg text-white bg-amber-900 cursor-not-allowed opacity-70">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13.5m0-13.5c-3.132 0-6.286.721-9 2.093V19c2.714 1.372 5.868 2.093 9 2.093s6.286-.721 9-2.093V8.346c-2.714-1.372-5.868-2.093-9-2.093zM12 6.253c3.132 0 6.286.721 9 2.093M12 6.253V1.87M5.772 17.892C5.356 16.48 5 15.012 5 13.5c0-1.512.356-2.98.772-4.392" />
-                  </svg>No Chapters Yet
-                </button>
-              {% endif %}
+      <!-- Stats -->
+      <div class="flex flex-wrap items-center gap-3 mb-4 text-gray-600 text-xs sm:text-sm">
+        <span class="flex items-center gap-1"><svg class="h-4 w-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>{{ book.views }} views</span>
+        <span class="flex items-center gap-1"><svg class="h-4 w-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c2.58 0 4.5 2.42 4.5 5.5 0 3.66-3.4 6.73-8.55 11.32L12 21.35z"/></svg>{{ total_likes }} likes</span>
+        <span class="flex items-center gap-1"><svg class="h-4 w-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>{{ book.rating|floatformat:1 }}/5</span>
+      </div>
 
-              <!-- Bookmark Button -->
-              {% if user.is_authenticated %}
-                {# KEPT: Original button colors #}
-                <a href="{% url 'add_to_collection' book.id %}" class="inline-flex items-center justify-center px-8 py-4 border border-amber-700 text-base font-bold rounded-full shadow-lg text-amber-700 bg-white hover:bg-amber-50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                  {% if book.id in collection_books %}
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-amber-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
-                    </svg>Bookmarked
-                  {% else %}
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                    </svg>Bookmark
-                  {% endif %}
-                </a>
-              {% else %}
-                {# KEPT: Original button colors #}
-                <a href="{% url 'login' %}" class="inline-flex items-center justify-center px-8 py-4 border border-orange-500 text-base font-bold rounded-full shadow-lg text-orange-500 bg-white hover:bg-orange-50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                  </svg>Bookmark
-                </a>
-              {% endif %}
-            </div>
-          </section>
+      <!-- Description -->
+      {% if book.description %}
+        <div class="text-gray-700 text-sm sm:text-base leading-relaxed max-h-40 sm:max-h-48 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white shadow-inner custom-scrollbar">
+          <p>{{ book.description }}</p>
         </div>
+      {% endif %}
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-5 flex flex-wrap gap-2 sm:gap-3">
+
+      {% if book.chapters.exists %}
+        {% if history and history.last_read_chapter %}
+          <a href="{% url 'read' book.id history.last_read_chapter.id %}"
+           class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full bg-amber-700 text-white hover:bg-amber-800 transition">
+            Continue Reading
+          </a>
+        {% else %}
+          <a href="{% url 'read' book.id book.chapters.first.id %}"
+           class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full bg-amber-700 text-white hover:bg-amber-800 transition">
+            Read Now
+          </a>
+        {% endif %}
+      {% else %}
+        <button class="px-4 py-2 text-xs sm:text-sm bg-gray-400 text-white rounded-full cursor-not-allowed">
+          No Chapters Yet
+        </button>
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        <a href="{% url 'add_to_collection' book.id %}"
+         class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full border border-amber-700 text-amber-700 bg-white hover:bg-amber-50 transition">
+          {% if book.id in collection_books %}Bookmarked{% else %}Bookmark{% endif %}
+        </a>
+      {% else %}
+        <a href="{% url 'login' %}"
+         class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full border border-orange-500 text-orange-500 bg-white hover:bg-orange-50 transition">
+          Bookmark
+        </a>
+      {% endif %}
+    </div>
+  </section>
+</div>
+
 
         <!-- Chapters List Section -->
         {% if book.chapters.exists %}
-          <section class="border-t border-gray-200 px-8 md:px-10 py-8 bg-gray-50">
-            {# KEPT: Original text and icon colors #}
-            <h2 class="text-2xl font-bold text-amber-900 mb-6 flex items-center gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13.5m0-13.5c-3.132 0-6.286.721-9 2.093V19c2.714 1.372 5.868 2.093 9 2.093s6.286-.721 9-2.093V8.346c-2.714-1.372-5.868-2.093-9-2.093zM12 6.253c3.132 0 6.286.721 9 2.093M12 6.253V1.87M5.772 17.892C5.356 16.48 5 15.012 5 13.5c0-1.512.356-2.98.772-4.392" />
-              </svg>Chapters
+          <section class="border-t border-gray-200 px-6 sm:px-8 md:px-10 py-6 sm:py-8 bg-gray-50">
+            <h2 class="text-xl sm:text-2xl font-bold text-amber-900 mb-5 sm:mb-6 flex items-center gap-2 sm:gap-3">
+              <span class="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-100 border border-amber-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13.5m0-13.5c-3.132 0-6.286.721-9 2.093V19c2.714 1.372 5.868 2.093 9 2.093s6.286-.721 9-2.093V8.346c-2.714-1.372-5.868-2.093-9-2.093zM12 6.253c3.132 0 6.286.721 9 2.093M12 6.253V1.87M5.772 17.892C5.356 16.48 5 15.012 5 13.5c0-1.512.356-2.98.772-4.392" />
+                </svg>
+              </span>
+              <span>Chapters</span>
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-80 overflow-y-auto custom-scrollbar pr-2">
+
+            <!-- Scrollable chapter list -->
+            <div class="max-h-80 sm:max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white divide-y custom-scrollbar">
               {% for chapter in chapters %}
-                {# KEPT: Original hover colors for chapter links #}
-                <a href="{% url 'read' book.id chapter.id %}" class="block p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200 group">
-                  <p class="text-sm font-semibold text-gray-500 mb-1">Chapter {{ chapter.order }}</p>
-                  <h4 class="text-lg font-medium text-amber-800 group-hover:text-amber-950 transition-colors">{{ chapter.title }}</h4>
+                <a href="{% url 'read' book.id chapter.id %}" class="flex items-center justify-between p-3 sm:p-4 group hover:bg-amber-50 transition-colors">
+                  <div class="flex flex-col">
+                    <span class="text-xs sm:text-sm font-semibold text-gray-500">Chapter {{ chapter.order }}</span>
+
+                    <span class="text-sm sm:text-lg font-medium text-amber-800 group-hover:text-amber-900">{{ chapter.title }}</span>
+                  </div>
+
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-amber-600 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
                 </a>
               {% empty %}
-                <p class="text-gray-500 italic col-span-full">No chapters have been added to this book yet.</p>
+                <p class="text-gray-500 italic p-5 text-sm sm:text-base text-center">No chapters added yet.</p>
               {% endfor %}
             </div>
           </section>
         {% endif %}
 
         <!-- Reviews Section - SLEEK, MODERN, PROFESSIONAL (keeping original theme) -->
-        <section class="border-t border-gray-200 px-8 md:px-10 py-10 bg-white"> {# Slightly increased padding #}
-          {# KEPT: Original text and icon colors #}
-          <h2 class="text-3xl font-bold text-amber-900 mb-8 flex items-center gap-3"> {# Larger, bolder title #}
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"> {# Larger icon #}
+        <section class="border-t border-gray-200 px-6 sm:px-8 md:px-10 py-6 sm:py-8 bg-white">
+          <h2 class="text-xl sm:text-2xl font-bold text-amber-900 mb-5 sm:mb-6 flex items-center gap-2 sm:gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 sm:h-7 sm:w-7 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>Reader Reviews (<span id="review-count">{{ book.reviews.count }}</span>)
+            </svg>Reviews (<span id="review-count">{{ book.reviews.count }}</span>)
           </h2>
 
+          <!-- Reviews Scroller -->
           <!-- Scrollable Reviews -->
           <div id="reviews-list" class="space-y-6 max-h-[40rem] overflow-y-auto pr-3"> {# Increased max-height for more reviews, added pr-3 for scrollbar space #}
             {% for review in book.reviews.all %}
