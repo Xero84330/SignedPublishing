@@ -97,6 +97,10 @@ def read(request, book_id, chapter_id):
     chapter = get_object_or_404(Chapter, id=chapter_id, Book=book)  
     prev_chapter = Chapter.objects.filter(Book=book, order__lt=chapter.order).order_by('-order').first()
     next_chapter = Chapter.objects.filter(Book=book, order__gt=chapter.order).order_by('order').first()
+
+    user_liked_chapter = False
+    if request.user.is_authenticated:
+        user_liked_chapter = chapter.liked_by.filter(id=request.user.id).exists()
    
 
     # -----------------------------
@@ -118,6 +122,7 @@ def read(request, book_id, chapter_id):
 
 
     return render(request, "reader/rread.html", {
+        "chapter_liked": user_liked_chapter,
         "book": book,
         "chapter": chapter,
         "chapters": book.chapters.all().order_by("order"),
