@@ -162,54 +162,60 @@
 
           <!-- Reviews Scroller -->
           <!-- Scrollable Reviews -->
-          <div id="reviews-list" class="space-y-6 max-h-[40rem] overflow-y-auto pr-3"> {# Increased max-height for more reviews, added pr-3 for scrollbar space #}
-            {% for review in book.reviews.all %}
-              <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 relative"> {# Increased padding, softer shadow #}
-                <div class="flex justify-between items-start mb-3"> {# Aligned items to start #}
-                  <div>
-                    <strong class="text-amber-900 text-lg font-semibold">{{ review.user.username }}</strong> {# Darker, bolder username #}
-                    <span class="block text-gray-500 text-sm mt-1">{{ review.timestamp|date:"M d, Y" }}</span> {# Added timestamp for professionalism #}
-                  </div>
-                  <div class="text-yellow-500 text-base flex items-center gap-1">
-                    {% for _ in ''|ljust:review.rating %}
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                      </svg>
-                    {% endfor %}
-                    <span class="ml-1 font-medium text-gray-700">{{ review.rating }}/5</span> {# Added text color to rating #}
-                  </div>
-                </div>
+          <div id="reviews-list" class="space-y-4 max-h-[32rem] overflow-y-auto pr-2">
+  {% for review in book.reviews.all %}
+  <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-200">
+    <div class="flex justify-between items-start mb-2">
+      <div>
+        <strong class="text-amber-900 text-sm sm:text-base font-semibold">
+          {{ review.user.username }}
+        </strong>
+        <span class="block text-gray-500 text-xs sm:text-sm mt-0.5">
+          {{ review.timestamp|date:"M d, Y" }}
+        </span>
+      </div>
 
-                <p class="text-gray-700 leading-relaxed review-text max-h-20 overflow-hidden cursor-pointer hover:text-gray-900 transition-colors" title="Click to expand"> {# Changed line-clamp to max-height for consistent rendering, added hover effect #}
-                  {{ review.review }}
-                </p>
+      <div class="flex items-center gap-0.5 text-yellow-500 text-sm">
+        {% for _ in ''|ljust:review.rating %}
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+        </svg>
+        {% endfor %}
+        <span class="ml-1 text-gray-700 text-xs sm:text-sm">{{ review.rating }}/5</span>
+      </div>
+    </div>
 
-                {% if review.user == user or user.is_staff or user == book.user %}
-                  <div class="mt-4 flex gap-5 text-sm"> {# Increased gap #}
-                    {% if review.user == user %}
-                      {# KEPT: Original amber button color, added flex for icon alignment #}
-                      <button class="text-amber-700 hover:text-amber-900 font-medium edit-review-btn transition-colors flex items-center" data-id="{{ review.id }}" data-content="{{ review.review }}" data-rating="{{ review.rating }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>Edit
-                      </button>
-                    {% endif %}
+    <p class="text-gray-700 text-sm sm:text-base leading-relaxed review-text max-h-16 overflow-hidden cursor-pointer hover:text-gray-900 transition-colors" title="Tap to expand">
+      {{ review.review }}
+    </p>
 
-                    {# KEPT: Original red delete button color #}
-                    <button class="text-red-600 hover:text-red-800 font-medium delete-review-btn transition-colors flex items-center" data-id="{{ review.id }}">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1H9a1 1 0 00-1 1v3m3 0h.01" />
-                      </svg>Delete
-                    </button>
-                  </div>
-                {% endif %}
-              </div>
-            {% empty %}
-              <p class="text-gray-500 italic p-6 bg-gray-50 border border-gray-200 rounded-lg">
-                No reviews yet. Be the first to share your opinion!
-              </p>
-            {% endfor %}
-          </div>
+    {% if review.user == user or user.is_staff or user == book.user %}
+    <div class="mt-3 flex gap-4 text-xs sm:text-sm">
+      {% if review.user == user %}
+      <button class="text-amber-700 hover:text-amber-900 font-medium edit-review-btn flex items-center" 
+              data-id="{{ review.id }}" 
+              data-content="{{ review.review }}" 
+              data-rating="{{ review.rating }}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        </svg>Edit
+      </button>
+      {% endif %}
+
+      <button class="text-red-600 hover:text-red-800 font-medium delete-review-btn flex items-center" 
+              data-id="{{ review.id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1H9a1 1 0 00-1 1v3m3 0h.01" />
+        </svg>Delete
+      </button>
+    </div>
+    {% endif %}
+  </div>
+  {% empty %}
+  <p class="text-gray-500 italic p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm text-center">No reviews yet</p>
+  {% endfor %}
+</div>
+
 
           {% if user.is_authenticated %}
             <form id="review-form" class="mt-12 p-8 bg-amber-50 border border-amber-200 rounded-xl shadow-lg"> {# Increased padding, softer shadow #}

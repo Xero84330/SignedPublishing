@@ -133,7 +133,6 @@
   <!-- Mobile Sidebar -->
   <div id="mobile-menu"
     class="fixed top-14 left-0 h-screen w-52 bg-orange-100 text-amber-950 shadow-xl transform -translate-x-full transition-transform duration-300 md:hidden z-50 flex flex-col rounded-r-lg">
-    {# Changed shadow-lg to shadow-xl, added rounded-r-lg #}
     <!-- User Profile -->
     {% if user.is_authenticated %}
     <div class="flex flex-col items-center p-4 border-b border-amber-900/50">
@@ -192,12 +191,12 @@
           {% csrf_token %}
           <button id="mlogout"
             class="block text-center p-1 h-8 w-24 text-white bg-amber-900 rounded-3xl hover:bg-amber-800 text-sm font-bold mx-auto transition-all duration-200 hover:shadow-md transform hover:scale-105">LOGOUT</button>
-          {# Added duration, shadow, transform, scale #}
+        
         </form>
         {% else %}
         <button id="msignin"
           class="block text-center p-1 h-8 w-24 text-white bg-amber-900 rounded-3xl hover:bg-amber-800 text-sm font-bold mx-auto transition-all duration-200 hover:shadow-md transform hover:scale-105">SIGN
-          IN</button> {# Added duration, shadow, transform, scale #}
+          IN</button> 
         {% endif %}
       </li>
     </ul>
@@ -205,7 +204,7 @@
 
   {% if messages %}
   <div id="toast-container" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 p-2">
-    {# Added p-2 for padding #}
+
     {% for message in messages %}
     <div class="px-4 py-3 rounded-lg shadow-xl text-sm font-medium
         {% if message.tags == 'error' %}
@@ -222,7 +221,6 @@
 
             {% endif %}
         transition transform opacity-100 duration-500 scale-100 ease-out">
-      {# Added scale-100 ease-out for smoother entry #}
       {{ message }}
     </div>
     {% endfor %}
@@ -307,23 +305,19 @@
       
       <div class="flex justify-between items-center pb-2 border-b border-amber-900/10">
         
-        <strong class="font-semibold text-amber-900">Username:</strong> <span class="text-gray-700">{{ user.username
-          }}</span>
+        <strong class="font-semibold text-amber-900">Username:</strong> <span class="text-gray-700">{{ user.username }}</span>
       </div>
       <div class="flex justify-between items-start pb-2 border-b border-amber-900/10">
         
-        <strong class="font-semibold text-amber-900">Bio:</strong> <span class="text-gray-700 text-right">{{
-          user.bio|default:'Not set' }}</span>
+        <strong class="font-semibold text-amber-900">Bio:</strong> <span class="text-gray-700 text-right">{{user.bio|default:'Not set' }}</span>
       </div>
       <div class="flex justify-between items-center pb-2 border-b border-amber-900/10">
         
-        <strong class="font-semibold text-amber-900">Gender:</strong> <span class="text-gray-700">{{
-          user.gender|default:'Not set' }}</span>
+        <strong class="font-semibold text-amber-900">Gender:</strong> <span class="text-gray-700">{{user.gender|default:'Not set' }}</span>
       </div>
       <div class="flex justify-between items-center pb-2 border-b border-amber-900/10">
        
-        <strong class="font-semibold text-amber-900">Country:</strong> <span class="text-gray-700">{{
-          user.country|default:'Not set' }}</span>
+        <strong class="font-semibold text-amber-900">Country:</strong> <span class="text-gray-700">{{user.country|default:'Not set' }}</span>
       </div>
       
     </div>
