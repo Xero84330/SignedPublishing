@@ -36,6 +36,7 @@
             <meta name="twitter:image"
                   content="{% block twitter_image %}{% static 'images/Brown_Full_logo.png' %}{% endblock %}">
         {% endblock %}
+        <link rel="manifest" href="{% static 'images/manifest.json' %}">
         <link rel="icon"
               type="image/png"
               href="{% static 'images/Kariya-removebg-preview.png' %}">
@@ -180,6 +181,11 @@
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">🔍</span>
                         </div>
                     </form>
+                </li>
+                <li>
+                    <button id="installBtn"
+                            class="install-btn block hover:bg-orange-200 px-3 py-2 rounded font-medium transition-colors duration-200"
+                            style="display:none">⤓ Install App</button>
                 </li>
                 <li>
                     <a href="{% url 'browse' %}"
@@ -395,6 +401,45 @@
         }
       }, 3000)
     })
+    let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+// Listen for Chrome's "beforeinstallprompt" event
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Stop Chrome from showing its mini-infobar automatically
+  e.preventDefault();
+  // Save the event so you can trigger it later
+  deferredPrompt = e;
+  // Show your custom install button
+  installBtn.style.display = 'block';
+});
+
+// When user clicks your "Install App" button
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return; // Safety check
+
+  // Show the browser install prompt
+  deferredPrompt.prompt();
+
+  // Wait for the user's choice
+  const { outcome } = await deferredPrompt.userChoice;
+
+  console.log(`User response to install prompt: ${outcome}`);
+
+  // Reset the deferred prompt variable
+  deferredPrompt = null;
+
+  // Hide your button after the user acts (installed or dismissed)
+  installBtn.style.display = 'none';
+});
+
+// Hide the button if the app is already installed
+window.addEventListener('appinstalled', () => {
+  console.log('✅ PWA was installed successfully!');
+  installBtn.style.display = 'none';
+});
+installBtn.style.display = 'block';
+installBtn.classList.add('animate-fadeIn');
         </script>
     </body>
 </html>
