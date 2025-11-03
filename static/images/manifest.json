@@ -1,6 +1,6 @@
 {
   "name": "Signed Publishing",
-  "short_name": "Signed",
+  "short_name": "SSP",
   "description": "Read and publish stories, novels, and eBooks on Signed Publishing.",
   "start_url": "/",
   "scope": "/",
