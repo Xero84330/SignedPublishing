@@ -1,189 +1,249 @@
 {% extends 'reader/rbase.html' %}
 {% load static %}
 {% block meta %}
-<title>Home | Signed Publishing – Read Stories, Novels, and eBooks</title>
-<meta name="description" content="Signed Publishing — a creative hub for authors and readers. Explore trending books, contests, and new writers from around the world.">
-<meta name="keywords" content="Signed Publishing, books, authors, readers, online publishing, writing contests, magazine, web novels, ebooks">
-<meta property="og:title" content="Signed Publishing | Where Authors and Readers Connect">
-<meta property="og:description" content="Join a thriving platform where creativity meets opportunity — explore, publish, and discover new stories.">
-<meta property="og:url" content="https://www.signedpublishing.com/">
-<meta property="og:image" content="{% static 'images/Brown_Full_logo.png' %}">
-<meta name="twitter:title" content="Signed Publishing | Books, Contests & Authors">
-<meta name="twitter:description" content="Explore trending books and writing contests on Signed Publishing.">
+    <title>Home | Signed Publishing – Read Stories, Novels, and eBooks</title>
+    <meta name="description"
+          content="Signed Publishing — a creative hub for authors and readers. Explore trending books, contests, and new writers from around the world.">
+    <meta name="keywords"
+          content="Signed Publishing, books, authors, readers, online publishing, writing contests, magazine, web novels, ebooks">
+    <meta property="og:title"
+          content="Signed Publishing | Where Authors and Readers Connect">
+    <meta property="og:description"
+          content="Join a thriving platform where creativity meets opportunity — explore, publish, and discover new stories.">
+    <meta property="og:url" content="https://www.signedpublishing.com/">
+    <meta property="og:image"
+          content="{% static 'images/Brown_Full_logo.png' %}">
+    <meta name="twitter:title"
+          content="Signed Publishing | Books, Contests & Authors">
+    <meta name="twitter:description"
+          content="Explore trending books and writing contests on Signed Publishing.">
 {% endblock %}
 {% block body %}
-<!-- Desktop + Tablet Section -->
-<section class="hidden sm:flex flex-row justify-center items-center p-6 gap-6 mb-10"> {# Added mb-10 for consistent spacing #}
-  <!-- Text block -->
-  <div class="bg-orange-50 w-full md:h-60 h-40 flex flex-col gap-4 p-4 shadow-lg rounded-xl overflow-hidden"> {# Changed shadow-md to shadow-lg, rounded-lg to rounded-xl #}
-    <h1 class="text-amber-950 font-bold md:text-4xl md:font-extrabold">Latest News</h1>
-
-    <!-- News carousel -->
-    <div id="news-carousel-desktop" class="relative flex-grow overflow-hidden">
-      {% for item in news_items %}
-        <div class="news-slide-desktop absolute inset-0 space-y-2 text-sm transition-opacity duration-700 ease-in-out {% if forloop.first %}opacity-100{% else %}opacity-0{% endif %}"
-             data-title="{{ item.title }}"
-             data-content="{{ item.content }}"
-             {% if item.image %}data-image="{{ item.image.url }}"{% else %}data-image=""{% endif %}>
-          <p>{{ item.content }}</p>
-        </div>
-      {% endfor %}
-    </div>
-
-    <button id="explore-button-desktop" class="text-white bg-orange-500 w-20 h-8 md:w-40 md:h-10 font-bold text-sm mt-auto hover:bg-orange-600 transition-all duration-300 rounded-md hover:shadow-lg transform hover:scale-105">Explore</button> {# Added duration, shadow, transform, scale #}
-  </div>
-
-  <!-- Image block -->
-  <div class="bg-gray-200 w-full lg:w-2/3 md:h-60 h-40 flex items-center justify-center shadow-lg rounded-xl overflow-hidden"> {# Changed shadow-md to shadow-lg, rounded-lg to rounded-xl #}
-    <img id="news-image-desktop"
-         src="{% if news_items and news_items.0.image %}{{ news_items.0.image.url }}{% else %}/static/images/placeholder.png{% endif %}"
-         class="w-full h-full object-cover rounded transition-all duration-700 ease-in-out" alt="Latest News Image" />
-  </div>
-</section>
-
-<!-- Mobile Section -->
-<section class="flex flex-col sm:hidden justify-center items-center p-6 gap-4 mb-8"> {# Added mb-8 for spacing #}
-  <div class="w-full flex justify-between items-center">
-    <h1 class="text-amber-950 font-bold text-lg">Latest News</h1>
-    <button id="explore-button-mobile" class="text-white bg-orange-500 w-20 h-8 font-bold text-sm hover:bg-orange-600 transition-all duration-300 rounded-md hover:shadow-lg transform hover:scale-105">Explore</button> {# Added duration, shadow, transform, scale #}
-  </div>
-
-  <div id="news-carousel-mobile" class="w-full h-40 relative overflow-hidden mt-2 rounded-xl shadow-lg"> {# Changed rounded-lg to rounded-xl, shadow-md to shadow-lg #}
-    {% for item in news_items %}
-      <div class="news-slide-mobile absolute inset-0 flex items-center justify-center bg-orange-50 transition-opacity duration-700 ease-in-out {% if forloop.first %}opacity-100{% else %}opacity-0{% endif %}"
-           data-title="{{ item.title }}"
-           data-content="{{ item.content }}"
-           {% if item.image %}data-image="{{ item.image.url }}"{% else %}data-image=""{% endif %}>
-        {% if item.image %}
-        <img src="{{ item.image.url }}" class="w-full h-full object-cover rounded transition-all duration-700 ease-in-out" alt="News Item Image" />
-        {% else %}
-        <div class="w-full h-full flex items-center justify-center bg-gray-300 text-gray-500 rounded text-sm">
-          <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L20 20m-3-6.5V16m-6-10h6m6 0a2 2 0 110 4 2 2 0 010-4z"></path></svg> {# Placeholder icon #}
-          <span class="sr-only">No Image</span>
-        </div>
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
-</section>
-
-<!-- News Modal -->
-<div id="news-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
-  <div class="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
-    <button id="close-modal" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 focus:outline-none">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-    </button>
-    <div class="p-6">
-      <img id="modal-news-image" src="" alt="News Image" class="w-full h-48 object-cover rounded-md mb-4 {% if not item.image %}hidden{% endif %}">
-      <h2 id="modal-news-title" class="text-xl font-bold text-amber-950 mb-2"></h2>
-      <p id="modal-news-content" class="text-gray-700 text-sm"></p>
-    </div>
-  </div>
-</div>
-
-  <!-- Top Books Section -->
-  <section class="my-10 px-6">
-    <div class="flex justify-between items-center mb-4">
-      <h1 class="text-amber-950 font-bold md:text-2xl">Top Books</h1>
-      <!-- Desktop -->
-      <button class="bg-orange-500 px-4 py-1 text-white font-bold hover:bg-orange-600 transition-all duration-300 md:inline-block hidden rounded-md hover:shadow-lg transform hover:scale-105">More</button> {# Added duration, shadow, transform, scale #}
-      <!-- Mobile -->
-      <button class="bg-orange-500 px-2 py-1 text-white text-sm font-bold hover:bg-orange-600 transition-all duration-300 inline-block md:hidden rounded-md hover:shadow-lg transform hover:scale-105">More</button> {# Added duration, shadow, transform, scale #}
-    </div>
-
-    <div class="overflow-x-auto whitespace-nowrap py-2 no-scrollbar">
-      {% for fb in top_books %}
-        {% if fb.book.chapters.exists %}
-          <a href="{% url 'book' fb.book.id %}" class="inline-block mr-3 transform transition-all duration-300 hover:-translate-y-1"> {# Added transform, transition, hover effect #}
-            <div class="group w-24 sm:w-28 md:w-36 rounded-lg overflow-hidden shadow-lg hover:shadow-xl relative bg-gray-50 cursor-pointer"> {# Changed shadow-md to shadow-lg #}
-              <!-- Cover Image -->
-              <div class="w-full aspect-[2/3] relative">
-                {% if fb.book.coverimage %}
-                  <img src="{{ fb.book.coverimage.url }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ fb.book.bname }} Cover" />
-                {% else %}
-                  <div class="absolute inset-0 flex items-center justify-center bg-gray-300 text-gray-500 text-xs p-2 text-center">
-                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.206 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.794 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.794 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.206 18 16.5 18s-3.332.477-4.5 1.253"></path></svg> {# Placeholder icon #}
-                    <span class="sr-only">No Image</span>
-                  </div>
-                {% endif %}
-
-                <!-- Gradient only at bottom -->
-                <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/70 to-transparent"></div>
-
-                <!-- Book Title -->
-                <div class="absolute bottom-1 left-0 right-0 px-1 sm:px-2 text-white text-xs sm:text-sm font-semibold text-center drop-shadow-md">
-                  <span class="line-clamp-1">{{ fb.book.bname }}</span>
-                </div>
-              </div>
+    <!-- Desktop + Tablet Section -->
+    <section class="hidden sm:flex flex-row justify-center items-center p-6 gap-6 mb-10">
+        <!-- Text block -->
+        <div class="bg-orange-50 w-full md:h-60 h-40 flex flex-col gap-4 p-4 shadow-lg rounded-xl overflow-hidden">
+            <h1 class="text-amber-950 font-bold md:text-4xl md:font-extrabold">Latest News</h1>
+            <!-- News carousel -->
+            <div id="news-carousel-desktop" class="relative flex-grow overflow-hidden">
+                {% for item in news_items %}
+                    <div class="news-slide-desktop absolute inset-0 space-y-2 text-sm transition-opacity duration-700 ease-in-out {% if forloop.first %}opacity-100{% else %}opacity-0{% endif %}"
+                         data-title="{{ item.title }}"
+                         data-content="{{ item.content }}"
+                         {% if item.image %}data-image="{{ item.image.url }}"{% else %}data-image=""{% endif %}>
+                        <p>{{ item.content }}</p>
+                    </div>
+                {% endfor %}
             </div>
-          </a>
-        {% endif %}
-      {% endfor %}
-    </div>
-  </section>
-
-  <!-- Featured Books Section -->
-  <section class="my-10 px-6">
-    <div class="flex justify-between items-center mb-4">
-      <h1 class="text-amber-950 font-bold md:text-2xl">Featured Books</h1>
-      <!-- Desktop -->
-      <button class="bg-orange-500 px-4 py-1 text-white font-bold hover:bg-orange-600 transition-all duration-300 md:inline-block hidden rounded-md hover:shadow-lg transform hover:scale-105">More</button> {# Added duration, shadow, transform, scale #}
-      <!-- Mobile -->
-      <button class="bg-orange-500 px-2 py-1 text-white text-sm font-bold hover:bg-orange-600 transition-all duration-300 inline-block md:hidden rounded-md hover:shadow-lg transform hover:scale-105">More</button> {# Added duration, shadow, transform, scale #}
-    </div>
-    <div class="overflow-x-auto whitespace-nowrap py-2 no-scrollbar">
-      {% for fb in featured_books %}
-        {% if fb.book.chapters.exists %}
-          <a href="{% url 'book' fb.book.id %}" class="inline-block mr-3 transform transition-all duration-300 hover:-translate-y-1"> {# Added transform, transition, hover effect #}
-            <div class="group w-24 sm:w-28 md:w-36 rounded-lg overflow-hidden shadow-lg hover:shadow-xl relative bg-gray-50 cursor-pointer"> {# Changed shadow-md to shadow-lg #}
-              <!-- Cover Image -->
-              <div class="w-full aspect-[2/3] relative">
-                {% if fb.book.coverimage %}
-                  <img src="{{ fb.book.coverimage.url }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ fb.book.bname }} Cover" />
-                {% else %}
-                  <div class="absolute inset-0 flex items-center justify-center bg-gray-300 text-gray-500 text-xs p-2 text-center">
-                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.206 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.794 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.794 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.206 18 16.5 18s-3.332.477-4.5 1.253"></path></svg> {# Placeholder icon #}
-                    <span class="sr-only">No Image</span>
-                  </div>
-                {% endif %}
-
-                <!-- Gradient only at bottom -->
-                <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/70 to-transparent"></div>
-
-                <!-- Book Title -->
-                <div class="absolute bottom-1 left-0 right-0 px-1 sm:px-2 text-white text-xs sm:text-sm font-semibold text-center drop-shadow-md">
-                  <span class="line-clamp-1">{{ fb.book.bname }}</span>
+            <button id="explore-button-desktop"
+                    class="text-white bg-orange-500 w-20 h-8 md:w-40 md:h-10 font-bold text-sm mt-auto hover:bg-orange-600 transition-all duration-300 rounded-md hover:shadow-lg transform hover:scale-105">
+                Explore
+            </button>
+        </div>
+        <!-- Image block -->
+        <div class="bg-gray-200 w-full lg:w-2/3 md:h-60 h-40 flex items-center justify-center shadow-lg rounded-xl overflow-hidden">
+            <img id="news-image-desktop"
+                 src="{% if news_items and news_items.0.image %}{{ news_items.0.image.url }}{% else %}/static/images/placeholder.png{% endif %}"
+                 class="w-full h-full object-cover rounded transition-all duration-700 ease-in-out"
+                 alt="Latest News Image" />
+        </div>
+    </section>
+    <!-- Mobile Section -->
+    <section class="flex flex-col sm:hidden justify-center items-center p-6 gap-4 mb-8">
+        <div class="w-full flex justify-between items-center">
+            <h1 class="text-amber-950 font-bold text-lg">Latest News</h1>
+            <button id="explore-button-mobile"
+                    class="text-white bg-orange-500 w-20 h-8 font-bold text-sm hover:bg-orange-600 transition-all duration-300 rounded-md hover:shadow-lg transform hover:scale-105">
+                Explore
+            </button>
+        </div>
+        <div id="news-carousel-mobile"
+             class="w-full h-40 relative overflow-hidden mt-2 rounded-xl shadow-lg">
+            {% for item in news_items %}
+                <div class="news-slide-mobile absolute inset-0 flex items-center justify-center bg-orange-50 transition-opacity duration-700 ease-in-out {% if forloop.first %}opacity-100{% else %}opacity-0{% endif %}"
+                     data-title="{{ item.title }}"
+                     data-content="{{ item.content }}"
+                     {% if item.image %}data-image="{{ item.image.url }}"{% else %}data-image=""{% endif %}>
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}"
+                             class="w-full h-full object-cover rounded transition-all duration-700 ease-in-out"
+                             alt="News Item Image" />
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-gray-300 text-gray-500 rounded text-sm">
+                            <svg class="w-10 h-10 text-gray-400"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L20 20m-3-6.5V16m-6-10h6m6 0a2 2 0 110 4 2 2 0 010-4z">
+                                </path>
+                            </svg>
+                            {# Placeholder icon #}
+                            <span class="sr-only">No Image</span>
+                        </div>
+                    {% endif %}
                 </div>
-              </div>
+            {% endfor %}
+        </div>
+    </section>
+    <!-- News Modal -->
+    <div id="news-modal"
+         class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
+            <button id="close-modal"
+                    class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 focus:outline-none">
+                <svg class="w-6 h-6"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <div class="p-6">
+                <img id="modal-news-image"
+                     src=""
+                     alt="News Image"
+                     class="w-full h-48 object-cover rounded-md mb-4 {% if not item.image %}hidden{% endif %}">
+                <h2 id="modal-news-title" class="text-xl font-bold text-amber-950 mb-2"></h2>
+                <p id="modal-news-content" class="text-gray-700 text-sm"></p>
             </div>
-          </a>
-        {% endif %}
-      {% endfor %}
+        </div>
     </div>
-  </section>
-
-  <!-- Genre Section -->
-  <section class="p-6 bg-orange-50 w-full max-w-4xl mx-auto rounded-xl shadow-lg mb-10"> {# Changed rounded-lg to rounded-xl, shadow-md to shadow-lg #}
-    <h2 class="md:text-2xl text-lg text-center font-extrabold text-amber-900 mb-6">Genres</h2>
-
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      <a href="{% url 'browse' %}?q=Action" class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Action</a> {# Added duration, transform, shadow #}
-      <a href="{% url 'browse' %}?q=Romance" class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Romance</a> {# Added duration, transform, shadow #}
-      <a href="{% url 'browse' %}?q=Comedy" class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Comedy</a> {# Added duration, transform, shadow #}
-      <a href="{% url 'browse' %}?q=Drama" class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Drama</a> {# Added duration, transform, shadow #}
-      <a href="{% url 'browse' %}?q=Fantasy" class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Fantasy</a> {# Added duration, transform, shadow #}
-      <a href="{% url 'browse' %}?q=Sci-Fi" class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Sci-Fi</a> {# Added duration, transform, shadow #}
-      <a href="{% url 'browse' %}?q=Horror" class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Horror</a> {# Added duration, transform, shadow #}
-      <a href="{% url 'browse' %}?q=Mystery" class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Mystery</a> {# Added duration, transform, shadow #}
-    </div>
-  </section>
-
-  <!-- Achievements Section -->
-  <section class="m-6 text-center h-40 bg-gray-100 flex items-center justify-center rounded-xl shadow-lg hover:bg-orange-100 transition-colors duration-300 transform hover:-translate-y-0.5 cursor-pointer"> {# Adjusted margin, added duration, transform, shadow #}
-    <h1 class="text-amber-950 font-extrabold md:text-2xl text-xl">Our Achievements</h1>
-  </section>
-
-<style>
+    <!-- Top Books Section -->
+    <section class="my-10 px-6">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-amber-950 font-bold md:text-2xl">Top Books</h1>
+            <!-- Desktop -->
+            <button class="bg-orange-500 px-4 py-1 text-white font-bold hover:bg-orange-600 transition-all duration-300 md:inline-block hidden rounded-md hover:shadow-lg transform hover:scale-105">
+                More
+            </button>
+            <!-- Mobile -->
+            <button class="bg-orange-500 px-2 py-1 text-white text-sm font-bold hover:bg-orange-600 transition-all duration-300 inline-block md:hidden rounded-md hover:shadow-lg transform hover:scale-105">
+                More
+            </button>
+        </div>
+        <div class="overflow-x-auto whitespace-nowrap py-2 no-scrollbar">
+            {% for fb in top_books %}
+                {% if fb.book.chapters.exists %}
+                    <a href="{% url 'book' fb.book.id %}"
+                       class="inline-block mr-3 transform transition-all duration-300 hover:-translate-y-1">
+                        <div class="group w-24 sm:w-28 md:w-36 rounded-lg overflow-hidden shadow-lg hover:shadow-xl relative bg-gray-50 cursor-pointer">
+                            <!-- Cover Image -->
+                            <div class="w-full aspect-[2/3] relative">
+                                {% if fb.book.coverimage %}
+                                    <img src="{{ fb.book.coverimage.url }}"
+                                         class="absolute inset-0 w-full h-full object-cover"
+                                         alt="{{ fb.book.bname }} Cover" />
+                                {% else %}
+                                    <div class="absolute inset-0 flex items-center justify-center bg-gray-300 text-gray-500 text-xs p-2 text-center">
+                                        <svg class="w-8 h-8 text-gray-400"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             viewBox="0 0 24 24"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.206 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.794 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.794 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.206 18 16.5 18s-3.332.477-4.5 1.253">
+                                            </path>
+                                        </svg>
+                                        {# Placeholder icon #}
+                                        <span class="sr-only">No Image</span>
+                                    </div>
+                                {% endif %}
+                                <!-- Gradient only at bottom -->
+                                <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <!-- Book Title -->
+                                <div class="absolute bottom-1 left-0 right-0 px-1 sm:px-2 text-white text-xs sm:text-sm font-semibold text-center drop-shadow-md">
+                                    <span class="line-clamp-1">{{ fb.book.bname }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+    <!-- Featured Books Section -->
+    <section class="my-10 px-6">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-amber-950 font-bold md:text-2xl">Featured Books</h1>
+            <!-- Desktop -->
+            <button class="bg-orange-500 px-4 py-1 text-white font-bold hover:bg-orange-600 transition-all duration-300 md:inline-block hidden rounded-md hover:shadow-lg transform hover:scale-105">
+                More
+            </button>
+            <!-- Mobile -->
+            <button class="bg-orange-500 px-2 py-1 text-white text-sm font-bold hover:bg-orange-600 transition-all duration-300 inline-block md:hidden rounded-md hover:shadow-lg transform hover:scale-105">
+                More
+            </button>
+        </div>
+        <div class="overflow-x-auto whitespace-nowrap py-2 no-scrollbar">
+            {% for fb in featured_books %}
+                {% if fb.book.chapters.exists %}
+                    <a href="{% url 'book' fb.book.id %}"
+                       class="inline-block mr-3 transform transition-all duration-300 hover:-translate-y-1"> {# Added transform, transition, hover effect #}
+                        <div class="group w-24 sm:w-28 md:w-36 rounded-lg overflow-hidden shadow-lg hover:shadow-xl relative bg-gray-50 cursor-pointer">
+                            {# Changed shadow-md to shadow-lg #}
+                            <!-- Cover Image -->
+                            <div class="w-full aspect-[2/3] relative">
+                                {% if fb.book.coverimage %}
+                                    <img src="{{ fb.book.coverimage.url }}"
+                                         class="absolute inset-0 w-full h-full object-cover"
+                                         alt="{{ fb.book.bname }} Cover" />
+                                {% else %}
+                                    <div class="absolute inset-0 flex items-center justify-center bg-gray-300 text-gray-500 text-xs p-2 text-center">
+                                        <svg class="w-8 h-8 text-gray-400"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             viewBox="0 0 24 24"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.206 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.794 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.794 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.206 18 16.5 18s-3.332.477-4.5 1.253">
+                                            </path>
+                                        </svg>
+                                        {# Placeholder icon #}
+                                        <span class="sr-only">No Image</span>
+                                    </div>
+                                {% endif %}
+                                <!-- Gradient only at bottom -->
+                                <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <!-- Book Title -->
+                                <div class="absolute bottom-1 left-0 right-0 px-1 sm:px-2 text-white text-xs sm:text-sm font-semibold text-center drop-shadow-md">
+                                    <span class="line-clamp-1">{{ fb.book.bname }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+    <!-- Genre Section -->
+    <section class="p-6 bg-orange-50 w-full max-w-4xl mx-auto rounded-xl shadow-lg mb-10">
+        {# Changed rounded-lg to rounded-xl, shadow-md to shadow-lg #}
+        <h2 class="md:text-2xl text-lg text-center font-extrabold text-amber-900 mb-6">Genres</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <a href="{% url 'browse' %}?q=Action"
+               class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Action</a> {# Added duration, transform, shadow #}
+            <a href="{% url 'browse' %}?q=Romance"
+               class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Romance</a> {# Added duration, transform, shadow #}
+            <a href="{% url 'browse' %}?q=Comedy"
+               class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Comedy</a> {# Added duration, transform, shadow #}
+            <a href="{% url 'browse' %}?q=Drama"
+               class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Drama</a> {# Added duration, transform, shadow #}
+            <a href="{% url 'browse' %}?q=Fantasy"
+               class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Fantasy</a> {# Added duration, transform, shadow #}
+            <a href="{% url 'browse' %}?q=Sci-Fi"
+               class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Sci-Fi</a> {# Added duration, transform, shadow #}
+            <a href="{% url 'browse' %}?q=Horror"
+               class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Horror</a> {# Added duration, transform, shadow #}
+            <a href="{% url 'browse' %}?q=Mystery"
+               class="block text-center hover:bg-orange-500 hover:text-white shadow-md bg-white text-amber-950 px-3 py-2 rounded-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg">Mystery</a> {# Added duration, transform, shadow #}
+        </div>
+    </section>
+    <!-- Achievements Section -->
+    <section class="m-6 text-center h-40 bg-gray-100 flex items-center justify-center rounded-xl shadow-lg hover:bg-orange-100 transition-colors duration-300 transform hover:-translate-y-0.5 cursor-pointer">
+        {# Adjusted margin, added duration, transform, shadow #}
+        <h1 class="text-amber-950 font-extrabold md:text-2xl text-xl">Our Achievements</h1>
+    </section>
+    <style>
   /* Custom utility for no-scrollbar */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -192,9 +252,8 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
-</style>
-
-<script>
+    </style>
+    <script>
     const menu = document.getElementById('menu')
     const referals = document.getElementById('referals')
     
@@ -343,5 +402,5 @@
       }
     });
 
-</script>
+    </script>
 {% endblock %}

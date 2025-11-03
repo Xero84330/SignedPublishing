@@ -1,18 +1,23 @@
 {% extends 'reader/rbase.html' %}
 {% load static %}
 {% block meta %}
-  <title>{{ book.title }} | Signed Publishing – Read Stories, Novels, and eBooks</title>
-  <meta name="description" content="{{ book.title }} by {{ book.author.username }} — {{ book.synopsis|truncatechars:150 }}" />
-  <meta name="keywords" content="{{ book.genre }}, {{ book.author.username }}, Signed Publishing, novels, eBooks, online reading" />
-  <meta property="og:title" content="{{ book.title }} | {{ book.author.username }}" />
-  <meta property="og:description" content="{{ book.synopsis|truncatechars:150 }}" />
-  <meta property="og:url" content="https://www.signedpublishing.com/book/{{ book.id }}/" />
-  <meta property="og:image" content="{{ book.coverimage.url }}" />
-  <meta name="twitter:image" content="{{ book.coverimage.url }}" />
-  <meta name="twitter:title" content="{{ book.title }} | Signed Publishing" />
-  <meta name="twitter:description" content="{{ book.synopsis|truncatechars:150 }}" />
-
-  <script type="application/ld+json">
+    <title>{{ book.title }} | Signed Publishing – Read Stories, Novels, and eBooks</title>
+    <meta name="description"
+          content="{{ book.title }} by {{ book.author.username }} — {{ book.synopsis|truncatechars:150 }}" />
+    <meta name="keywords"
+          content="{{ book.genre }}, {{ book.author.username }}, Signed Publishing, novels, eBooks, online reading" />
+    <meta property="og:title"
+          content="{{ book.title }} | {{ book.author.username }}" />
+    <meta property="og:description"
+          content="{{ book.synopsis|truncatechars:150 }}" />
+    <meta property="og:url"
+          content="https://www.signedpublishing.com/book/{{ book.id }}/" />
+    <meta property="og:image" content="{{ book.coverimage.url }}" />
+    <meta name="twitter:image" content="{{ book.coverimage.url }}" />
+    <meta name="twitter:title" content="{{ book.title }} | Signed Publishing" />
+    <meta name="twitter:description"
+          content="{{ book.synopsis|truncatechars:150 }}" />
+    <script type="application/ld+json">
 {
   "@context": "https://schema.org/",
   "@type": "Book",
@@ -31,247 +36,292 @@
     "url": "https://www.signedpublishing.com/"
   }
 }
-</script>
+    </script>
 {% endblock %}
 {% block body %}
-  <div class="font-sans antialiased text-gray-800 bg-gray-100 min-h-screen">
-    <main class="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-      <article class="bg-white shadow-lg rounded-2xl sm:rounded-3xl overflow-hidden transform transition-all duration-300 hover:shadow-xl border border-gray-100">
-        <div class="lg:flex rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
-
-  <!-- Book Cover -->
-  <aside class="lg:w-1/3 p-4 sm:p-6 bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center">
-    {% if book.coverimage %}
-      <img src="{{ book.coverimage.url }}" alt="Book Cover"
-        class="w-44 sm:w-56 md:w-64 aspect-[2/3] object-cover rounded-lg shadow-md border border-gray-200 transition-transform duration-300 hover:scale-105" />
-    {% else %}
-      <div class="w-44 sm:w-56 md:w-64 aspect-[2/3] bg-gray-100 rounded-lg shadow text-gray-500 flex items-center justify-center font-medium">
-        No Cover
-      </div>
-    {% endif %}
-  </aside>
-
-  <!-- Details -->
-  <section class="lg:w-2/3 p-4 sm:p-6 md:p-8 flex flex-col justify-between">
-
-    <!-- Top Info -->
-    <div>
-      <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 mb-2">{{ book.bname }}</h1>
-
-      <div class="flex flex-wrap items-center gap-2 mb-3 text-gray-700 text-sm sm:text-base">
-        {% if book.user %}
-          <span class="font-semibold text-amber-700">By {{ book.user.username }}</span>
-        {% endif %}
-        {% if book.genre %}
-          <span class="text-xs px-2 py-0.5 bg-orange-100 rounded-full italic text-amber-700 border border-orange-200">{{ book.genre }}</span>
-        {% endif %}
-      </div>
-
-      <!-- Stats -->
-      <div class="flex flex-wrap items-center gap-3 mb-4 text-gray-600 text-xs sm:text-sm">
-        <span class="flex items-center gap-1"><svg class="h-4 w-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>{{ book.views }} views</span>
-        <span class="flex items-center gap-1"><svg class="h-4 w-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c2.58 0 4.5 2.42 4.5 5.5 0 3.66-3.4 6.73-8.55 11.32L12 21.35z"/></svg>{{ total_likes }} likes</span>
-        <span class="flex items-center gap-1"><svg class="h-4 w-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>{{ book.rating|floatformat:1 }}/5</span>
-      </div>
-
-      <!-- Description -->
-      {% if book.description %}
-        <div class="text-gray-700 text-sm sm:text-base leading-relaxed max-h-40 sm:max-h-48 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white shadow-inner custom-scrollbar">
-          <p>{{ book.description }}</p>
-        </div>
-      {% endif %}
-    </div>
-
-    <!-- Buttons -->
-    <div class="mt-5 flex flex-wrap gap-2 sm:gap-3">
-
-      {% if book.chapters.exists %}
-        {% if history and history.last_read_chapter %}
-          <a href="{% url 'read' book.id history.last_read_chapter.id %}"
-           class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full bg-amber-700 text-white hover:bg-amber-800 transition">
-            Continue Reading
-          </a>
-        {% else %}
-          <a href="{% url 'read' book.id book.chapters.first.id %}"
-           class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full bg-amber-700 text-white hover:bg-amber-800 transition">
-            Read Now
-          </a>
-        {% endif %}
-      {% else %}
-        <button class="px-4 py-2 text-xs sm:text-sm bg-gray-400 text-white rounded-full cursor-not-allowed">
-          No Chapters Yet
-        </button>
-      {% endif %}
-
-      {% if user.is_authenticated %}
-        <a href="{% url 'add_to_collection' book.id %}"
-         class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full border border-amber-700 text-amber-700 bg-white hover:bg-amber-50 transition">
-          {% if book.id in collection_books %}Bookmarked{% else %}Bookmark{% endif %}
-        </a>
-      {% else %}
-        <a href="{% url 'login' %}"
-         class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full border border-orange-500 text-orange-500 bg-white hover:bg-orange-50 transition">
-          Bookmark
-        </a>
-      {% endif %}
-    </div>
-  </section>
-</div>
-
-
-        <!-- Chapters List Section -->
-        {% if book.chapters.exists %}
-          <section class="border-t border-gray-200 px-6 sm:px-8 md:px-10 py-6 sm:py-8 bg-gray-50">
-            <h2 class="text-xl sm:text-2xl font-bold text-amber-900 mb-5 sm:mb-6 flex items-center gap-2 sm:gap-3">
-              <span class="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-100 border border-amber-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13.5m0-13.5c-3.132 0-6.286.721-9 2.093V19c2.714 1.372 5.868 2.093 9 2.093s6.286-.721 9-2.093V8.346c-2.714-1.372-5.868-2.093-9-2.093zM12 6.253c3.132 0 6.286.721 9 2.093M12 6.253V1.87M5.772 17.892C5.356 16.48 5 15.012 5 13.5c0-1.512.356-2.98.772-4.392" />
-                </svg>
-              </span>
-              <span>Chapters</span>
-            </h2>
-
-            <!-- Scrollable chapter list -->
-            <div class="max-h-80 sm:max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white divide-y custom-scrollbar">
-              {% for chapter in chapters %}
-                <a href="{% url 'read' book.id chapter.id %}" class="flex items-center justify-between p-3 sm:p-4 group hover:bg-amber-50 transition-colors">
-                  <div class="flex flex-col">
-                    <span class="text-xs sm:text-sm font-semibold text-gray-500">Chapter {{ chapter.order }}</span>
-
-                    <span class="text-sm sm:text-lg font-medium text-amber-800 group-hover:text-amber-900">{{ chapter.title }}</span>
-                  </div>
-
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-amber-600 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
-              {% empty %}
-                <p class="text-gray-500 italic p-5 text-sm sm:text-base text-center">No chapters added yet.</p>
-              {% endfor %}
-            </div>
-          </section>
-        {% endif %}
-
-        <!-- Reviews Section - SLEEK, MODERN, PROFESSIONAL (keeping original theme) -->
-        <section class="border-t border-gray-200 px-6 sm:px-8 md:px-10 py-6 sm:py-8 bg-white">
-          <h2 class="text-xl sm:text-2xl font-bold text-amber-900 mb-5 sm:mb-6 flex items-center gap-2 sm:gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 sm:h-7 sm:w-7 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>Reviews (<span id="review-count">{{ book.reviews.count }}</span>)
-          </h2>
-
-          <!-- Reviews Scroller -->
-          <!-- Scrollable Reviews -->
-          <div id="reviews-list" class="space-y-4 max-h-[32rem] overflow-y-auto pr-2">
-  {% for review in book.reviews.all %}
-  <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-200">
-    <div class="flex justify-between items-start mb-2">
-      <div>
-        <strong class="text-amber-900 text-sm sm:text-base font-semibold">
-          {{ review.user.username }}
-        </strong>
-        <span class="block text-gray-500 text-xs sm:text-sm mt-0.5">
-          {{ review.timestamp|date:"M d, Y" }}
-        </span>
-      </div>
-
-      <div class="flex items-center gap-0.5 text-yellow-500 text-sm">
-        {% for _ in ''|ljust:review.rating %}
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-        </svg>
-        {% endfor %}
-        <span class="ml-1 text-gray-700 text-xs sm:text-sm">{{ review.rating }}/5</span>
-      </div>
-    </div>
-
-    <p class="text-gray-700 text-sm sm:text-base leading-relaxed review-text max-h-16 overflow-hidden cursor-pointer hover:text-gray-900 transition-colors" title="Tap to expand">
-      {{ review.review }}
-    </p>
-
-    {% if review.user == user or user.is_staff or user == book.user %}
-    <div class="mt-3 flex gap-4 text-xs sm:text-sm">
-      {% if review.user == user %}
-      <button class="text-amber-700 hover:text-amber-900 font-medium edit-review-btn flex items-center" 
-              data-id="{{ review.id }}" 
-              data-content="{{ review.review }}" 
-              data-rating="{{ review.rating }}">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-        </svg>Edit
-      </button>
-      {% endif %}
-
-      <button class="text-red-600 hover:text-red-800 font-medium delete-review-btn flex items-center" 
-              data-id="{{ review.id }}">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1H9a1 1 0 00-1 1v3m3 0h.01" />
-        </svg>Delete
-      </button>
-    </div>
-    {% endif %}
-  </div>
-  {% empty %}
-  <p class="text-gray-500 italic p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm text-center">No reviews yet</p>
-  {% endfor %}
-</div>
-
-
-          {% if user.is_authenticated %}
-            <form id="review-form" class="mt-12 p-8 bg-amber-50 border border-amber-200 rounded-xl shadow-lg"> {# Increased padding, softer shadow #}
-              {# KEPT: Original text colors #}
-              <h3 class="text-2xl font-bold text-amber-900 mb-6">Share Your Thoughts</h3> {# Larger, bolder title #}
-
-              <div class="mb-6">
-                <label for="rating" class="block mb-3 text-lg font-medium text-gray-700">Your Rating:</label> {# Larger font for label #}
-                <div class="flex items-center gap-1" id="rating-stars"> {# Added a div for star rating #}
-                  {# KEPT: Original yellow for stars #}
-                  {% for i in rating_range %}
-                    <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" class="hidden" {% if forloop.first %}checked{% endif %}>
-                    <label for="star{{ i }}" class="text-gray-300 hover:text-yellow-400 cursor-pointer transition-colors duration-200">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 fill-current" viewBox="0 0 24 24">
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                      </svg>
-                    </label>
-                  {% endfor %}
+    <div class="font-sans antialiased text-gray-800 bg-gray-100 min-h-screen">
+        <main class="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+            <article class="bg-white shadow-lg rounded-2xl sm:rounded-3xl overflow-hidden transform transition-all duration-300 hover:shadow-xl border border-gray-100">
+                <div class="lg:flex rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
+                    <!-- Book Cover -->
+                    <aside class="lg:w-1/3 p-4 sm:p-6 bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center">
+                        {% if book.coverimage %}
+                            <img src="{{ book.coverimage.url }}"
+                                 alt="Book Cover"
+                                 class="w-44 sm:w-56 md:w-64 aspect-[2/3] object-cover rounded-lg shadow-md border border-gray-200 transition-transform duration-300 hover:scale-105" />
+                        {% else %}
+                            <div class="w-44 sm:w-56 md:w-64 aspect-[2/3] bg-gray-100 rounded-lg shadow text-gray-500 flex items-center justify-center font-medium">
+                                No Cover
+                            </div>
+                        {% endif %}
+                    </aside>
+                    <!-- Details -->
+                    <section class="lg:w-2/3 p-4 sm:p-6 md:p-8 flex flex-col justify-between">
+                        <!-- Top Info -->
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-bold text-amber-900 mb-2">{{ book.bname }}</h1>
+                            <div class="flex flex-wrap items-center gap-2 mb-3 text-gray-700 text-sm sm:text-base">
+                                {% if book.user %}<span class="font-semibold text-amber-700">By {{ book.user.username }}</span>{% endif %}
+                                {% if book.genre %}
+                                    <span class="text-xs px-2 py-0.5 bg-orange-100 rounded-full italic text-amber-700 border border-orange-200">{{ book.genre }}</span>
+                                {% endif %}
+                            </div>
+                            <!-- Stats -->
+                            <div class="flex flex-wrap items-center gap-3 mb-4 text-gray-600 text-xs sm:text-sm">
+                                <span class="flex items-center gap-1">
+                                    <svg class="h-4 w-4 text-amber-600"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                {{ book.views }} views</span>
+                                <span class="flex items-center gap-1">
+                                    <svg class="h-4 w-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c2.58 0 4.5 2.42 4.5 5.5 0 3.66-3.4 6.73-8.55 11.32L12 21.35z" />
+                                    </svg>
+                                {{ total_likes }} likes</span>
+                                <span class="flex items-center gap-1">
+                                    <svg class="h-4 w-4 text-yellow-500"
+                                         fill="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                    </svg>
+                                {{ book.rating|floatformat:1 }}/5</span>
+                            </div>
+                            <!-- Description -->
+                            {% if book.description %}
+                                <div class="text-gray-700 text-sm sm:text-base leading-relaxed max-h-40 sm:max-h-48 overflow-y-auto p-2 border border-gray-200 rounded-md bg-white shadow-inner custom-scrollbar">
+                                    <p>{{ book.description }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <!-- Buttons -->
+                        <div class="mt-5 flex flex-wrap gap-2 sm:gap-3">
+                            {% if book.chapters.exists %}
+                                {% if history and history.last_read_chapter %}
+                                    <a href="{% url 'read' book.id history.last_read_chapter.id %}"
+                                       class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full bg-amber-700 text-white hover:bg-amber-800 transition">
+                                        Continue Reading
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'read' book.id book.chapters.first.id %}"
+                                       class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full bg-amber-700 text-white hover:bg-amber-800 transition">
+                                        Read Now
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <button class="px-4 py-2 text-xs sm:text-sm bg-gray-400 text-white rounded-full cursor-not-allowed">
+                                    No Chapters Yet
+                                </button>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'add_to_collection' book.id %}"
+                                   class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full border border-amber-700 text-amber-700 bg-white hover:bg-amber-50 transition">
+                                    {% if book.id in collection_books %}
+                                        Bookmarked
+                                    {% else %}
+                                        Bookmark
+                                    {% endif %}
+                                </a>
+                            {% else %}
+                                <a href="{% url 'login' %}"
+                                   class="px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold rounded-full border border-orange-500 text-orange-500 bg-white hover:bg-orange-50 transition">
+                                    Bookmark
+                                </a>
+                            {% endif %}
+                        </div>
+                    </section>
                 </div>
-              </div>
-
-              <div class="mb-6">
-                <label for="review-content" class="block mb-3 text-lg font-medium text-gray-700">Your Review:</label> {# Larger font for label #}
-                {# KEPT: Original amber focus ring #}
-                <textarea name="review" id="review-content" rows="6" placeholder="What did you think of the book?" class="w-full border border-amber-300 rounded-md px-4 py-3 resize-y focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-gray-800 placeholder-gray-400"></textarea>
-              </div>
-
-              {# KEPT: Original amber button colors #}
-              <button type="submit" class="w-full sm:w-auto px-8 py-4 bg-amber-700 hover:bg-amber-800 text-white font-bold rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                Post Review
-              </button>
-            </form>
-          {% else %}
-            <p class="text-gray-600 italic mt-12 p-6 bg-gray-50 border border-gray-200 rounded-lg">
-              Please <a href="{% url 'login' %}" class="text-amber-700 hover:underline font-semibold">login</a> to post a review. {# KEPT: Original amber link color #}
-            </p>
-          {% endif %}
-        </section>
-      </article>
-    </main>
-  </div>
-
-  <!-- Delete Confirmation Modal (Popup) -->
-  <div id="delete-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg p-8 shadow-xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0" id="delete-modal-content">
-      <h3 class="text-xl font-bold text-gray-900 mb-4">Confirm Deletion</h3>
-      <p class="text-gray-700 mb-6">Are you sure you want to delete this review? This action cannot be undone.</p>
-      <div class="flex justify-end gap-3">
-        <button id="cancel-delete" class="px-5 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
-        <button id="confirm-delete" class="px-5 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">Delete</button>
-      </div>
+                {% if book.chapters.exists %}
+                    <section class="border-t border-gray-200 px-6 sm:px-8 md:px-10 py-6 sm:py-8 bg-gray-50">
+                        <h2 class="text-xl sm:text-2xl font-bold text-amber-900 mb-5 sm:mb-6 flex items-center gap-2 sm:gap-3">
+                            <span class="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-100 border border-amber-200">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5 sm:h-6 sm:w-6 text-amber-600"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13.5m0-13.5c-3.132 0-6.286.721-9 2.093V19c2.714 1.372 5.868 2.093 9 2.093s6.286-.721 9-2.093V8.346c-2.714-1.372-5.868-2.093-9-2.093zM12 6.253c3.132 0 6.286.721 9 2.093M12 6.253V1.87M5.772 17.892C5.356 16.48 5 15.012 5 13.5c0-1.512.356-2.98.772-4.392" />
+                                </svg>
+                            </span>
+                            <span>Chapters</span>
+                        </h2>
+                        <!-- Scrollable chapter list -->
+                        <div class="max-h-80 sm:max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white divide-y custom-scrollbar">
+                            {% for chapter in chapters %}
+                                <a href="{% url 'read' book.id chapter.id %}"
+                                   class="flex items-center justify-between p-3 sm:p-4 group hover:bg-amber-50 transition-colors">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs sm:text-sm font-semibold text-gray-500">Chapter {{ chapter.order }}</span>
+                                        <span class="text-sm sm:text-lg font-medium text-amber-800 group-hover:text-amber-900">{{ chapter.title }}</span>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-amber-600 transition"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </a>
+                            {% empty %}
+                                <p class="text-gray-500 italic p-5 text-sm sm:text-base text-center">No chapters added yet.</p>
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+                <!-- Reviews Section - SLEEK, MODERN, PROFESSIONAL (keeping original theme) -->
+                <section class="border-t border-gray-200 px-6 sm:px-8 md:px-10 py-6 sm:py-8 bg-white">
+                    <h2 class="text-xl sm:text-2xl font-bold text-amber-900 mb-5 sm:mb-6 flex items-center gap-2 sm:gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-6 w-6 sm:h-7 sm:w-7 text-amber-600"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                        Reviews (<span id="review-count">{{ book.reviews.count }}</span>)
+                    </h2>
+                    <!-- Reviews Scroller -->
+                    <!-- Scrollable Reviews -->
+                    <div id="reviews-list"
+                         class="space-y-4 max-h-[32rem] overflow-y-auto pr-2">
+                        {% for review in book.reviews.all %}
+                            <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-200">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <strong class="text-amber-900 text-sm sm:text-base font-semibold">{{ review.user.username }}</strong>
+                                        <span class="block text-gray-500 text-xs sm:text-sm mt-0.5">{{ review.timestamp|date:"M d, Y" }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-0.5 text-yellow-500 text-sm">
+                                        {% for _ in ''|ljust:review.rating %}
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="h-4 w-4"
+                                                 fill="currentColor"
+                                                 viewBox="0 0 24 24">
+                                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                            </svg>
+                                        {% endfor %}
+                                        <span class="ml-1 text-gray-700 text-xs sm:text-sm">{{ review.rating }}/5</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 text-sm sm:text-base leading-relaxed review-text max-h-16 overflow-hidden cursor-pointer hover:text-gray-900 transition-colors"
+                                   title="Tap to expand">{{ review.review }}</p>
+                                {% if review.user == user or user.is_staff or user == book.user %}
+                                    <div class="mt-3 flex gap-4 text-xs sm:text-sm">
+                                        {% if review.user == user %}
+                                            <button class="text-amber-700 hover:text-amber-900 font-medium edit-review-btn flex items-center"
+                                                    data-id="{{ review.id }}"
+                                                    data-content="{{ review.review }}"
+                                                    data-rating="{{ review.rating }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                     class="h-3 w-3 mr-1"
+                                                     fill="none"
+                                                     viewBox="0 0 24 24"
+                                                     stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                Edit
+                                            </button>
+                                        {% endif %}
+                                        <button class="text-red-600 hover:text-red-800 font-medium delete-review-btn flex items-center"
+                                                data-id="{{ review.id }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="h-3 w-3 mr-1"
+                                                 fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1H9a1 1 0 00-1 1v3m3 0h.01" />
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500 italic p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm text-center">No reviews yet</p>
+                        {% endfor %}
+                    </div>
+                    {% if user.is_authenticated %}
+                        <form id="review-form"
+                              class="mt-12 p-8 bg-amber-50 border border-amber-200 rounded-xl shadow-lg">
+                            {# Increased padding, softer shadow #}
+                            {# KEPT: Original text colors #}
+                            <h3 class="text-2xl font-bold text-amber-900 mb-6">Share Your Thoughts</h3>
+                            {# Larger, bolder title #}
+                            <div class="mb-6">
+                                <label for="rating" class="block mb-3 text-lg font-medium text-gray-700">Your Rating:</label>
+                                {# Larger font for label #}
+                                <div class="flex items-center gap-1" id="rating-stars">
+                                    {# Added a div for star rating #}
+                                    {# KEPT: Original yellow for stars #}
+                                    {% for i in rating_range %}
+                                        <input type="radio"
+                                               id="star{{ i }}"
+                                               name="rating"
+                                               value="{{ i }}"
+                                               class="hidden"
+                                               {% if forloop.first %}checked{% endif %}>
+                                        <label for="star{{ i }}"
+                                               class="text-gray-300 hover:text-yellow-400 cursor-pointer transition-colors duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="h-8 w-8 fill-current"
+                                                 viewBox="0 0 24 24">
+                                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                            </svg>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label for="review-content"
+                                       class="block mb-3 text-lg font-medium text-gray-700">Your Review:</label>
+                                {# Larger font for label #}
+                                {# KEPT: Original amber focus ring #}
+                                <textarea name="review"
+                                          id="review-content"
+                                          rows="6"
+                                          placeholder="What did you think of the book?"
+                                          class="w-full border border-amber-300 rounded-md px-4 py-3 resize-y focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-gray-800 placeholder-gray-400"></textarea>
+                            </div>
+                            {# KEPT: Original amber button colors #}
+                            <button type="submit"
+                                    class="w-full sm:w-auto px-8 py-4 bg-amber-700 hover:bg-amber-800 text-white font-bold rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                Post Review
+                            </button>
+                        </form>
+                    {% else %}
+                        <p class="text-gray-600 italic mt-12 p-6 bg-gray-50 border border-gray-200 rounded-lg">
+                            Please <a href="{% url 'login' %}"
+    class="text-amber-700 hover:underline font-semibold">login</a> to post a review. {# KEPT: Original amber link color #}
+                        </p>
+                    {% endif %}
+                </section>
+            </article>
+        </main>
     </div>
-  </div>
-
-  <!-- Review AJAX Script -->
-  <script>
+    <!-- Delete Confirmation Modal (Popup) -->
+    <div id="delete-modal"
+         class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 shadow-xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0"
+             id="delete-modal-content">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Confirm Deletion</h3>
+            <p class="text-gray-700 mb-6">Are you sure you want to delete this review? This action cannot be undone.</p>
+            <div class="flex justify-end gap-3">
+                <button id="cancel-delete"
+                        class="px-5 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button id="confirm-delete"
+                        class="px-5 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Review AJAX Script -->
+    <script>
     document.addEventListener('DOMContentLoaded', () => {
       const reviewForm = document.getElementById('review-form')
       const reviewCountSpan = document.getElementById('review-count')
@@ -497,5 +547,5 @@
         });
       });
     });
-  </script>
+    </script>
 {% endblock %}

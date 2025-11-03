@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./output.css">
-    <script>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./output.css">
+        <script>
         // Simple toggle logic
         function showTab(tab) {
             // Hide both lists
@@ -25,57 +24,52 @@
             }
         }
 
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Book Page</title>
-</head>
-
-<body class="bg-orange-50 text-amber-950">
-    <div class="max-w-5xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md flex flex-col md:flex-row gap-6">
-
-        <!-- Left: Book Cover -->
-        <div class="flex-shrink-0 w-full md:w-1/3 flex justify-center items-start">
-            <img src="your-book-cover.jpg" alt="Book Cover" class="w-64 h-auto rounded shadow">
-        </div>
-
-        <!-- Right: Chapter Management -->
-        <div class="w-full md:w-2/3 flex flex-col gap-4">
-            <!-- Header with Add Chapter Button -->
-            <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">Chapters</h2>
-                <button class="bg-amber-500 text-white font-semibold px-4 py-2 rounded hover:bg-amber-600 transition">
-                    Add Chapter
-                </button>
+        </script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <title>Book Page</title>
+    </head>
+    <body class="bg-orange-50 text-amber-950">
+        <div class="max-w-5xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md flex flex-col md:flex-row gap-6">
+            <!-- Left: Book Cover -->
+            <div class="flex-shrink-0 w-full md:w-1/3 flex justify-center items-start">
+                <img src="your-book-cover.jpg"
+                     alt="Book Cover"
+                     class="w-64 h-auto rounded shadow">
             </div>
-
-            <!-- Tabs -->
-            <div class="flex space-x-4">
-                <button id="draftTab" onclick="showTab('draftList')"
-                    class="px-4 py-2 rounded bg-amber-500 text-white font-medium">
-                    Draft
-                </button>
-                <button id="publishedTab" onclick="showTab('publishedList')"
-                    class="px-4 py-2 rounded border border-amber-500 font-medium hover:bg-amber-100">
-                    Published
-                </button>
-            </div>
-
-            <!-- Chapter Lists -->
-            <div id="draftList" class="space-y-2 mt-2">
-                <!-- Example draft chapters -->
-                <div class="p-3 bg-orange-100 rounded shadow">Draft Chapter 1</div>
-                <div class="p-3 bg-orange-100 rounded shadow">Draft Chapter 2</div>
-                <div class="p-3 bg-orange-100 rounded shadow">Draft Chapter 3</div>
-            </div>
-
-            <div id="publishedList" class="space-y-2 mt-2 hidden">
-                <!-- Example published chapters -->
-                <div class="p-3 bg-green-100 rounded shadow">Chapter 1: Awakening</div>
-                <div class="p-3 bg-green-100 rounded shadow">Chapter 2: The Hunt Begins</div>
-                <div class="p-3 bg-green-100 rounded shadow">Chapter 3: Trial of Fire</div>
+            <!-- Right: Chapter Management -->
+            <div class="w-full md:w-2/3 flex flex-col gap-4">
+                <!-- Header with Add Chapter Button -->
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Chapters</h2>
+                    <button class="bg-amber-500 text-white font-semibold px-4 py-2 rounded hover:bg-amber-600 transition">
+                        Add Chapter
+                    </button>
+                </div>
+                <!-- Tabs -->
+                <div class="flex space-x-4">
+                    <button id="draftTab"
+                            onclick="showTab('draftList')"
+                            class="px-4 py-2 rounded bg-amber-500 text-white font-medium">Draft</button>
+                    <button id="publishedTab"
+                            onclick="showTab('publishedList')"
+                            class="px-4 py-2 rounded border border-amber-500 font-medium hover:bg-amber-100">
+                        Published
+                    </button>
+                </div>
+                <!-- Chapter Lists -->
+                <div id="draftList" class="space-y-2 mt-2">
+                    <!-- Example draft chapters -->
+                    <div class="p-3 bg-orange-100 rounded shadow">Draft Chapter 1</div>
+                    <div class="p-3 bg-orange-100 rounded shadow">Draft Chapter 2</div>
+                    <div class="p-3 bg-orange-100 rounded shadow">Draft Chapter 3</div>
+                </div>
+                <div id="publishedList" class="space-y-2 mt-2 hidden">
+                    <!-- Example published chapters -->
+                    <div class="p-3 bg-green-100 rounded shadow">Chapter 1: Awakening</div>
+                    <div class="p-3 bg-green-100 rounded shadow">Chapter 2: The Hunt Begins</div>
+                    <div class="p-3 bg-green-100 rounded shadow">Chapter 3: Trial of Fire</div>
+                </div>
             </div>
         </div>
-    </div>
-</body>
-
+    </body>
 </html>

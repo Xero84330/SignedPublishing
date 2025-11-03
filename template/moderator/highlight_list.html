@@ -1,118 +1,148 @@
 {% extends 'author/abase.html' %}
-
 {% block body %}
-  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 sm:p-6 lg:p-8">
-    <div class="max-w-7xl mx-auto">
-      <h1 class="text-3xl font-extrabold mb-8 text-center text-amber-600 dark:text-amber-400">Moderator Dashboard</h1>
-
-      <!-- Top Books Section -->
-      <section class="mb-10">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Top Books</h2>
-          <a href="{% url 'add_book_page' %}?category=TOP" class="btn-primary">Add Book</a>
-        </div>
-        <div class="flex overflow-x-auto space-x-4 py-2 custom-scrollbar">
-          {% for hb in top_books %}
-            <div class="relative flex-none w-36 sm:w-40 aspect-[2/3] rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-[1.03] hover:shadow-lg group">
-              {% if hb.book.coverimage %}
-                <img src="{{ hb.book.coverimage.url }}" alt="{{ hb.book.bname }} Cover" class="w-full h-full object-cover" />
-              {% else %}
-                <div class="w-full h-full bg-amber-100 dark:bg-amber-800 flex items-center justify-center text-center text-amber-700 dark:text-amber-200 font-semibold text-sm p-2">
-                  No Cover
+    <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 sm:p-6 lg:p-8">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="text-3xl font-extrabold mb-8 text-center text-amber-600 dark:text-amber-400">Moderator Dashboard</h1>
+            <!-- Top Books Section -->
+            <section class="mb-10">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Top Books</h2>
+                    <a href="{% url 'add_book_page' %}?category=TOP" class="btn-primary">Add Book</a>
                 </div>
-              {% endif %}
-              <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center pb-2 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
-                <p class="text-white text-sm font-semibold text-center px-1">{{ hb.book.bname|truncatechars:18 }}</p>
-              </div>
-              <!-- Hover Overlay for Title and Delete -->
-              <div class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <p class="text-white text-base font-semibold text-center mb-2">{{ hb.book.bname }}</p>
-                <a href="{% url 'delete_highlight' hb.id %}" class="bg-red-600 text-white p-2 rounded-full text-xs hover:bg-red-700 flex items-center justify-center w-8 h-8" title="Delete">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          {% empty %}
-            <p class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">No top books added yet.</p>
-          {% endfor %}
-        </div>
-      </section>
-
-      <!-- Featured Books Section -->
-      <section class="mb-10">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Featured Books</h2>
-          <a href="{% url 'add_book_page' %}?category=FEATURED" class="btn-primary">Add Book</a>
-        </div>
-        <div class="flex overflow-x-auto space-x-4 py-2 custom-scrollbar">
-          {% for hb in featured_books %}
-            <div class="relative flex-none w-36 sm:w-40 aspect-[2/3] rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-[1.03] hover:shadow-lg group">
-              {% if hb.book.coverimage %}
-                <img src="{{ hb.book.coverimage.url }}" alt="{{ hb.book.bname }} Cover" class="w-full h-full object-cover" />
-              {% else %}
-                <div class="w-full h-full bg-amber-100 dark:bg-amber-800 flex items-center justify-center text-center text-amber-700 dark:text-amber-200 font-semibold text-sm p-2">
-                  No Cover
+                <div class="flex overflow-x-auto space-x-4 py-2 custom-scrollbar">
+                    {% for hb in top_books %}
+                        <div class="relative flex-none w-36 sm:w-40 aspect-[2/3] rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-[1.03] hover:shadow-lg group">
+                            {% if hb.book.coverimage %}
+                                <img src="{{ hb.book.coverimage.url }}"
+                                     alt="{{ hb.book.bname }} Cover"
+                                     class="w-full h-full object-cover" />
+                            {% else %}
+                                <div class="w-full h-full bg-amber-100 dark:bg-amber-800 flex items-center justify-center text-center text-amber-700 dark:text-amber-200 font-semibold text-sm p-2">
+                                    No Cover
+                                </div>
+                            {% endif %}
+                            <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center pb-2 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+                                <p class="text-white text-sm font-semibold text-center px-1">{{ hb.book.bname|truncatechars:18 }}</p>
+                            </div>
+                            <!-- Hover Overlay for Title and Delete -->
+                            <div class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <p class="text-white text-base font-semibold text-center mb-2">{{ hb.book.bname }}</p>
+                                <a href="{% url 'delete_highlight' hb.id %}"
+                                   class="bg-red-600 text-white p-2 rounded-full text-xs hover:bg-red-700 flex items-center justify-center w-8 h-8"
+                                   title="Delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="h-4 w-4"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">No top books added yet.</p>
+                    {% endfor %}
                 </div>
-              {% endif %}
-              <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center pb-2 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
-                <p class="text-white text-sm font-semibold text-center px-1">{{ hb.book.bname|truncatechars:18 }}</p>
-              </div>
-              <!-- Hover Overlay for Title and Delete -->
-              <div class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <p class="text-white text-base font-semibold text-center mb-2">{{ hb.book.bname }}</p>
-                <a href="{% url 'delete_highlight' hb.id %}" class="bg-red-600 text-white p-2 rounded-full text-xs hover:bg-red-700 flex items-center justify-center w-8 h-8" title="Delete">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          {% empty %}
-            <p class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">No featured books added yet.</p>
-          {% endfor %}
-        </div>
-      </section>
-
-      <!-- News Section -->
-      <section class="mb-8">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">News Articles</h2>
-          <a href="{% url 'add_news' %}" class="btn-primary">Add News</a>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {% for item in news_items %}
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col relative group transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-              {% if item.image %}
-                <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-40 object-cover rounded-md mb-4" />
-              {% else %}
-                <div class="w-full h-40 bg-gray-100 dark:bg-gray-700 rounded-md mb-4 flex items-center justify-center text-gray-400 dark:text-gray-500">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+            </section>
+            <!-- Featured Books Section -->
+            <section class="mb-10">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Featured Books</h2>
+                    <a href="{% url 'add_book_page' %}?category=FEATURED"
+                       class="btn-primary">Add Book</a>
                 </div>
-              {% endif %}
-              <h3 class="font-bold text-lg mb-2 text-gray-800 dark:text-gray-200">{{ item.title }}</h3>
-              <p class="text-gray-700 dark:text-gray-300 flex-grow text-sm mb-4">{{ item.content|truncatewords:20 }}</p>
-              <div class="text-xs text-gray-500 dark:text-gray-400 mt-auto pt-2 border-t border-gray-100 dark:border-gray-700">
-                Added by: <span class="font-medium">{% if item.added_by %}{{ item.added_by.username }}{% else %}Unknown{% endif %}</span>
-              </div>
-              <a href="{% url 'delete_news' item.id %}" class="absolute top-3 right-3 bg-red-600 text-white p-1.5 rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-700 flex items-center justify-center w-7 h-7" title="Delete News">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </a>
+                <div class="flex overflow-x-auto space-x-4 py-2 custom-scrollbar">
+                    {% for hb in featured_books %}
+                        <div class="relative flex-none w-36 sm:w-40 aspect-[2/3] rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-[1.03] hover:shadow-lg group">
+                            {% if hb.book.coverimage %}
+                                <img src="{{ hb.book.coverimage.url }}"
+                                     alt="{{ hb.book.bname }} Cover"
+                                     class="w-full h-full object-cover" />
+                            {% else %}
+                                <div class="w-full h-full bg-amber-100 dark:bg-amber-800 flex items-center justify-center text-center text-amber-700 dark:text-amber-200 font-semibold text-sm p-2">
+                                    No Cover
+                                </div>
+                            {% endif %}
+                            <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center pb-2 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+                                <p class="text-white text-sm font-semibold text-center px-1">{{ hb.book.bname|truncatechars:18 }}</p>
+                            </div>
+                            <!-- Hover Overlay for Title and Delete -->
+                            <div class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <p class="text-white text-base font-semibold text-center mb-2">{{ hb.book.bname }}</p>
+                                <a href="{% url 'delete_highlight' hb.id %}"
+                                   class="bg-red-600 text-white p-2 rounded-full text-xs hover:bg-red-700 flex items-center justify-center w-8 h-8"
+                                   title="Delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="h-4 w-4"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">No featured books added yet.</p>
+                    {% endfor %}
+                </div>
+            </section>
+            <!-- News Section -->
+            <section class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">News Articles</h2>
+                    <a href="{% url 'add_news' %}" class="btn-primary">Add News</a>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for item in news_items %}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col relative group transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
+                            {% if item.image %}
+                                <img src="{{ item.image.url }}"
+                                     alt="{{ item.title }}"
+                                     class="w-full h-40 object-cover rounded-md mb-4" />
+                            {% else %}
+                                <div class="w-full h-40 bg-gray-100 dark:bg-gray-700 rounded-md mb-4 flex items-center justify-center text-gray-400 dark:text-gray-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="h-12 w-12"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                            {% endif %}
+                            <h3 class="font-bold text-lg mb-2 text-gray-800 dark:text-gray-200">{{ item.title }}</h3>
+                            <p class="text-gray-700 dark:text-gray-300 flex-grow text-sm mb-4">{{ item.content|truncatewords:20 }}</p>
+                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-auto pt-2 border-t border-gray-100 dark:border-gray-700">
+                                Added by: <span class="font-medium">
+                                {% if item.added_by %}
+                                    {{ item.added_by.username }}
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </span>
+                        </div>
+                        <a href="{% url 'delete_news' item.id %}"
+                           class="absolute top-3 right-3 bg-red-600 text-white p-1.5 rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-700 flex items-center justify-center w-7 h-7"
+                           title="Delete News">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="h-4 w-4"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </a>
+                    </div>
+                {% empty %}
+                    <p class="col-span-full text-center text-gray-500 dark:text-gray-400 py-6">No news articles available.</p>
+                {% endfor %}
             </div>
-          {% empty %}
-            <p class="col-span-full text-center text-gray-500 dark:text-gray-400 py-6">No news articles available.</p>
-          {% endfor %}
-        </div>
-      </section>
+        </section>
     </div>
-  </div>
-
-  <style>
+</div>
+<style>
     /* Custom scrollbar for better aesthetics in horizontal book lists */
     .custom-scrollbar::-webkit-scrollbar {
       height: 8px;
@@ -153,5 +183,5 @@
     .dark .btn-primary {
       @apply bg-amber-600 hover:bg-amber-700 focus:ring-amber-500;
     }
-  </style>
+</style>
 {% endblock %}

@@ -1,101 +1,100 @@
 {% extends 'author/abase.html' %}
 {% load static %}
 {% block body %}
-
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <h1 class="text-3xl sm:text-4xl font-extrabold text-amber-900 mb-8 text-center sm:text-left tracking-tight">
-    Add Book to
-    <span class="text-amber-600">
-      {% if selected_category == "TOP" %}
-      Top Books
-      {% elif selected_category == "FEATURED" %}
-      Featured Books
-      {% else %}
-      Highlights
-      {% endif %}
-    </span>
-  </h1>
-
-  <!-- Search Filters -->
-  <form method="get"
-    class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
-    <div>
-      <label class="text-sm font-semibold text-gray-700 mb-1">Search by Book Name</label>
-      <input type="text" name="q" value="{{ search_query }}" placeholder="Enter book name"
-        class="border border-orange-200 p-2.5 rounded-lg focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-all duration-200" />
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-amber-900 mb-8 text-center sm:text-left tracking-tight">
+            Add Book to
+            <span class="text-amber-600">
+                {% if selected_category == "TOP" %}
+                    Top Books
+                {% elif selected_category == "FEATURED" %}
+                    Featured Books
+                {% else %}
+                    Highlights
+                {% endif %}
+            </span>
+        </h1>
+        <!-- Search Filters -->
+        <form method="get"
+              class="bg-white shadow-lg rounded-xl p-6 mb-8 border border-gray-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+            <div>
+                <label class="text-sm font-semibold text-gray-700 mb-1">Search by Book Name</label>
+                <input type="text"
+                       name="q"
+                       value="{{ search_query }}"
+                       placeholder="Enter book name"
+                       class="border border-orange-200 p-2.5 rounded-lg focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-all duration-200" />
+            </div>
+            <div>
+                <label class="text-sm font-semibold text-gray-700 mb-1">Search by Author</label>
+                <select name="author_id"
+                        class="block w-full border border-orange-200 p-2.5 rounded-lg bg-white focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-all duration-200">
+                    <option value="">All Authors</option>
+                    {% for author in authors %}
+                        <option value="{{ author.id }}"
+                                {% if selected_author == author.id %}selected{% endif %}>{{ author.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="text-sm font-semibold text-gray-700 mb-1">Search by Book ID</label>
+                <input type="number"
+                       name="book_id"
+                       value="{{ book_id }}"
+                       placeholder="Book ID"
+                       class="border border-orange-200 p-2.5 rounded-lg focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-all duration-200" />
+            </div>
+            <button type="submit"
+                    class="bg-amber-600 text-white font-semibold px-6 py-2.5 rounded-lg shadow-md hover:bg-amber-700 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all duration-300">
+                Search
+            </button>
+        </form>
+        <!-- Book List -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for book in books %}
+                <div class="bg-white border border-gray-100 rounded-xl shadow-md hover:shadow-xl p-4 flex flex-col items-center text-center hover:scale-[1.03] transition-all duration-300 relative group">
+                    {% if book.coverimage %}
+                        <img src="{{ book.coverimage.url }}"
+                             alt="{{ book.bname }} Cover"
+                             class="w-36 h-56 object-cover rounded-md mb-3 shadow-sm border border-gray-200 transition-transform duration-300 group-hover:shadow-amber-300 group-hover:shadow-md" />
+                    {% else %}
+                        <img src="https://via.placeholder.com/180x270/FBBF24/FFFFFF?text=No+Cover"
+                             alt="No Cover"
+                             class="w-36 h-56 object-cover rounded-md mb-3 shadow-sm border border-gray-200 transition-transform duration-300 group-hover:shadow-amber-300 group-hover:shadow-md" />
+                    {% endif %}
+                    <div class="font-bold text-lg text-amber-900 mb-1">{{ book.bname }}</div>
+                    <div class="text-sm text-gray-600 mb-3">by {{ book.user.username }}</div>
+                    <!-- Add Button -->
+                    <button type="button"
+                            class="mt-auto w-full bg-amber-500 text-white font-semibold py-2 rounded-lg hover:bg-amber-600 text-sm shadow-sm hover:shadow-md transition-all duration-200"
+                            onclick="addToHighlights('{{ book.id }}', '{{ selected_category|default_if_none:'' }}')">
+                        Add to Highlights
+                    </button>
+                    {% if not selected_category %}
+                        <div class="flex gap-2 mt-3 text-xs justify-center items-center w-full">
+                            <select id="cat-{{ book.id }}"
+                                    class="text-xs border border-orange-200 rounded-md px-2 py-1 bg-white">
+                                <option value="TOP">Top</option>
+                                <option value="FEATURED">Featured</option>
+                            </select>
+                            <input type="number"
+                                   id="ord-{{ book.id }}"
+                                   value="1"
+                                   min="1"
+                                   class="w-16 border border-orange-200 rounded-md px-2 py-1 text-center bg-white">
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% if not books %}
+            <div class="text-center py-12 bg-white rounded-xl shadow-lg border border-gray-100 mt-8">
+                <p class="text-xl text-gray-500 font-medium">No books found matching your criteria.</p>
+            </div>
+        {% endif %}
     </div>
-
-    <div>
-      <label class="text-sm font-semibold text-gray-700 mb-1">Search by Author</label>
-      <select name="author_id"
-        class="block w-full border border-orange-200 p-2.5 rounded-lg bg-white focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-all duration-200">
-        <option value="">All Authors</option>
-        {% for author in authors %}
-        <option value="{{ author.id }}" {% if selected_author == author.id %}selected{% endif %}>{{ author.username }}
-        </option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div>
-      <label class="text-sm font-semibold text-gray-700 mb-1">Search by Book ID</label>
-      <input type="number" name="book_id" value="{{ book_id }}" placeholder="Book ID"
-        class="border border-orange-200 p-2.5 rounded-lg focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-all duration-200" />
-    </div>
-
-    <button type="submit"
-      class="bg-amber-600 text-white font-semibold px-6 py-2.5 rounded-lg shadow-md hover:bg-amber-700 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all duration-300">
-      Search
-    </button>
-  </form>
-
-  <!-- Book List -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    {% for book in books %}
-    <div
-      class="bg-white border border-gray-100 rounded-xl shadow-md hover:shadow-xl p-4 flex flex-col items-center text-center hover:scale-[1.03] transition-all duration-300 relative group">
-
-      {% if book.coverimage %}
-      <img src="{{ book.coverimage.url }}" alt="{{ book.bname }} Cover"
-        class="w-36 h-56 object-cover rounded-md mb-3 shadow-sm border border-gray-200 transition-transform duration-300 group-hover:shadow-amber-300 group-hover:shadow-md" />
-      {% else %}
-      <img src="https://via.placeholder.com/180x270/FBBF24/FFFFFF?text=No+Cover" alt="No Cover"
-        class="w-36 h-56 object-cover rounded-md mb-3 shadow-sm border border-gray-200 transition-transform duration-300 group-hover:shadow-amber-300 group-hover:shadow-md" />
-      {% endif %}
-
-      <div class="font-bold text-lg text-amber-900 mb-1">{{ book.bname }}</div>
-      <div class="text-sm text-gray-600 mb-3">by {{ book.user.username }}</div>
-
-      <!-- Add Button -->
-      <button type="button"
-        class="mt-auto w-full bg-amber-500 text-white font-semibold py-2 rounded-lg hover:bg-amber-600 text-sm shadow-sm hover:shadow-md transition-all duration-200"
-        onclick="addToHighlights('{{ book.id }}', '{{ selected_category|default_if_none:'' }}')">
-        Add to Highlights
-      </button>
-
-      {% if not selected_category %}
-      <div class="flex gap-2 mt-3 text-xs justify-center items-center w-full">
-        <select id="cat-{{ book.id }}" class="text-xs border border-orange-200 rounded-md px-2 py-1 bg-white">
-          <option value="TOP">Top</option>
-          <option value="FEATURED">Featured</option>
-        </select>
-        <input type="number" id="ord-{{ book.id }}" value="1" min="1"
-          class="w-16 border border-orange-200 rounded-md px-2 py-1 text-center bg-white">
-      </div>
-      {% endif %}
-    </div>
-    {% endfor %}
-  </div>
-
-  {% if not books %}
-  <div class="text-center py-12 bg-white rounded-xl shadow-lg border border-gray-100 mt-8">
-    <p class="text-xl text-gray-500 font-medium">No books found matching your criteria.</p>
-  </div>
-  {% endif %}
-</div>
-
-<!-- ✅ JavaScript -->
-<script>
+    <!-- ✅ JavaScript -->
+    <script>
   function addToHighlights(bookId, selectedCategory) {
     function getCookie(name) {
       const value = `; ${document.cookie}`;
@@ -141,6 +140,5 @@
     document.body.appendChild(form);
     form.submit();
   }
-</script>
-
+    </script>
 {% endblock %}

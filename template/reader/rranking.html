@@ -1,55 +1,62 @@
 {% extends 'reader/rbase.html' %}
-
 {% block body %}
-  <!-- Ranking Page -->
-  <section class="p-6 bg-orange-50 min-h-screen">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-amber-950 font-extrabold text-xl md:text-2xl">Top Rankings</h1>
-
-      <!-- Order toggle -->
-      <button class="flex items-center gap-1 px-3 py-1 bg-amber-900 text-white rounded-md shadow hover:bg-orange-500 transition-colors text-sm">
-        <span>Sort</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transform transition-transform duration-300" id="sortIconRank" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Ranking List -->
-    <div class="space-y-3">
-      <!-- Ranking Item -->
-      <div class="flex items-center bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow p-2">
-        <div class="w-10 h-10 flex items-center justify-center bg-orange-500 text-white font-bold rounded-md">1</div>
-        <img src="https://via.placeholder.com/80x120" alt="Book Cover" class="w-16 h-20 object-cover rounded ml-3" />
-        <div class="ml-3 flex-1">
-          <h2 class="text-sm md:text-base font-bold text-amber-950 truncate">Book Title</h2>
-          <p class="text-xs text-gray-600 line-clamp-2">A short description of the book, enough to tease interest.</p>
+    <!-- Ranking Page -->
+    <section class="p-6 bg-orange-50 min-h-screen">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-amber-950 font-extrabold text-xl md:text-2xl">Top Rankings</h1>
+            <!-- Order toggle -->
+            <button class="flex items-center gap-1 px-3 py-1 bg-amber-900 text-white rounded-md shadow hover:bg-orange-500 transition-colors text-sm">
+                <span>Sort</span>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="w-4 h-4 transform transition-transform duration-300"
+                     id="sortIconRank"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                </svg>
+            </button>
         </div>
-        <button class="ml-auto px-2 py-1 bg-orange-500 text-white rounded text-xs hover:bg-orange-600 transition-colors">Read</button>
-      </div>
-
-      <!-- Another Item -->
-      <div class="flex items-center bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow p-2">
-        <div class="w-10 h-10 flex items-center justify-center bg-orange-500 text-white font-bold rounded-md">2</div>
-        <img src="https://via.placeholder.com/80x120" alt="Book Cover" class="w-16 h-20 object-cover rounded ml-3" />
-        <div class="ml-3 flex-1">
-          <h2 class="text-sm md:text-base font-bold text-amber-950 truncate">Another Book</h2>
-          <p class="text-xs text-gray-600 line-clamp-2">Another teaser description for this ranked book.</p>
+        <!-- Ranking List -->
+        <div class="space-y-3">
+            <!-- Ranking Item -->
+            <div class="flex items-center bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow p-2">
+                <div class="w-10 h-10 flex items-center justify-center bg-orange-500 text-white font-bold rounded-md">1</div>
+                <img src="https://via.placeholder.com/80x120"
+                     alt="Book Cover"
+                     class="w-16 h-20 object-cover rounded ml-3" />
+                <div class="ml-3 flex-1">
+                    <h2 class="text-sm md:text-base font-bold text-amber-950 truncate">Book Title</h2>
+                    <p class="text-xs text-gray-600 line-clamp-2">A short description of the book, enough to tease interest.</p>
+                </div>
+                <button class="ml-auto px-2 py-1 bg-orange-500 text-white rounded text-xs hover:bg-orange-600 transition-colors">
+                    Read
+                </button>
+            </div>
+            <!-- Another Item -->
+            <div class="flex items-center bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow p-2">
+                <div class="w-10 h-10 flex items-center justify-center bg-orange-500 text-white font-bold rounded-md">2</div>
+                <img src="https://via.placeholder.com/80x120"
+                     alt="Book Cover"
+                     class="w-16 h-20 object-cover rounded ml-3" />
+                <div class="ml-3 flex-1">
+                    <h2 class="text-sm md:text-base font-bold text-amber-950 truncate">Another Book</h2>
+                    <p class="text-xs text-gray-600 line-clamp-2">Another teaser description for this ranked book.</p>
+                </div>
+                <button class="ml-auto px-2 py-1 bg-orange-500 text-white rounded text-xs hover:bg-orange-600 transition-colors">
+                    Read
+                </button>
+            </div>
+            <!-- Duplicate for more ranks -->
         </div>
-        <button class="ml-auto px-2 py-1 bg-orange-500 text-white rounded text-xs hover:bg-orange-600 transition-colors">Read</button>
-      </div>
-
-      <!-- Duplicate for more ranks -->
-    </div>
-
-    <!-- Pagination -->
-    <!--  <div class="flex justify-center items-center mt-8 space-x-1 text-sm">
+        <!-- Pagination -->
+        <!--  <div class="flex justify-center items-center mt-8 space-x-1 text-sm">
             <button class="px-2 py-1 bg-amber-200 text-amber-950 rounded hover:bg-amber-300">Prev</button>
             <button class="px-2 py-1 bg-amber-900 text-white rounded">1</button>
             <button class="px-2 py-1 bg-amber-200 text-amber-950 rounded hover:bg-amber-300">2</button>
             <button class="px-2 py-1 bg-amber-200 text-amber-950 rounded hover:bg-amber-300">3</button>
             <button class="px-2 py-1 bg-amber-200 text-amber-950 rounded hover:bg-amber-300">Next</button>
         </div>  -->
-  </section>
+    </section>
 {% endblock %}

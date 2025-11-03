@@ -1,149 +1,142 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="{% static 'css/output.css' %}" rel="stylesheet"/>
-  <title>{{ chapter.title }} | {{ book.bname }}</title>
-
-  <style>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+        <title>{{ chapter.title }} | {{ book.bname }}</title>
+        <style>
     #chapterSidebar { @apply hidden translate-x-full; }
     #overlay { @apply hidden; }
     @keyframes fadeIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
     .animate-fade-in { animation: fadeIn .3s ease-out; }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition:none !important; animation:none !important; } }
-  </style>
-</head>
-
-<body class="bg-orange-50 text-amber-950 font-sans min-h-screen flex flex-col">
-
-  <!-- NAVBAR -->
-  <nav class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-amber-200">
-    <div class="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
-      <a href="{% url 'book' book.id %}" class="flex items-center gap-1.5 text-amber-900 font-medium hover:text-amber-700 text-sm">
-        <span class="text-lg">Back</span>
-      </a>
-      <button id="navChapterToggle" class="flex items-center gap-1.5 text-amber-900 hover:text-amber-700 text-sm font-medium">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-        Chapters
-      </button>
-    </div>
-  </nav>
-
-  <!-- SIDEBAR (off-canvas) -->
-  <aside id="chapterSidebar" class="fixed inset-y-0 right-0 w-72 sm:w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-out z-50 overflow-y-auto">
-    <div class="flex items-center justify-between px-4 py-3 border-b border-amber-100">
-      <h2 class="font-bold text-lg text-amber-900">Chapters</h2>
-      <button id="closeSidebar" class="text-gray-600 hover:text-amber-900 text-xl">X</button>
-    </div>
-    <ul class="p-4 space-y-2 text-sm">
-      {% for c in chapters %}
-        <li>
-          <a href="{% url 'read' book.id c.id %}" class="block rounded-md px-3 py-2 hover:bg-amber-50 hover:text-amber-700 transition {% if c.id == chapter.id %}font-bold text-amber-800 bg-amber-50{% endif %}">
-            {{ c.title }}
-          </a>
-        </li>
-      {% empty %}
-        <li class="text-gray-500 px-3 py-2">No chapters available yet</li>
-      {% endfor %}
-    </ul>
-  </aside>
-
-  <!-- Overlay -->
-  <div id="overlay" class="fixed inset-0 bg-black/40 z-40"></div>
-
-  <!-- MAIN CONTENT -->
-  <main class="flex-1 max-w-3xl mx-auto w-full px-4 py-6 sm:px-6 sm:py-8">
-    <article class="bg-white rounded-xl shadow-lg p-5 sm:p-8">
-
-      <!-- Title -->
-      <h1 class="text-2xl sm:text-3xl font-bold text-center mb-5 text-amber-900 leading-tight">
-        {{ chapter.title }}
-      </h1>
-
-      <!-- Like Button (with initial state) -->
-      <div class="flex justify-center mb-6">
-        <button id="likeBtn"
-                data-chapter-id="{{ chapter.id }}"
-                data-liked="{% if chapter_liked %}true{% else %}false{% endif %}"
-                class="flex items-center gap-2 text-amber-900 hover:text-amber-700 transition text-lg">
-          <span id="likeIcon"> 💖</span>
-          <span id="likeCount">{{ chapter.likes }}</span>
-        </button>
-      </div>
-
-      <!-- Chapter Content -->
-      <div class="prose prose-amber max-w-none text-base sm:text-lg leading-relaxed text-gray-800 space-y-5">
-        {{ chapter.content|safe }}
-      </div>
-
-      <!-- Navigation -->
-      <nav class="mt-10 flex items-center justify-between gap-3">
-        {% if prev_chapter %}
-          <a href="{% url 'read' book.id prev_chapter.id %}" class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-900 text-white hover:bg-amber-800 shadow-md transition text-lg">
-            ‹
-          </a>
-        {% else %}
-          <div class="w-10 h-10"></div>
-        {% endif %}
-
-        <button id="chapterToggle" class="px-5 py-2 bg-amber-900 text-white rounded-full hover:bg-amber-800 shadow-md transition text-sm sm:text-base">
-          Chapters
-        </button>
-
-        {% if next_chapter %}
-          <a href="{% url 'read' book.id next_chapter.id %}" class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-900 text-white hover:bg-amber-800 shadow-md transition text-lg">
-            ›
-          </a>
-        {% else %}
-          <div class="w-10 h-10"></div>
-        {% endif %}
-      </nav>
-
-      <!-- COMMENTS -->
-      <section class="mt-12 border-t border-amber-200 pt-8">
-        <h3 class="text-lg sm:text-xl font-bold mb-5">
-          Comments (<span id="commentCount">{{ chapter.comments_count }}</span>)
-        </h3>
-
-        <div id="commentsList" class="space-y-4">
-          {% for comment in chapter.comments.all %}
-            <div class="bg-gray-100 rounded-lg p-4 shadow-sm">
-              <p class="font-medium text-sm text-amber-900">{{ comment.user.username }}</p>
-              <p class="text-sm text-gray-700 mt-1">{{ comment.content }}</p>
-              <p class="text-xs text-gray-500 mt-1">{{ comment.created_at|date:'M d, Y H:i' }}</p>
+        </style>
+    </head>
+    <body class="bg-orange-50 text-amber-950 font-sans min-h-screen flex flex-col">
+        <!-- NAVBAR -->
+        <nav class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-amber-200">
+            <div class="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
+                <a href="{% url 'book' book.id %}"
+                   class="flex items-center gap-1.5 text-amber-900 font-medium hover:text-amber-700 text-sm">
+                    <span class="text-lg">Back</span>
+                </a>
+                <button id="navChapterToggle"
+                        class="flex items-center gap-1.5 text-amber-900 hover:text-amber-700 text-sm font-medium">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    Chapters
+                </button>
             </div>
-          {% empty %}
-            <p class="text-gray-500 text-sm">No comments yet. Be the first!</p>
-          {% endfor %}
-        </div>
-
-        {% if user.is_authenticated %}
-          <div class="mt-6 flex flex-col sm:flex-row gap-2">
-            <input id="commentInput" type="text" placeholder="Write a comment..." class="flex-1 border border-amber-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"/>
-            <button id="postCommentBtn" class="bg-amber-900 text-white px-4 py-2 rounded-lg hover:bg-amber-800 transition text-sm sm:text-base shadow">
-              Post
-            </button>
-          </div>
-        {% else %}
-          <p class="mt-4 text-sm text-gray-600">
-            Please <a href="{% url 'login' %}" class="text-amber-700 font-semibold hover:underline">log in</a> to comment.
-          </p>
-        {% endif %}
-      </section>
-    </article>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="bg-amber-950 text-white text-center py-4 text-xs sm:text-sm">
-    © 2025 Signed & Stamped Publishing House
-  </footer>
-
-  <!-- JAVASCRIPT -->
-  <script>
+        </nav>
+        <!-- SIDEBAR (off-canvas) -->
+        <aside id="chapterSidebar"
+               class="fixed inset-y-0 right-0 w-72 sm:w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-out z-50 overflow-y-auto">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-amber-100">
+                <h2 class="font-bold text-lg text-amber-900">Chapters</h2>
+                <button id="closeSidebar" class="text-gray-600 hover:text-amber-900 text-xl">X</button>
+            </div>
+            <ul class="p-4 space-y-2 text-sm">
+                {% for c in chapters %}
+                    <li>
+                        <a href="{% url 'read' book.id c.id %}"
+                           class="block rounded-md px-3 py-2 hover:bg-amber-50 hover:text-amber-700 transition {% if c.id == chapter.id %}font-bold text-amber-800 bg-amber-50{% endif %}">
+                            {{ c.title }}
+                        </a>
+                    </li>
+                {% empty %}
+                    <li class="text-gray-500 px-3 py-2">No chapters available yet</li>
+                {% endfor %}
+            </ul>
+        </aside>
+        <!-- Overlay -->
+        <div id="overlay" class="fixed inset-0 bg-black/40 z-40"></div>
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 max-w-3xl mx-auto w-full px-4 py-6 sm:px-6 sm:py-8">
+            <article class="bg-white rounded-xl shadow-lg p-5 sm:p-8">
+                <!-- Title -->
+                <h1 class="text-2xl sm:text-3xl font-bold text-center mb-5 text-amber-900 leading-tight">{{ chapter.title }}</h1>
+                <!-- Like Button (with initial state) -->
+                <div class="flex justify-center mb-6">
+                    <button id="likeBtn"
+                            data-chapter-id="{{ chapter.id }}"
+                            data-liked="{% if chapter_liked %}true{% else %}false{% endif %}"
+                            class="flex items-center gap-2 text-amber-900 hover:text-amber-700 transition text-lg">
+                        <span id="likeIcon">💖</span>
+                        <span id="likeCount">{{ chapter.likes }}</span>
+                    </button>
+                </div>
+                <!-- Chapter Content -->
+                <div class="prose prose-amber max-w-none text-base sm:text-lg leading-relaxed text-gray-800 space-y-5">
+                    {{ chapter.content|safe }}
+                </div>
+                <!-- Navigation -->
+                <nav class="mt-10 flex items-center justify-between gap-3">
+                    {% if prev_chapter %}
+                        <a href="{% url 'read' book.id prev_chapter.id %}"
+                           class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-900 text-white hover:bg-amber-800 shadow-md transition text-lg">
+                            ‹
+                        </a>
+                    {% else %}
+                        <div class="w-10 h-10"></div>
+                    {% endif %}
+                    <button id="chapterToggle"
+                            class="px-5 py-2 bg-amber-900 text-white rounded-full hover:bg-amber-800 shadow-md transition text-sm sm:text-base">
+                        Chapters
+                    </button>
+                    {% if next_chapter %}
+                        <a href="{% url 'read' book.id next_chapter.id %}"
+                           class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-900 text-white hover:bg-amber-800 shadow-md transition text-lg">
+                            ›
+                        </a>
+                    {% else %}
+                        <div class="w-10 h-10"></div>
+                    {% endif %}
+                </nav>
+                <!-- COMMENTS -->
+                <section class="mt-12 border-t border-amber-200 pt-8">
+                    <h3 class="text-lg sm:text-xl font-bold mb-5">
+                        Comments (<span id="commentCount">{{ chapter.comments_count }}</span>)
+                    </h3>
+                    <div id="commentsList" class="space-y-4">
+                        {% for comment in chapter.comments.all %}
+                            <div class="bg-gray-100 rounded-lg p-4 shadow-sm">
+                                <p class="font-medium text-sm text-amber-900">{{ comment.user.username }}</p>
+                                <p class="text-sm text-gray-700 mt-1">{{ comment.content }}</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ comment.created_at|date:'M d, Y H:i' }}</p>
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500 text-sm">No comments yet. Be the first!</p>
+                        {% endfor %}
+                    </div>
+                    {% if user.is_authenticated %}
+                        <div class="mt-6 flex flex-col sm:flex-row gap-2">
+                            <input id="commentInput"
+                                   type="text"
+                                   placeholder="Write a comment..."
+                                   class="flex-1 border border-amber-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                            <button id="postCommentBtn"
+                                    class="bg-amber-900 text-white px-4 py-2 rounded-lg hover:bg-amber-800 transition text-sm sm:text-base shadow">
+                                Post
+                            </button>
+                        </div>
+                    {% else %}
+                        <p class="mt-4 text-sm text-gray-600">
+                            Please <a href="{% url 'login' %}"
+    class="text-amber-700 font-semibold hover:underline">log in</a> to comment.
+                        </p>
+                    {% endif %}
+                </section>
+            </article>
+        </main>
+        <!-- FOOTER -->
+        <footer class="bg-amber-950 text-white text-center py-4 text-xs sm:text-sm">
+            © 2025 Signed & Stamped Publishing House
+        </footer>
+        <!-- JAVASCRIPT -->
+        <script>
     // === Sidebar Controls ===
     const sidebar = document.getElementById('chapterSidebar');
     const overlay = document.getElementById('overlay');
@@ -235,6 +228,6 @@
         }
       });
     });
-  </script>
-</body>
+        </script>
+    </body>
 </html>

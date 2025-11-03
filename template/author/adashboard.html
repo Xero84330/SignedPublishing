@@ -1,100 +1,125 @@
 {% extends 'author/abase.html' %}
 {% block body %}
-  <section class="my-10 px-4 md:px-6">
-    <!-- Latest News -->
-    <!-- Desktop + Tablet Section -->
-<section class="hidden sm:flex flex-row justify-center items-center p-6 gap-6 mb-10"> {# Added mb-10 for consistent spacing #}
-  <!-- Text block -->
-  <div class="bg-orange-50 w-full md:h-60 h-40 flex flex-col gap-4 p-4 shadow-lg rounded-xl overflow-hidden"> {# Changed shadow-md to shadow-lg, rounded-lg to rounded-xl #}
-    <h1 class="text-amber-950 font-bold md:text-4xl md:font-extrabold">Latest News</h1>
-
-    <!-- News carousel -->
-    <div id="news-carousel-desktop" class="relative flex-grow overflow-hidden">
-      {% for item in news_items %}
-        <div class="news-slide-desktop absolute inset-0 space-y-2 text-sm transition-opacity duration-700 ease-in-out {% if forloop.first %}opacity-100{% else %}opacity-0{% endif %}"
-             {% if item.image %}data-image="{{ item.image.url }}"{% else %}data-image=""{% endif %}>
-          <p>{{ item.content }}</p>
-        </div>
-      {% endfor %}
-    </div>
-
-    <button class="text-white bg-orange-500 w-20 h-8 md:w-40 md:h-10 font-bold text-sm mt-auto hover:bg-orange-600 transition-all duration-300 rounded-md hover:shadow-lg transform hover:scale-105">Explore</button> {# Added duration, shadow, transform, scale #}
-  </div>
-
-  <!-- Image block -->
-  <div class="bg-gray-200 w-full lg:w-2/3 md:h-60 h-40 flex items-center justify-center shadow-lg rounded-xl overflow-hidden"> {# Changed shadow-md to shadow-lg, rounded-lg to rounded-xl #}
-    <img id="news-image-desktop"
-         src="{% if news_items and news_items.0.image %}{{ news_items.0.image.url }}{% else %}/static/images/placeholder.png{% endif %}"
-         class="w-full h-full object-cover rounded transition-all duration-700 ease-in-out" alt="Latest News Image" />
-  </div>
-</section>
-
-<!-- Mobile Section -->
-<section class="flex flex-col sm:hidden justify-center items-center p-6 gap-4 mb-8"> {# Added mb-8 for spacing #}
-  <div class="w-full flex justify-between items-center">
-    <h1 class="text-amber-950 font-bold text-lg">Latest News</h1>
-    <button class="text-white bg-orange-500 w-20 h-8 font-bold text-sm hover:bg-orange-600 transition-all duration-300 rounded-md hover:shadow-lg transform hover:scale-105">Explore</button> {# Added duration, shadow, transform, scale #}
-  </div>
-
-  <div id="news-carousel-mobile" class="w-full h-40 relative overflow-hidden mt-2 rounded-xl shadow-lg"> {# Changed rounded-lg to rounded-xl, shadow-md to shadow-lg #}
-    {% for item in news_items %}
-      <div class="news-slide-mobile absolute inset-0 flex items-center justify-center bg-orange-50 transition-opacity duration-700 ease-in-out {% if forloop.first %}opacity-100{% else %}opacity-0{% endif %}">
-        {% if item.image %}
-        <img src="{{ item.image.url }}" class="w-full h-full object-cover rounded transition-all duration-700 ease-in-out" alt="News Item Image" />
-        {% else %}
-        <div class="w-full h-full flex items-center justify-center bg-gray-300 text-gray-500 rounded text-sm">
-          <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L20 20m-3-6.5V16m-6-10h6m6 0a2 2 0 110 4 2 2 0 010-4z"></path></svg> {# Placeholder icon #}
-          <span class="sr-only">No Image</span>
-        </div>
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
-</section>
-
-
-    <!-- Books Grid -->
-    <section class="my-10">
-      <div class="flex justify-between items-center mb-6 border-b pb-3 border-amber-100">
-        {# Increased mb, added bottom border and padding #}
-        <h1 class="text-amber-950 font-bold text-2xl">Your Books</h1>
-        <a href="{% url 'addbook' %}" class="px-5 py-2 text-white bg-amber-900 rounded-full font-bold hover:bg-amber-800 transition-all text-sm shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Add</a> {# Increased px, added shadow and hover effects #}
-      </div>
-
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6" id="book-grid">
-        {# Increased gap #}
-        {% for book in books %}
-          <div class="group relative w-32 md:w-40 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 bg-white cursor-pointer mx-auto transform hover:-translate-y-1">
-            {# Adjusted width, increased rounded, stronger shadow, added group and hover transform, centered #}
-            <!-- Cover Image -->
-            <div class="w-full aspect-[2/3] relative">
-              {% if book.coverimage %}
-                <img src="{{ book.coverimage.url }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ book.bname }} cover" /> {# Added alt text and hover scale #}
-              {% else %}
-                <div class="absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-500 text-xs rounded-t-xl">No Image</div> {# Adjusted bg-gray, added rounded-t-xl #}
-              {% endif %}
-
-              <!-- Gradient only at bottom -->
-              <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/80 to-transparent"></div> {# Increased gradient height and opacity #}
-
-              <!-- Book Title -->
-              <div class="absolute bottom-2 left-0 right-0 px-3 text-white text-base font-semibold text-center drop-shadow-lg">
-                {# Increased bottom, px, text size, and shadow #}
-                <span class="line-clamp-1">{{ book.bname }}</span>
-              </div>
+    <section class="my-10 px-4 md:px-6">
+        <!-- Latest News -->
+        <!-- Desktop + Tablet Section -->
+        <section class="hidden sm:flex flex-row justify-center items-center p-6 gap-6 mb-10">
+            {# Added mb-10 for consistent spacing #}
+            <!-- Text block -->
+            <div class="bg-orange-50 w-full md:h-60 h-40 flex flex-col gap-4 p-4 shadow-lg rounded-xl overflow-hidden">
+                {# Changed shadow-md to shadow-lg, rounded-lg to rounded-xl #}
+                <h1 class="text-amber-950 font-bold md:text-4xl md:font-extrabold">Latest News</h1>
+                <!-- News carousel -->
+                <div id="news-carousel-desktop" class="relative flex-grow overflow-hidden">
+                    {% for item in news_items %}
+                        <div class="news-slide-desktop absolute inset-0 space-y-2 text-sm transition-opacity duration-700 ease-in-out {% if forloop.first %}opacity-100{% else %}opacity-0{% endif %}"
+                             {% if item.image %}data-image="{{ item.image.url }}"{% else %}data-image=""{% endif %}>
+                            <p>{{ item.content }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="text-white bg-orange-500 w-20 h-8 md:w-40 md:h-10 font-bold text-sm mt-auto hover:bg-orange-600 transition-all duration-300 rounded-md hover:shadow-lg transform hover:scale-105">
+                    Explore
+                </button>
+                {# Added duration, shadow, transform, scale #}
             </div>
-
-            <!-- Buttons below the card -->
-            <div class="flex justify-center gap-3 py-3 bg-orange-50 border-t border-orange-100">
-              <a href="{% url 'statistics' book.id %}" class="bg-amber-900 text-white text-xs px-4 py-2 rounded-full hover:bg-amber-700 transition-all shadow-sm hover:shadow-md">Info</a>
-
-              <a href="{% url 'abookpage' book.id %}" class="bg-orange-500 text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition-all shadow-sm hover:shadow-md">Update</a> {# Increased px/py, rounded-full, added shadow #}
+            <!-- Image block -->
+            <div class="bg-gray-200 w-full lg:w-2/3 md:h-60 h-40 flex items-center justify-center shadow-lg rounded-xl overflow-hidden">
+                {# Changed shadow-md to shadow-lg, rounded-lg to rounded-xl #}
+                <img id="news-image-desktop"
+                     src="{% if news_items and news_items.0.image %}{{ news_items.0.image.url }}{% else %}/static/images/placeholder.png{% endif %}"
+                     class="w-full h-full object-cover rounded transition-all duration-700 ease-in-out"
+                     alt="Latest News Image" />
             </div>
-          </div>
-        {% empty %}
-          <p class="col-span-full text-center text-gray-500 p-8 bg-gray-50 rounded-lg shadow-inner">You haven't added any books yet. Click "Add" to get started!</p> {# Added placeholder for empty state #}
-        {% endfor %}
-      </div>
+        </section>
+        <!-- Mobile Section -->
+        <section class="flex flex-col sm:hidden justify-center items-center p-6 gap-4 mb-8">
+            {# Added mb-8 for spacing #}
+            <div class="w-full flex justify-between items-center">
+                <h1 class="text-amber-950 font-bold text-lg">Latest News</h1>
+                <button class="text-white bg-orange-500 w-20 h-8 font-bold text-sm hover:bg-orange-600 transition-all duration-300 rounded-md hover:shadow-lg transform hover:scale-105">
+                    Explore
+                </button>
+                {# Added duration, shadow, transform, scale #}
+            </div>
+            <div id="news-carousel-mobile"
+                 class="w-full h-40 relative overflow-hidden mt-2 rounded-xl shadow-lg">
+                {# Changed rounded-lg to rounded-xl, shadow-md to shadow-lg #}
+                {% for item in news_items %}
+                    <div class="news-slide-mobile absolute inset-0 flex items-center justify-center bg-orange-50 transition-opacity duration-700 ease-in-out {% if forloop.first %}opacity-100{% else %}opacity-0{% endif %}">
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}"
+                                 class="w-full h-full object-cover rounded transition-all duration-700 ease-in-out"
+                                 alt="News Item Image" />
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center bg-gray-300 text-gray-500 rounded text-sm">
+                                <svg class="w-10 h-10 text-gray-400"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     viewBox="0 0 24 24"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L20 20m-3-6.5V16m-6-10h6m6 0a2 2 0 110 4 2 2 0 010-4z">
+                                    </path>
+                                </svg>
+                                {# Placeholder icon #}
+                                <span class="sr-only">No Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+        <!-- Books Grid -->
+        <section class="my-10">
+            <div class="flex justify-between items-center mb-6 border-b pb-3 border-amber-100">
+                {# Increased mb, added bottom border and padding #}
+                <h1 class="text-amber-950 font-bold text-2xl">Your Books</h1>
+                <a href="{% url 'addbook' %}"
+                   class="px-5 py-2 text-white bg-amber-900 rounded-full font-bold hover:bg-amber-800 transition-all text-sm shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Add</a> {# Increased px, added shadow and hover effects #}
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
+                 id="book-grid">
+                {# Increased gap #}
+                {% for book in books %}
+                    <div class="group relative w-32 md:w-40 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 bg-white cursor-pointer mx-auto transform hover:-translate-y-1">
+                        {# Adjusted width, increased rounded, stronger shadow, added group and hover transform, centered #}
+                        <!-- Cover Image -->
+                        <div class="w-full aspect-[2/3] relative">
+                            {% if book.coverimage %}
+                                <img src="{{ book.coverimage.url }}"
+                                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                     alt="{{ book.bname }} cover" />
+                                {# Added alt text and hover scale #}
+                            {% else %}
+                                <div class="absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-500 text-xs rounded-t-xl">
+                                    No Image
+                                </div>
+                                {# Adjusted bg-gray, added rounded-t-xl #}
+                            {% endif %}
+                            <!-- Gradient only at bottom -->
+                            <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/80 to-transparent"></div>
+                            {# Increased gradient height and opacity #}
+                            <!-- Book Title -->
+                            <div class="absolute bottom-2 left-0 right-0 px-3 text-white text-base font-semibold text-center drop-shadow-lg">
+                                {# Increased bottom, px, text size, and shadow #}
+                                <span class="line-clamp-1">{{ book.bname }}</span>
+                            </div>
+                        </div>
+                        <!-- Buttons below the card -->
+                        <div class="flex justify-center gap-3 py-3 bg-orange-50 border-t border-orange-100">
+                            <a href="{% url 'statistics' book.id %}"
+                               class="bg-amber-900 text-white text-xs px-4 py-2 rounded-full hover:bg-amber-700 transition-all shadow-sm hover:shadow-md">Info</a>
+                            <a href="{% url 'abookpage' book.id %}"
+                               class="bg-orange-500 text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition-all shadow-sm hover:shadow-md">Update</a> {# Increased px/py, rounded-full, added shadow #}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="col-span-full text-center text-gray-500 p-8 bg-gray-50 rounded-lg shadow-inner">
+                        You haven't added any books yet. Click "Add" to get started!
+                    </p>
+                    {# Added placeholder for empty state #}
+                {% endfor %}
+            </div>
+        </section>
     </section>
-  </section>
 {% endblock %}

@@ -2,230 +2,242 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#92400e">
-    <link href="{% static 'css/output.css' %}" rel="stylesheet" />
-  </head>
-
-  {% if messages %}
-    <div id="toast-container" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50">
-      {% for message in messages %}
-        <div class="px-4 py-3 rounded-lg shadow-lg text-sm font-medium
-          {% if message.tags == 'error' %}
-            
-              
-              
-              
-              
-            bg-red-600 text-white
-
-
-
-
-
-          {% elif message.tags == 'success' %}
-            
-              
-              
-              
-              
-            bg-green-600 text-white
-
-
-
-
-
-          {% else %}
-            
-              
-              
-              
-              
-            bg-gray-800 text-white
-
-
-
-
-
-          {% endif %}
-          transition transform opacity-100 duration-500">{{ message }}</div>
-      {% endfor %}
-    </div>
-  {% endif %}
-
-  <body class="flex items-center justify-center min-h-screen bg-orange-50">
-    <div class="w-full max-w-sm p-8 space-y-6 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl shadow-xl border border-amber-900">
-      <div class="relative flex flex-col items-center">
-        <h2 class="text-3xl font-extrabold text-amber-950 text-center">
-          {% if user.is_authenticated %}
-            Update Profile
-          {% else %}
-            Sign Up
-          {% endif %}
-        </h2>
-        <a href="{% url 'home' %}" class="absolute top-0 right-0 text-amber-950 hover:text-orange-500 text-2xl font-bold">&times;</a>
-
-        <!-- PFP Preview -->
-        <div class="mt-4 relative">
-          <img id="pfp-preview" src="{{ user.profile_picture.url|default:'/media/profile_pics/default_pfp.png' }}" alt="Profile Picture" class="w-24 h-24 rounded-full border-2 border-amber-900 object-cover mx-auto" />
-          <label for="profile_picture" class="absolute bottom-0 right-0 bg-amber-900 text-white p-1 rounded-full cursor-pointer hover:bg-amber-800">✏️</label>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#92400e">
+        <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+    </head>
+    {% if messages %}
+        <div id="toast-container"
+             class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50">
+            {% for message in messages %}
+                <div class="px-4 py-3 rounded-lg shadow-lg text-sm font-medium {% if message.tags == 'error' %}      bg-red-600 text-white      {% elif message.tags == 'success' %}      bg-green-600 text-white      {% else %}      bg-gray-800 text-white      {% endif %} transition transform opacity-100 duration-500">
+                    {{ message }}
+                </div>
+            {% endfor %}
         </div>
-      </div>
-
-      <form id="profileForm" action="#" method="POST" enctype="multipart/form-data" class="space-y-5" novalidate>
-        {% csrf_token %}
-
-        <!-- Hidden file input -->
-        <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="hidden" />
-
-        <!-- Username -->
-        <div>
-          <label for="username" class="block text-sm font-medium text-amber-950">Username</label>
-          <input type="text" id="username" name="username" required value="{{ user.username|default:'' }}" class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900" placeholder="Choose a username" />
-        </div>
-
-        <!-- Email + Verify -->
-        <div id="emailSection">
-          <div class="flex items-center gap-2">
-            <input type="email" id="email" name="email" required data-original-email="{{ user.email|default:'' }}" class="flex-1 w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="Enter your email" value="{{ user.email|default:'' }}" />
-            <button type="button" id="sendOtpBtn" class="px-3 py-2 bg-amber-900 text-white rounded-lg hover:bg-amber-800">Verify</button>
-          </div>
-
-          <!-- OTP Inline Field -->
-          <div id="otpContainer" class="hidden mt-3 space-y-2">
-            <input type="text" id="otpInput" maxlength="6" class="w-full px-4 py-2 border rounded-lg border-amber-900 focus:outline-none text-center tracking-widest text-xl" placeholder="Enter OTP" />
-            <p id="otpError" class="text-red-600 text-sm hidden">Invalid OTP. Try again.</p>
-            <div class="flex justify-between items-center text-sm">
-              <button type="button" id="verifyOtpBtn" class="bg-amber-900 text-white px-3 py-1 rounded-lg hover:bg-amber-800">Verify OTP</button>
-              <button type="button" id="resendOtpBtn" class="text-amber-900 hover:text-orange-600" disabled>Resend OTP</button>
-              <span id="otpTimer" class="text-gray-600"></span>
+    {% endif %}
+    <body class="flex items-center justify-center min-h-screen bg-orange-50">
+        <div class="w-full max-w-sm p-8 space-y-6 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl shadow-xl border border-amber-900">
+            <div class="relative flex flex-col items-center">
+                <h2 class="text-3xl font-extrabold text-amber-950 text-center">
+                    {% if user.is_authenticated %}
+                        Update Profile
+                    {% else %}
+                        Sign Up
+                    {% endif %}
+                </h2>
+                <a href="{% url 'home' %}"
+                   class="absolute top-0 right-0 text-amber-950 hover:text-orange-500 text-2xl font-bold">&times;</a>
+                <!-- PFP Preview -->
+                <div class="mt-4 relative">
+                    <img id="pfp-preview"
+                         src="{{ user.profile_picture.url|default:'/media/profile_pics/default_pfp.png' }}"
+                         alt="Profile Picture"
+                         class="w-24 h-24 rounded-full border-2 border-amber-900 object-cover mx-auto" />
+                    <label for="profile_picture"
+                           class="absolute bottom-0 right-0 bg-amber-900 text-white p-1 rounded-full cursor-pointer hover:bg-amber-800">
+                        ✏️
+                    </label>
+                </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Hidden flag set by JS when OTP verified -->
-        <!-- Default to 1 for authenticated users (update flow) so form is enabled by default -->
-        <input type="hidden"
-          id="email_verified"
-          name="email_verified"
-          value="{% if user.is_authenticated %}
-            1
-          {% else %}
-            0
-          {% endif %}" />
-
-        <!-- Bio -->
-        <div>
-          <label for="bio" class="block text-sm font-medium text-amber-950">Bio</label>
-          <textarea id="bio" name="bio" rows="3" class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900" placeholder="Write a short bio (optional)">{{ user.bio|default:'' }}</textarea>
-        </div>
-
-        {% if not user.is_authenticated %}
-          <!-- Password -->
-          <div>
-            <label for="password" class="block text-sm font-medium text-amber-950">Password</label>
-            <input type="password" id="password" name="password" class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900" placeholder="Enter password" />
-          </div>
-
-          <!-- Confirm Password -->
-          <div>
-            <label for="confirm-password" class="block text-sm font-medium text-amber-950">Confirm Password</label>
-            <input type="password" id="confirm-password" name="confirm-password" class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900" placeholder="Re-enter password" />
-            <p id="pwMismatch" class="text-red-600 text-sm mt-1 hidden">Passwords do not match.</p>
-          </div>
-        {% endif %}
-
-        {% if user.is_authenticated %}
-  <!-- Gender -->
-  <div>
-    <label for="gender" class="block text-sm font-medium text-amber-950">Gender</label>
-    <select id="gender" name="gender"
-      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
-      <option value="" {% if not user.gender %}selected{% endif %}>Select gender</option>
-      <option value="male" {% if user.gender == "male" %}selected{% endif %}>Male</option>
-      <option value="female" {% if user.gender == "female" %}selected{% endif %}>Female</option>
-      <option value="other" {% if user.gender == "other" %}selected{% endif %}>Other</option>
-      <option value="prefer_not" {% if user.gender == "prefer_not" %}selected{% endif %}>Prefer not to say</option>
-    </select>
-  </div>
-
-  <!-- Date of Birth -->
-  <div>
-    <label for="date_of_birth" class="block text-sm font-medium text-amber-950">Date of Birth</label>
-    <input type="date" id="date_of_birth" name="date_of_birth"
-      value="{{ user.date_of_birth|date:'Y-m-d' }}"
-      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm" />
-  </div>
-
-  <!-- Country -->
-  <div>
-    <label for="country" class="block text-sm font-medium text-amber-950">Country</label>
-    <input type="text" id="country" name="country" value="{{ user.country|default:'' }}"
-      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900"
-      placeholder="Enter your country" />
-  </div>
-{% else %}
-  <!-- Gender -->
-  <div>
-    <label for="gender" class="block text-sm font-medium text-amber-950">Gender</label>
-    <select id="gender" name="gender"
-      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
-      <option value="">Select gender</option>
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-      <option value="other">Other</option>
-      <option value="prefer_not">Prefer not to say</option>
-    </select>
-  </div>
-
-  <!-- Date of Birth -->
-  <div>
-    <label for="date_of_birth" class="block text-sm font-medium text-amber-950">Date of Birth</label>
-    <input type="date" id="date_of_birth" name="date_of_birth"
-      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm" />
-  </div>
-
-  <!-- Country -->
-  <div>
-    <label for="country" class="block text-sm font-medium text-amber-950">Country</label>
-    <input type="text" id="country" name="country"
-      class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900"
-      placeholder="Enter your country" />
-  </div>
-{% endif %}
-
-
-        <!-- Submit (disabled styling & tooltip handled via JS) -->
-        <div class="relative">
-          <button id="submitBtn" type="submit" class="w-full px-4 py-3 text-white bg-amber-900 rounded-xl transform transition-all shadow-md focus:outline-none">
-            {% if user.is_authenticated %}
-              Update Profile
-            {% else %}
-              Sign Up
+            <form id="profileForm"
+                  action="#"
+                  method="POST"
+                  enctype="multipart/form-data"
+                  class="space-y-5"
+                  novalidate>
+                {% csrf_token %}
+                <!-- Hidden file input -->
+                <input type="file"
+                       id="profile_picture"
+                       name="profile_picture"
+                       accept="image/*"
+                       class="hidden" />
+                <!-- Username -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-amber-950">Username</label>
+                    <input type="text"
+                           id="username"
+                           name="username"
+                           required
+                           value="{{ user.username|default:'' }}"
+                           class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900"
+                           placeholder="Choose a username" />
+                </div>
+                <!-- Email + Verify -->
+                <div id="emailSection">
+                    <div class="flex items-center gap-2">
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               required
+                               data-original-email="{{ user.email|default:'' }}"
+                               class="flex-1 w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                               placeholder="Enter your email"
+                               value="{{ user.email|default:'' }}" />
+                        <button type="button"
+                                id="sendOtpBtn"
+                                class="px-3 py-2 bg-amber-900 text-white rounded-lg hover:bg-amber-800">Verify</button>
+                    </div>
+                    <!-- OTP Inline Field -->
+                    <div id="otpContainer" class="hidden mt-3 space-y-2">
+                        <input type="text"
+                               id="otpInput"
+                               maxlength="6"
+                               class="w-full px-4 py-2 border rounded-lg border-amber-900 focus:outline-none text-center tracking-widest text-xl"
+                               placeholder="Enter OTP" />
+                        <p id="otpError" class="text-red-600 text-sm hidden">Invalid OTP. Try again.</p>
+                        <div class="flex justify-between items-center text-sm">
+                            <button type="button"
+                                    id="verifyOtpBtn"
+                                    class="bg-amber-900 text-white px-3 py-1 rounded-lg hover:bg-amber-800">
+                                Verify OTP
+                            </button>
+                            <button type="button"
+                                    id="resendOtpBtn"
+                                    class="text-amber-900 hover:text-orange-600"
+                                    disabled>Resend OTP</button>
+                            <span id="otpTimer" class="text-gray-600"></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Hidden flag set by JS when OTP verified -->
+                <!-- Default to 1 for authenticated users (update flow) so form is enabled by default -->
+                <input type="hidden"
+                       id="email_verified"
+                       name="email_verified"
+                       value="{% if user.is_authenticated %} 1 {% else %} 0 {% endif %}" />
+                <!-- Bio -->
+                <div>
+                    <label for="bio" class="block text-sm font-medium text-amber-950">Bio</label>
+                    <textarea id="bio"
+                              name="bio"
+                              rows="3"
+                              class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900"
+                              placeholder="Write a short bio (optional)">{{ user.bio|default:'' }}</textarea>
+                </div>
+                {% if not user.is_authenticated %}
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-amber-950">Password</label>
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900"
+                               placeholder="Enter password" />
+                    </div>
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="confirm-password"
+                               class="block text-sm font-medium text-amber-950">Confirm Password</label>
+                        <input type="password"
+                               id="confirm-password"
+                               name="confirm-password"
+                               class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900"
+                               placeholder="Re-enter password" />
+                        <p id="pwMismatch" class="text-red-600 text-sm mt-1 hidden">Passwords do not match.</p>
+                    </div>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <!-- Gender -->
+                    <div>
+                        <label for="gender" class="block text-sm font-medium text-amber-950">Gender</label>
+                        <select id="gender"
+                                name="gender"
+                                class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
+                            <option value="" {% if not user.gender %}selected{% endif %}>Select gender</option>
+                            <option value="male" {% if user.gender == "male" %}selected{% endif %}>Male</option>
+                            <option value="female" {% if user.gender == "female" %}selected{% endif %}>Female</option>
+                            <option value="other" {% if user.gender == "other" %}selected{% endif %}>Other</option>
+                            <option value="prefer_not"
+                                    {% if user.gender == "prefer_not" %}selected{% endif %}>Prefer not to say</option>
+                        </select>
+                    </div>
+                    <!-- Date of Birth -->
+                    <div>
+                        <label for="date_of_birth" class="block text-sm font-medium text-amber-950">Date of Birth</label>
+                        <input type="date"
+                               id="date_of_birth"
+                               name="date_of_birth"
+                               value="{{ user.date_of_birth|date:'Y-m-d' }}"
+                               class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm" />
+                    </div>
+                    <!-- Country -->
+                    <div>
+                        <label for="country" class="block text-sm font-medium text-amber-950">Country</label>
+                        <input type="text"
+                               id="country"
+                               name="country"
+                               value="{{ user.country|default:'' }}"
+                               class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900"
+                               placeholder="Enter your country" />
+                    </div>
+                {% else %}
+                    <!-- Gender -->
+                    <div>
+                        <label for="gender" class="block text-sm font-medium text-amber-950">Gender</label>
+                        <select id="gender"
+                                name="gender"
+                                class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
+                            <option value="">Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                            <option value="prefer_not">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <!-- Date of Birth -->
+                    <div>
+                        <label for="date_of_birth" class="block text-sm font-medium text-amber-950">Date of Birth</label>
+                        <input type="date"
+                               id="date_of_birth"
+                               name="date_of_birth"
+                               class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm" />
+                    </div>
+                    <!-- Country -->
+                    <div>
+                        <label for="country" class="block text-sm font-medium text-amber-950">Country</label>
+                        <input type="text"
+                               id="country"
+                               name="country"
+                               class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm placeholder-amber-900"
+                               placeholder="Enter your country" />
+                    </div>
+                {% endif %}
+                <!-- Submit (disabled styling & tooltip handled via JS) -->
+                <div class="relative">
+                    <button id="submitBtn"
+                            type="submit"
+                            class="w-full px-4 py-3 text-white bg-amber-900 rounded-xl transform transition-all shadow-md focus:outline-none">
+                        {% if user.is_authenticated %}
+                            Update Profile
+                        {% else %}
+                            Sign Up
+                        {% endif %}
+                    </button>
+                    <!-- Tooltip for disabled state -->
+                    <div id="submitTooltip"
+                         class="hidden absolute right-2 top-0 mt-12 text-xs bg-amber-950 text-white px-2 py-1 rounded">
+                        Fill all required fields and verify email.
+                    </div>
+                </div>
+            </form>
+            {% if not user.is_authenticated %}
+                <p class="text-sm text-center text-amber-950">
+                    <a href="{% provider_login_url 'google' %}"
+                       class="font-semibold text-amber-950 hover:text-orange-500 transition-colors">Continue with Google</a>
+                </p>
             {% endif %}
-          </button>
-
-          <!-- Tooltip for disabled state -->
-          <div id="submitTooltip" class="hidden absolute right-2 top-0 mt-12 text-xs bg-amber-950 text-white px-2 py-1 rounded">Fill all required fields and verify email.</div>
+            <p class="text-sm text-center text-amber-950">
+                Already have an account?
+                <a href="{% url 'login' %}"
+                   class="font-semibold text-amber-950 hover:text-orange-500 transition-colors">Log In</a>
+            </p>
         </div>
-      </form>
-
-      {% if not user.is_authenticated %}
-        <p class="text-sm text-center text-amber-950">
-          <a href="{% provider_login_url 'google' %}" class="font-semibold text-amber-950 hover:text-orange-500 transition-colors">Continue with Google</a>
-        </p>
-      {% endif %}
-
-      <p class="text-sm text-center text-amber-950">
-        Already have an account?
-        <a href="{% url 'login' %}" class="font-semibold text-amber-950 hover:text-orange-500 transition-colors">Log In</a>
-      </p>
-    </div>
-
-    <!-- PFP Preview + OTP + Validation Script -->
-    <script>
+        <!-- PFP Preview + OTP + Validation Script -->
+        <script>
       // --- Elements ---
       const pfpInput = document.getElementById('profile_picture')
       const pfpPreview = document.getElementById('pfp-preview')
@@ -541,6 +553,6 @@
       
       // If DOMContentLoaded already fired
       updateSubmitState()
-    </script>
-  </body>
+        </script>
+    </body>
 </html>
