@@ -4,27 +4,30 @@ from dotenv import load_dotenv
 from google.oauth2 import service_account
 import dj_database_url
 
-import logging
-logging.basicConfig(level=logging.DEBUG)
 # Initialize environment variables
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / "container.env")
-print("🔍 ENV Loaded — Bucket:", os.getenv("GS_BUCKET_NAME"))
 
 # Custom user model
 AUTH_USER_MODEL = 'authentication.User'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
-print(f"SECRET_KEY from env: {SECRET_KEY}")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", default=False) == "True"
 
-ALLOWED_HOSTS = ["*"]
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
+else:
+    hosts = os.getenv("ALLOWED_HOSTS")
+    if not hosts:
+        raise RuntimeError("ALLOWED_HOSTS must be set in production")
+    ALLOWED_HOSTS = [h.strip() for h in hosts.split(",") if h.strip()]
 
 # Application definition
 INSTALLED_APPS = [
@@ -84,7 +87,11 @@ WSGI_APPLICATION = 'model2.wsgi.application'
 
 # Database
 DATABASES = {
-    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+    'default': dj_database_url.parse(
+        os.getenv('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=not DEBUG
+    )
 }
 
 # Password validation
@@ -111,12 +118,8 @@ AUTHENTICATION_BACKENDS = [
 
 # Allauth settings
 SITE_ID = 4
-SOCIALACCOUNT_AUTO_SIGNUP = True
-SOCIALACCOUNT_LOGIN_ON_GET = True
-SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 SOCIALACCOUNT_ADAPTER = 'authentication.adapters.MySocialAccountAdapter'
@@ -162,3 +165,35 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 # Media (user-uploaded files)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 60 if DEBUG else 31536000  # set HSTS 1 year in prod
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = "DENY"
+SECURE_REFERRER_POLICY = "no-referrer-when-downgrade"
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIALACCOUNT_LOGIN_ON_GET = False
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://www.signedpublishing.com",
+    "https://signedpublishing.com",
+]
+
+SESSION_COOKIE_AGE = 60 * 60 * 24  # 24 hours in seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # keep session open until timeout
+SESSION_SAVE_EVERY_REQUEST = True  # reset timer on each user activity
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
+SECURE_CROSS_ORIGIN_EMBEDDER_POLICY = "require-corp"
+SECURE_CROSS_ORIGIN_RESOURCE_POLICY = "same-origin"
