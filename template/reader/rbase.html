@@ -41,6 +41,7 @@
               type="image/png"
               href="{% static 'images/Kariya-removebg-preview.png' %}">
         <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
         <style>
     /* This is a temporary style for the main content area to make clicks outside the nav detectable.
                                                                                                                                                                                  You should ensure your main content block properly fills the screen below the nav. */
@@ -251,37 +252,45 @@
                     <img src="{% static 'images/Kariya-removebg-preview.png' %}"
                          alt="Signed & Stamped Footer Logo"
                          class="w-12 md:w-16 h-auto object-contain" />
-                    <h1 class="text-lg md:text-2xl font-extrabold whitespace-nowrap">Signed & Stamped</h1>
+                    <h1 class="text-lg md:text-2xl font-extrabold whitespace-nowrap">Signed Publishing</h1>
                 </div>
                 <!-- Contact Info -->
                 <div class="flex flex-col gap-2 md:gap-3 text-sm md:text-base">
                     <h2 class="font-bold text-lg mb-1">Contact</h2>
-                    <a href="#" class="hover:text-orange-300 transition-colors duration-200">Email: contact@example.com</a>
-                    <a href="#" class="hover:text-orange-300 transition-colors duration-200">Phone: +1 (555) 123-4567</a>
+                    <a href="#" class="hover:text-orange-300 transition-colors duration-200">Email: Admin@signedpublishing.com</a>
                 </div>
                 <!-- Desktop-only -->
                 <div class="hidden md:flex flex-col gap-2 text-sm md:text-base">
                     <h2 class="font-bold text-lg mb-1">Our Team</h2>
-                    <a href="#"
-                       class="font-normal hover:text-orange-300 transition-colors duration-200">Member 1 Name</a>
-                    <a href="#"
-                       class="font-normal hover:text-orange-300 transition-colors duration-200">Member 2 Name</a>
+                    <a href="https://www.linkedin.com/in/john-banik-2a247a282?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                       class="font-normal hover:text-orange-300 transition-colors duration-200">John Banik</a>
+                    <a href="https://www.linkedin.com/in/saket-singh-951398353?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                       class="font-normal hover:text-orange-300 transition-colors duration-200">Saket Singh</a>
+                    <a href="https://www.linkedin.com/in/shivamsinghsamu?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                       class="font-normal hover:text-orange-300 transition-colors duration-200">Shivam Raj</a>
                 </div>
                 <div class="hidden md:flex flex-col gap-2 text-sm md:text-base">
                     <h2 class="font-bold text-lg mb-1">Legal</h2>
-                    <a href="#"
+                    <a href="{% url 'terms_and_conditions' %}"
                        class="font-normal hover:text-orange-300 transition-colors duration-200">Terms of Service</a>
-                    <a href="#"
+                    <a href="{% url 'terms_and_conditions' %}"
                        class="font-normal hover:text-orange-300 transition-colors duration-200">Privacy Policy</a>
                 </div>
                 <div class="hidden md:flex gap-4 text-lg md:text-xl self-end">
-                    <a href="#"
-                       class="hover:text-orange-300 transition-colors duration-200 transform hover:scale-110">📘</a>
-                    <a href="#"
-                       class="hover:text-orange-300 transition-colors duration-200 transform hover:scale-110">🐦</a>
-                    <a href="#"
-                       class="hover:text-orange-300 transition-colors duration-200 transform hover:scale-110">📸</a>
-                </div>
+  <a href="https://www.linkedin.com/company/signed-and-stamped-publishing-house-llc?trk=blended-typeahead"
+     class="hover:text-orange-300 transition-colors duration-200 transform hover:scale-110">
+     <i class="fa-brands fa-linkedin-in"></i>
+  </a>
+  <a href="https://x.com/SignedSPH"
+     class="hover:text-orange-300 transition-colors duration-200 transform hover:scale-110">
+     <i class="fa-brands fa-x-twitter"></i>
+  </a>
+  <a href="https://discord.com/channels/1345781368336158932/1346161772834324590/1358086422547923236"
+     class="hover:text-orange-300 transition-colors duration-200 transform hover:scale-110">
+     <i class="fa-brands fa-discord"></i>
+  </a>
+</div>
+
             </div>
             <div class="mt-8 text-center text-gray-400 text-sm border-t border-amber-800/50 pt-6">
                 &copy; 2024 Signed & Stamped.
@@ -297,7 +306,7 @@
         <!-- User Sidebar -->
         <div id="user-sidebar"
              class="fixed top-0 right-0 h-screen w-80 bg-orange-100 shadow-xl transform translate-x-full transition-transform duration-300 z-50 flex flex-col rounded-l-lg">
-            <!-- Header / Edit PFP -->
+            
             <div class="flex flex-col items-center p-4 border-b border-amber-900/50">
                 <img id="sidebar-pfp"
                      src="{{ user.profile_picture.url }}"
@@ -360,12 +369,12 @@
 
       // --- Close menus if clicking outside ---
       document.body.addEventListener('click', (event) => {
-        // Close mobile menu
+        
         if (mobileMenu && menuButton && !mobileMenu.contains(event.target) && !menuButton.contains(event.target) && !mobileMenu.classList.contains('-translate-x-full')) {
           mobileMenu.classList.add('-translate-x-full')
         }
 
-        // Close user sidebar
+        
         if (sidebar && !sidebar.contains(event.target) && (!pfpBtn || !pfpBtn.contains(event.target)) && !sidebar.classList.contains('translate-x-full')) {
           sidebar.classList.add('translate-x-full')
         }
@@ -395,7 +404,7 @@
       setTimeout(() => {
         const toast = document.getElementById('toast-container')
         if (toast) {
-          toast.classList.add('opacity-0', 'translate-y-5', 'scale-95') // Added translate-y and scale for exit animation
+          toast.classList.add('opacity-0', 'translate-y-5', 'scale-95') 
           setTimeout(() => toast.remove(), 500)
         }
       }, 3000)
@@ -403,36 +412,36 @@
     let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
 
-// Listen for Chrome's "beforeinstallprompt" event
+
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Stop Chrome from showing its mini-infobar automatically
+  
   e.preventDefault();
-  // Save the event so you can trigger it later
+  
   deferredPrompt = e;
-  // Show your custom install button
+  
   installBtn.style.display = 'block';
 });
 
-// When user clicks your "Install App" button
+
 installBtn.addEventListener('click', async () => {
   if (!deferredPrompt) return; // Safety check
 
-  // Show the browser install prompt
+ 
   deferredPrompt.prompt();
 
-  // Wait for the user's choice
+  
   const { outcome } = await deferredPrompt.userChoice;
 
   console.log(`User response to install prompt: ${outcome}`);
 
-  // Reset the deferred prompt variable
+ 
   deferredPrompt = null;
 
-  // Hide your button after the user acts (installed or dismissed)
+  
   installBtn.style.display = 'none';
 });
 
-// Hide the button if the app is already installed
+
 window.addEventListener('appinstalled', () => {
   console.log('✅ PWA was installed successfully!');
   installBtn.style.display = 'none';

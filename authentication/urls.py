@@ -12,4 +12,5 @@ urlpatterns = [
     path('send-otp/', views.send_otp, name='send_otp'),
     path('verify-email-otp/', views.verify_email_otp, name='verify_email_otp'),
     path('forgot-password/', views.forgotpassword, name='forgotpassword'),
+    path('terms/',login_required(views.terms_and_conditions, login_url='login'), name='terms_and_conditions'),
 ]

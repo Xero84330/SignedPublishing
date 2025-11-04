@@ -29,6 +29,10 @@ class User(AbstractUser):
     )
     date_of_birth = models.DateField(null=True, blank=True)
 
+    agreed_to_terms = models.BooleanField(default=False)
+    terms_accepted_at = models.DateTimeField(null=True, blank=True)
+    terms_version = models.CharField(max_length=10, default="1.0")
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 

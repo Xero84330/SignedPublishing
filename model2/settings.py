@@ -61,9 +61,20 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'authentication.middleware.TermsCheckMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+]
+
+TERMS_VERSION = "1.0"   # bump to "2.0" when T&C change
+
+# optional prefixes to skip (useful for API endpoints, static, media)
+TERMS_WHITELIST_PREFIXES = [
+    "/api/",
+    "/static/",
+    "/media/",
+    "/health/",
 ]
 
 ROOT_URLCONF = 'model2.urls'

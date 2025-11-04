@@ -327,3 +327,21 @@ def forgotpassword(request):
         "stage": stage,
         "email": email,
     })
+
+def terms_and_conditions(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'accept':
+            user = request.user
+            user.agreed_to_terms = True
+            user.agreed_to_terms_date = timezone.now()
+            user.save()
+            return redirect('home')  # or your desired redirect
+
+        elif action == 'decline':
+            logout(request)
+            return redirect('login')  # or your landing page
+
+    # for GET requests — just render the page (no 'action' yet)
+    return render(request, 'reader/terms.html')
