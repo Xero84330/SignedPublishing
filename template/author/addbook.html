@@ -1,305 +1,359 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>
-            {% if mode == 'edit' %}
-                Edit Book
-            {% else %}
-                Add New Book
-            {% endif %}
-        </title>
-        <link rel="stylesheet" href="{% static 'css/output.css' %}" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-              rel="stylesheet">
-        <!-- Removed all custom CSS here -->
-    </head>
-    <body class="bg-orange-50 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans">
-        <div class="w-full max-w-2xl bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 lg:p-10 relative overflow-hidden border border-orange-200">
-            <!-- Close Button -->
-            <a href="{% url 'create' %}"
-               class="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-full bg-orange-100 text-amber-700 hover:bg-orange-200 hover:text-amber-900 transition-colors duration-200 text-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </a>
-            <!-- Header -->
-            <div class="text-center mb-8">
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-amber-800">
-                    {% if mode == 'edit' %}
-                        Edit Book
-                    {% else %}
-                        Add New Book
-                    {% endif %}
-                </h2>
-                <p class="text-amber-600 mt-2 text-base">Fill in the details below</p>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        {% if mode == 'edit' %}
+            Edit Book
+        {% else %}
+            Add New Book
+        {% endif %}
+    </title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Removed all custom CSS here -->
+</head>
+<body class="bg-orange-50 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans">
+    <div class="w-full max-w-2xl bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-6 sm:p-8 lg:p-10 relative overflow-hidden border border-orange-200">
+        <!-- Close Button -->
+        <a href="{% url 'create' %}"
+           class="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-full bg-orange-100 text-amber-700 hover:bg-orange-200 hover:text-amber-900 transition-colors duration-200 text-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </a>
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-amber-800">
+                {% if mode == 'edit' %}
+                    Edit Book
+                {% else %}
+                    Add New Book
+                {% endif %}
+            </h2>
+            <p class="text-amber-600 mt-2 text-base">Fill in the details below</p>
+        </div>
+
+        <!-- Form -->
+        <form id="bookForm"
+              action="{% if mode == 'edit' %}{% url 'editbook' book.id %}{% else %}{% url 'addbook' %}{% endif %}"
+              enctype="multipart/form-data"
+              method="POST"
+              class="space-y-6 text-amber-900">
+            {% csrf_token %}
+
+            <!-- Book Name (Read-only in edit mode) -->
+            <div>
+                <label for="bookName" class="block text-sm font-semibold text-amber-800 mb-2">Book Title</label>
+                <input type="text"
+                       id="bookName"
+                       maxlength="100"
+                       name="bname"
+                       required
+                       placeholder="e.g., The Silent Forest"
+                       class="w-full px-4 py-2.5 rounded-lg border focus:ring-2 focus:ring-amber-400 focus:border-amber-500 transition-all duration-200 {% if mode == 'edit' %}bg-gray-100 text-gray-600 cursor-not-allowed border-gray-300{% else %}bg-white border-orange-300{% endif %}"
+                       value="{% if mode == 'edit' %}{{ book.bname }}{% else %}{{ request.POST.bname|default:'' }}{% endif %}"
+                       {% if mode == 'edit' %}readonly{% endif %} />
+                <p id="bnameCounter" class="text-xs text-gray-500 mt-1 text-right">0 / 100</p>
             </div>
-            <!-- Form -->
-            <form id="bookForm"
-                  action="{% if mode == 'edit' %}{% url 'editbook' book.id %}{% else %}{% url 'addbook' %}{% endif %}"
-                  enctype="multipart/form-data"
-                  method="POST"
-                  class="space-y-6 text-amber-900">
-                {% csrf_token %}
-                <!-- Book Name (Read-only in edit mode) -->
-                <div>
-                    <label for="bookName"
-                           class="block text-sm font-semibold text-amber-800 mb-2">Book Title</label>
-                    <input type="text"
-                           id="bookName"
-                           name="bname"
-                           required
-                           placeholder="e.g., The Silent Forest"
-                           class="w-full px-4 py-2.5 rounded-lg border focus:ring-2 focus:ring-amber-400 focus:border-amber-500 transition-all duration-200 {% if mode == 'edit' %}bg-gray-100 text-gray-600 cursor-not-allowed border-gray-300{% else %}bg-white border-orange-300{% endif %}"
-                           value="{% if mode == 'edit' %}{{ book.bname }}{% else %}{{ request.POST.bname|default:'' }}{% endif %}"
-                           {% if mode == 'edit' %}readonly{% endif %} />
-                </div>
-                <!-- Book Type -->
-                <div>
-                    <label for="type" class="block text-sm font-semibold text-amber-800 mb-2">Book Type</label>
-                    <div class="relative">
-                        <select id="type"
-                                name="btype"
-                                required
-                                class="w-full px-4 py-2.5 rounded-lg border border-orange-300 bg-white text-amber-900 appearance-none focus:ring-2 focus:ring-amber-400 focus:border-amber-500 transition-all duration-200 pr-10">
-                            <option value="">Choose type...</option>
-                            <option value="novel"
-                                    {% if mode == 'edit' and book.btype == 'novel' %}selected{% elif request.POST.btype == 'novel' %}selected{% endif %}>
-                                Novel
-                            </option>
-                            <option value="comic" {% if mode == 'edit' and book.btype == 'comic' %}selected{% elif
-                                request.POST.btype=='comic' %}selected{% endif %}>Comic</option>
-                            <option value="shortstory" {% if mode == 'edit' and book.btype == 'shortstory' %}selected{% elif
-                                request.POST.btype == 'shortstory' %}selected{% endif %}>Short Story</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-700">
-                            <svg class="fill-current h-4 w-4"
-                                 xmlns="http://www.w3.org/2000/svg"
-                                 viewBox="0 0 20 20">
-                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.757 7.586 5.343 9z" />
-                            </svg>
-                        </div>
+
+            <!-- Book Type -->
+            <div>
+                <label for="type" class="block text-sm font-semibold text-amber-800 mb-2">Book Type</label>
+                <div class="relative">
+                    <select id="type"
+                            name="btype"
+                            required
+                            class="w-full px-4 py-2.5 rounded-lg border border-orange-300 bg-white text-amber-900 appearance-none focus:ring-2 focus:ring-amber-400 focus:border-amber-500 transition-all duration-200 pr-10">
+                        <option value="">Choose type...</option>
+                        <option value="novel"
+                                {% if mode == 'edit' and book.btype == 'novel' %}selected{% elif request.POST.btype == 'novel' %}selected{% endif %}>
+                            Novel
+                        </option>
+                        <option value="comic"
+                                {% if mode == 'edit' and book.btype == 'comic' %}selected{% elif request.POST.btype == 'comic' %}selected{% endif %}>
+                            Comic
+                        </option>
+                        <option value="shortstory"
+                                {% if mode == 'edit' and book.btype == 'shortstory' %}selected{% elif request.POST.btype == 'shortstory' %}selected{% endif %}>
+                            Short Story
+                        </option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-700">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.757 7.586 5.343 9z" />
+                        </svg>
                     </div>
                 </div>
-                <!-- Genre -->
-                <div>
-                    <label for="genre" class="block text-sm font-semibold text-amber-800 mb-2">Genre</label>
-                    <input type="text"
-                           id="genre"
-                           name="genre"
-                           required
-                           placeholder="e.g., Fantasy, Mystery, Sci-Fi"
-                           class="w-full px-4 py-2.5 rounded-lg border border-orange-300 bg-white focus:ring-2 focus:ring-amber-400 focus:border-amber-500 transition-all duration-200"
-                           value="{% if mode == 'edit' %}{{ book.genre }}{% else %}{{ request.POST.genre|default:'' }}{% endif %}" />
-                </div>
-                <!-- Age Rating -->
-                <div>
-                    <label for="ageRating"
-                           class="block text-sm font-semibold text-amber-800 mb-2">Age Rating</label>
-                    <div class="relative">
-                        <select id="ageRating"
-                                name="agerating"
-                                required
-                                class="w-full px-4 py-2.5 rounded-lg border border-orange-300 bg-white text-amber-900 appearance-none focus:ring-2 focus:ring-amber-400 focus:border-amber-500 transition-all duration-200 pr-10">
-                            <option value="">Select rating...</option>
-                            <option value="All Ages" {% if mode == 'edit' and book.agerating == 'All Ages' %}selected{% elif
-                                request.POST.agerating=='All Ages' %}selected{% endif %}>All Ages</option>
-                            <option value="13+" {% if mode == 'edit' and book.agerating == '13+' %}selected{% elif
-                                request.POST.agerating=='13+' %}selected{% endif %}>13+</option>
-                            <option value="16+" {% if mode == 'edit' and book.agerating == '16+' %}selected{% elif
-                                request.POST.agerating=='16+' %}selected{% endif %}>16+</option>
-                            <option value="18+" {% if mode == 'edit' and book.agerating == '18+' %}selected{% elif
-                                request.POST.agerating == '18+' %}selected{% endif %}>18+</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-700">
-                            <svg class="fill-current h-4 w-4"
-                                 xmlns="http://www.w3.org/2000/svg"
-                                 viewBox="0 0 20 20">
-                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.757 7.586 5.343 9z" />
-                            </svg>
-                        </div>
+            </div>
+
+            <!-- Genre -->
+            <div>
+                <label for="genre" class="block text-sm font-semibold text-amber-800 mb-2">Genre</label>
+                <input type="text"
+                       id="genre"
+                       maxlength="50"
+                       name="genre"
+                       required
+                       placeholder="e.g., Fantasy, Mystery, Sci-Fi"
+                       class="w-full px-4 py-2.5 rounded-lg border border-orange-300 bg-white focus:ring-2 focus:ring-amber-400 focus:border-amber-500 transition-all duration-200"
+                       value="{% if mode == 'edit' %}{{ book.genre }}{% else %}{{ request.POST.genre|default:'' }}{% endif %}" />
+                <p id="genreCounter" class="text-xs text-gray-500 mt-1 text-right">0 / 50</p>
+            </div>
+
+            <!-- Age Rating -->
+            <div>
+                <label for="ageRating" class="block text-sm font-semibold text-amber-800 mb-2">Age Rating</label>
+                <div class="relative">
+                    <select id="ageRating"
+                            name="agerating"
+                            required
+                            class="w-full px-4 py-2.5 rounded-lg border border-orange-300 bg-white text-amber-900 appearance-none focus:ring-2 focus:ring-amber-400 focus:border-amber-500 transition-all duration-200 pr-10">
+                        <option value="">Select rating...</option>
+                        <option value="All Ages"
+                                {% if mode == 'edit' and book.agerating == 'All Ages' %}selected{% elif request.POST.agerating == 'All Ages' %}selected{% endif %}>
+                            All Ages
+                        </option>
+                        <option value="13+"
+                                {% if mode == 'edit' and book.agerating == '13+' %}selected{% elif request.POST.agerating == '13+' %}selected{% endif %}>
+                            13+
+                        </option>
+                        <option value="16+"
+                                {% if mode == 'edit' and book.agerating == '16+' %}selected{% elif request.POST.agerating == '16+' %}selected{% endif %}>
+                            16+
+                        </option>
+                        <option value="18+"
+                                {% if mode == 'edit' and book.agerating == '18+' %}selected{% elif request.POST.agerating == '18+' %}selected{% endif %}>
+                            18+
+                        </option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-700">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.757 7.586 5.343 9z" />
+                        </svg>
                     </div>
                 </div>
-                <!-- Description -->
-                <div>
-                    <label for="description"
-                           class="block text-sm font-semibold text-amber-800 mb-2">Description</label>
-                    <textarea id="description"
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-semibold text-amber-800 mb-2">Description</label>
+                <textarea id="description"
                               name="description"
                               rows="4"
                               required
                               placeholder="A compelling tale of adventure and discovery..."
                               class="w-full px-4 py-2.5 rounded-lg border border-orange-300 bg-white focus:ring-2 focus:ring-amber-400 focus:border-amber-500 resize-y transition-all duration-200">{% if mode == 'edit' %}{{ book.description }}{% else %}{{ request.POST.description|default:'' }}{% endif %}</textarea>
-                </div>
-                <!-- ===== COVER IMAGE (fixed) ===== -->
-                <div>
-                    <label class="block text-sm font-semibold text-amber-800 mb-3">
-                        Cover Image <span class="text-xs text-amber-600">(Max 500 KB, 9:16 recommended)</span>
-                    </label>
-                    <div id="dropArea"
-                         class="relative mx-auto w-56 sm:w-64 aspect-[9/16] flex flex-col items-center justify-center border-2 border-dashed border-orange-300 rounded-xl cursor-pointer overflow-hidden bg-orange-50 hover:bg-orange-100 transition-all duration-300 group">
-                        <!-- Placeholder (shown when no image) -->
-                        <div id="placeholder" class="text-center p-4 z-10 pointer-events-none">
-                            <svg class="w-12 h-12 mx-auto text-amber-600 group-hover:text-amber-700 transition-colors"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <p class="mt-2 text-amber-700 font-medium text-sm group-hover:text-amber-900">
-                                Drop image or <span class="underline">click to browse</span>
-                            </p>
-                        </div>
-                        <!-- File input -->
-                        <input type="file"
-                               name="coverimage"
-                               id="imageInput"
-                               accept="image/*"
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
-                        <!-- Image preview -->
-                        <img id="previewImg"
-                             class="absolute inset-0 w-full h-full object-cover hidden rounded-xl"
-                             alt="Cover preview" />
-                    </div>
-                    <!-- Progress & Error -->
-                    <div id="progressContainer" class="w-56 sm:w-64 mx-auto mt-3 hidden">
-                        <div class="h-1.5 bg-orange-200 rounded-full overflow-hidden">
-                            <div id="progressBar"
-                                 class="h-full bg-amber-600 rounded-full transition-all duration-300 ease-out"
-                                 style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <p id="errorMsg" class="text-red-500 text-xs text-center mt-2 hidden">File too large. Max 500KB allowed.</p>
-                </div>
-                {% if mode != 'edit' %}
-                    <!-- Terms and Conditions Checkbox -->
-                    <div class="flex items-center pt-4">
-                        <input type="checkbox"
-                               id="termsCheckbox"
-                               class="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded cursor-pointer" />
-                        <label for="termsCheckbox"
-                               class="ml-2 block text-sm text-gray-700 select-none">
-                            I agree to the <a href="#" class="text-amber-600 hover:underline">Terms and Conditions</a>
-                        </label>
-                    </div>
-                {% endif %}
-                <!-- Submit Button -->
-                <div class="pt-6 text-center">
-                    <button type="submit"
-                            id="submitButton"
-                            disabled
-                            class="inline-flex items-center justify-center gap-2 bg-amber-600 text-white font-bold py-3 px-8 rounded-full shadow-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-amber-600">
-                        {% if mode == 'edit' %}
-                            Update Book
-                        {% else %}
-                            Add Book
-                        {% endif %}
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                <p id="descCounter" class="text-xs text-gray-500 mt-1 text-right">0 / 1000</p>
+            </div>
+
+            <!-- ===== COVER IMAGE (fixed) ===== -->
+            <div>
+                <label class="block text-sm font-semibold text-amber-800 mb-3">
+                    Cover Image <span class="text-xs text-amber-600">(Max 1MB, 2:3 recommended)</span>
+                </label>
+                <div id="dropArea"
+                     class="relative mx-auto w-56 sm:w-64 aspect-[2/3] flex flex-col items-center justify-center border-2 border-dashed border-orange-300 rounded-xl cursor-pointer overflow-hidden bg-orange-50 hover:bg-orange-100 transition-all duration-300 group">
+                    
+                    <!-- Placeholder (shown when no image) -->
+                    <div id="placeholder" class="text-center p-4 z-10 pointer-events-none">
+                        <svg class="w-12 h-12 mx-auto text-amber-600 group-hover:text-amber-700 transition-colors"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                    </button>
+                        <p class="mt-2 text-amber-700 font-medium text-sm group-hover:text-amber-900">
+                            Drop image or <span class="underline">click to browse</span>
+                        </p>
+                    </div>
+
+                    <!-- File input -->
+                    <input type="file"
+                           name="coverimage"
+                           id="imageInput"
+                           accept="image/*"
+                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
+
+                    <!-- Image preview -->
+                    <img id="previewImg"
+                         class="absolute inset-0 w-full h-full object-cover hidden rounded-xl"
+                         alt="Cover preview" />
                 </div>
-            </form>
-        </div>
-        <!-- ==== ONE SCRIPT ONLY ==== -->
-        <script>
-  const imageInput = document.getElementById('imageInput');
-  const dropArea = document.getElementById('dropArea');
-  const previewImg = document.getElementById('previewImg');
-  const placeholder = document.getElementById('placeholder');
-  const progressContainer = document.getElementById('progressContainer');
-  const progressBar = document.getElementById('progressBar');
-  const errorMsg = document.getElementById('errorMsg');
-  const termsCheckbox = document.getElementById('termsCheckbox');
-const submitButton = document.getElementById('submitButton');
 
-  // === 1. SHOW EXISTING COVER ON PAGE LOAD ===
-  window.addEventListener('load', () => {
-    {% if mode == 'edit' and book.coverimage %}
-    const imgUrl = "{{ book.coverimage.url|escapejs }}";
-    if (imgUrl && imgUrl.trim() !== '') {
-      showPreview(imgUrl);
-    }
-    {% endif %}
-    updateSubmitButton();
-  });
+                <!-- Progress & Error -->
+                <div id="progressContainer" class="w-56 sm:w-64 mx-auto mt-3 hidden">
+                    <div class="h-1.5 bg-orange-200 rounded-full overflow-hidden">
+                        <div id="progressBar"
+                             class="h-full bg-amber-600 rounded-full transition-all duration-300 ease-out"
+                             style="width: 0%"></div>
+                    </div>
+                </div>
+                <p id="errorMsg" class="text-red-500 text-xs text-center mt-2 hidden">File too large. Max 1MB allowed.</p>
+            </div>
 
-  function showPreview(src) {
-    previewImg.src = src;
-    previewImg.classList.remove('hidden');
-    placeholder.classList.add('hidden');
-  }
+            {% if mode != 'edit' %}
+            <!-- Terms and Conditions Checkbox -->
+            <div class="flex items-center pt-4">
+                <input type="checkbox"
+                       id="termsCheckbox"
+                       class="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded cursor-pointer" />
+                <label for="termsCheckbox"
+                       class="ml-2 block text-sm text-gray-700 select-none">
+                    I agree to the <a href="{% url 'terms_and_conditions' %}" class="text-amber-600 hover:underline">Terms and Conditions</a>
+                </label>
+            </div>
+            {% endif %}
 
-  // === 2. HANDLE NEW FILE ===
-  imageInput.addEventListener('change', handleFile);
+            <!-- Submit Button -->
+            <div class="pt-6 text-center">
+                <button type="submit"
+                        id="submitButton"
+                        disabled
+                        class="inline-flex items-center justify-center gap-2 bg-amber-600 text-white font-bold py-3 px-8 rounded-full shadow-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-amber-600">
+                    {% if mode == 'edit' %}
+                        Update Book
+                    {% else %}
+                        Add Book
+                    {% endif %}
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
 
-  function handleFile() {
-    const file = imageInput.files[0];
-    if (!file) return; // Don't reset existing image if none chosen
+    <!-- ==== ONE SCRIPT ONLY ==== -->
+    <script>
+        // === CHARACTER COUNTERS ===
+        const fields = [
+            { id: 'bookName', limit: 100, counter: 'bnameCounter' },
+            { id: 'genre', limit: 50, counter: 'genreCounter' },
+            { id: 'description', limit: 1000, counter: 'descCounter' }
+        ];
 
-    if (file.size > 500 * 1024) {
-      errorMsg.classList.remove('hidden');
-      imageInput.value = '';
-      return;
-    }
+        fields.forEach(({ id, limit, counter }) => {
+            const input = document.getElementById(id);
+            const counterEl = document.getElementById(counter);
+            if (!input || !counterEl) return;
 
-    errorMsg.classList.add('hidden');
-    progressContainer.classList.remove('hidden');
-    progressBar.style.width = '0%';
+            function updateCount() {
+                const len = input.value.length;
+                counterEl.textContent = `${len} / ${limit}`;
+                if (len >= limit * 0.9) {
+                    counterEl.classList.remove('text-gray-500');
+                    counterEl.classList.add('text-red-500', 'font-medium');
+                } else {
+                    counterEl.classList.add('text-gray-500');
+                    counterEl.classList.remove('text-red-500', 'font-medium');
+                }
+            }
 
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 15;
-      progressBar.style.width = progress + '%';
-      if (progress >= 100) {
-        clearInterval(interval);
-        const reader = new FileReader();
-        reader.onload = e => {
-          showPreview(e.target.result);
-          progressContainer.classList.add('hidden');
-        };
-        reader.readAsDataURL(file);
-      }
-    }, 30);
-  }
+            input.addEventListener('input', updateCount);
+            updateCount(); // initialize on load
+        });
 
-  // === 3. DRAG & DROP ===
-  ['dragover', 'dragenter'].forEach(evt => {
-    dropArea.addEventListener(evt, e => {
-      e.preventDefault();
-      dropArea.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2');
-    });
-  });
+        // === IMAGE HANDLING ===
+        const imageInput = document.getElementById('imageInput');
+        const dropArea = document.getElementById('dropArea');
+        const previewImg = document.getElementById('previewImg');
+        const placeholder = document.getElementById('placeholder');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const errorMsg = document.getElementById('errorMsg');
+        const termsCheckbox = document.getElementById('termsCheckbox');
+        const submitButton = document.getElementById('submitButton');
 
-  ['dragleave', 'dragend', 'drop'].forEach(evt => {
-    dropArea.addEventListener(evt, e => {
-      e.preventDefault();
-      dropArea.classList.remove('ring-2', 'ring-amber-400', 'ring-offset-2');
-    });
-  });
+        // === 1. SHOW EXISTING COVER ON PAGE LOAD ===
+        window.addEventListener('load', () => {
+            {% if mode == 'edit' and book.coverimage %}
+            const imgUrl = "{{ book.coverimage.url|escapejs }}";
+            if (imgUrl && imgUrl.trim() !== '') {
+                showPreview(imgUrl);
+            }
+            {% endif %}
+            updateSubmitButton();
+        });
 
-  dropArea.addEventListener('drop', e => {
-    e.preventDefault();
-    if (e.dataTransfer.files.length) {
-      imageInput.files = e.dataTransfer.files;
-      handleFile();
-    }
-  });
+        function showPreview(src) {
+            previewImg.src = src;
+            previewImg.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+        }
 
-  // === 4. TERMS & SUBMIT BUTTON ===
-  function updateSubmitButton() {
-  if (termsCheckbox) {
-    submitButton.disabled = !termsCheckbox.checked;
-  } else {
-    submitButton.disabled = false; // always enabled in edit mode
-  }
-}
+        // === 2. HANDLE NEW FILE ===
+        imageInput.addEventListener('change', handleFile);
 
-if (termsCheckbox) {
-  termsCheckbox.addEventListener('change', updateSubmitButton);
-}
-        </script>
-    </body>
+        function handleFile() {
+            const file = imageInput.files[0];
+            if (!file) return;
+
+            if (file.size > 1024 * 1024) {
+                errorMsg.classList.remove('hidden');
+                imageInput.value = '';
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+            progressContainer.classList.remove('hidden');
+            progressBar.style.width = '0%';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 15;
+                progressBar.style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        showPreview(e.target.result);
+                        progressContainer.classList.add('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }, 30);
+        }
+
+        // === 3. DRAG & DROP ===
+        ['dragover', 'dragenter'].forEach(evt => {
+            dropArea.addEventListener(evt, e => {
+                e.preventDefault();
+                dropArea.classList.add('ring-2', 'ring-amber-400', 'ring-offset-2');
+            });
+        });
+
+        ['dragleave', 'dragend', 'drop'].forEach(evt => {
+            dropArea.addEventListener(evt, e => {
+                e.preventDefault();
+                dropArea.classList.remove('ring-2', 'ring-amber-400', 'ring-offset-2');
+            });
+        });
+
+        dropArea.addEventListener('drop', e => {
+            e.preventDefault();
+            if (e.dataTransfer.files.length) {
+                imageInput.files = e.dataTransfer.files;
+                handleFile();
+            }
+        });
+
+        // === 4. TERMS & SUBMIT BUTTON ===
+        function updateSubmitButton() {
+            if (termsCheckbox) {
+                submitButton.disabled = !termsCheckbox.checked;
+            } else {
+                submitButton.disabled = false; // always enabled in edit mode
+            }
+        }
+
+        if (termsCheckbox) {
+            termsCheckbox.addEventListener('change', updateSubmitButton);
+        }
+    </script>
+</body>
 </html>

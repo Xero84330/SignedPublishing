@@ -133,7 +133,7 @@
                             <div class="w-full aspect-[2/3] relative">
                                 {% if fb.book.coverimage %}
                                     <img src="{{ fb.book.coverimage.url }}"
-                                         class="absolute inset-0 w-full h-full object-cover"
+                                         class="absolute inset-0 w-full h-full object-cover object-center"
                                          alt="{{ fb.book.bname }} Cover" />
                                 {% else %}
                                     <div class="absolute inset-0 flex items-center justify-center bg-gray-300 text-gray-500 text-xs p-2 text-center">

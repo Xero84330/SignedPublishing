@@ -76,57 +76,96 @@
             </form>
         </div>
         <script>
-        const titleInput = document.getElementById('chapter-title-input')
-        const charCount = document.getElementById('char-count')
-        const editor = document.getElementById('chapter-content-editor')
-        const wordCount = document.getElementById('word-count')
+const titleInput = document.getElementById('chapter-title-input')
+const charCount = document.getElementById('char-count')
+const editor = document.getElementById('chapter-content-editor')
+const wordCount = document.getElementById('word-count')
 
-        // Initialize counts
-        charCount.textContent = `${titleInput.value.length} / 100 characters`
-        wordCount.textContent = `${editor.innerText.trim().split(/\s+/).filter(Boolean).length} words`
+// Initialize counts
+charCount.textContent = `${titleInput.value.length} / 100 characters`
+wordCount.textContent = `${editor.innerText.trim().split(/\s+/).filter(Boolean).length} words`
 
-        // Count title characters
-        titleInput.addEventListener('input', () => {
-            charCount.textContent = `${titleInput.value.length} / 100 characters`
-        })
+// Count title characters
+titleInput.addEventListener('input', () => {
+  charCount.textContent = `${titleInput.value.length} / 100 characters`
+})
 
-        // Count words in editor
-        editor.addEventListener('input', () => {
-            wordCount.textContent = `${editor.innerText.trim().split(/\s+/).filter(Boolean).length} words`
-        })
+// Count words in editor
+editor.addEventListener('input', () => {
+  wordCount.textContent = `${editor.innerText.trim().split(/\s+/).filter(Boolean).length} words`
+})
 
-        // Format toolbar
-        function toggleFormat(button, command) {
-            editor.focus();
-            document.execCommand(command, false, null);
+// Format toolbar
+function toggleFormat(button, command) {
+  editor.focus();
+  document.execCommand(command, false, null);
 
-            button.classList.toggle('bg-amber-600');
-            button.classList.toggle('text-white');
-            button.classList.toggle('text-amber-900');
-            button.classList.toggle('bg-white');
-            button.classList.toggle('hover:bg-amber-100');
-        }
+  button.classList.toggle('bg-amber-600');
+  button.classList.toggle('text-white');
+  button.classList.toggle('text-amber-900');
+  button.classList.toggle('bg-white');
+  button.classList.toggle('hover:bg-amber-100');
+}
 
-        function setFont(font) {
-            document.execCommand('fontName', false, font)
-        }
+function setFont(font) {
+  document.execCommand('fontName', false, font)
+}
 
-        // Close form
-        function closeForm() {
-            window.history.back(); // or you can redirect to a dashboard
-        }
+// Close form
+function closeForm() {
+  window.history.back(); // or redirect
+}
 
-        // On submit: copy editor HTML to hidden input
-        document.getElementById('chapter-form').addEventListener('submit', function (e) {
-            let hiddenInput = document.querySelector('input[name="content"]')
-            if (!hiddenInput) {
-                hiddenInput = document.createElement('input')
-                hiddenInput.type = 'hidden'
-                hiddenInput.name = 'content'
-                this.appendChild(hiddenInput)
-            }
-            hiddenInput.value = editor.innerHTML.trim()
-        })
-        </script>
+// On submit: copy editor HTML to hidden input
+document.getElementById('chapter-form').addEventListener('submit', function (e) {
+  let hiddenInput = document.querySelector('input[name="content"]')
+  if (!hiddenInput) {
+    hiddenInput = document.createElement('input')
+    hiddenInput.type = 'hidden'
+    hiddenInput.name = 'content'
+    this.appendChild(hiddenInput)
+  }
+  hiddenInput.value = editor.innerHTML.trim()
+})
+
+// 🧽 Clean pasted content
+function cleanPastedHTML(input) {
+  let html = input;
+
+  // Remove MS Office / Google Docs junk
+  html = html.replace(/<!--[\s\S]*?-->/gi, '');
+  html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  html = html.replace(/<(\/)?(meta|link|span|xml|st1:[^>]+|o:[^>]+|v:[^>]+|w:[^>]+|m:[^>]+)[^>]*>/gi, '');
+
+  // Keep only safe tags
+  html = html.replace(/<(?!\/?(b|i|u|font|br|p)\b)[^>]*>/gi, '');
+
+  // Remove MS Word styling and junk classes
+  html = html.replace(/\s*mso-[^:]+:[^;"]+;?/gi, '');
+  html = html.replace(/\s*class=(")?Mso.*?(")?/gi, '');
+  html = html.replace(/\s*style="[^"]*"/gi, '');
+
+  // Normalize line breaks → paragraphs
+  html = html.replace(/\r\n|\r/g, '\n');
+  html = html.replace(/\n{3,}/g, '\n\n');
+  html = html
+    .split(/\n{2,}/)
+    .map(p => `<p>${p.trim().replace(/\n+/g, '<br>')}</p>`)
+    .join('');
+  
+  html = html.replace(/<p>\s*<\/p>/g, '');
+
+  return html.trim();
+}
+
+// Handle paste
+editor.addEventListener('paste', (e) => {
+  e.preventDefault();
+  const text = e.clipboardData.getData('text/html') || e.clipboardData.getData('text/plain');
+  const cleaned = cleanPastedHTML(text);
+  document.execCommand('insertHTML', false, cleaned);
+});
+</script>
+
     </body>
 </html>

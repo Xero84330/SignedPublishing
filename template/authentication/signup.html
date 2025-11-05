@@ -177,16 +177,16 @@
                     </div>
                 {% else %}
                     <!-- Gender -->
-                    <div>
-                        <label for="gender" class="block text-sm font-medium text-amber-950">Gender</label>
+                    <div class="bg-orange-50">
+                        <label for="gender" class="block bg-orange-50 text-sm font-medium text-amber-950">Gender</label>
                         <select id="gender"
                                 name="gender"
-                                class="w-full px-4 py-3 mt-1 border rounded-xl border-amber-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
-                            <option value="">Select gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                            <option value="prefer_not">Prefer not to say</option>
+                                class="w-full px-4 py-3 mt-1 border rounded-xl appearance-none border-amber-900 bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
+                            <option class="bg-orange-50" value="">Select gender</option>
+                            <option class="bg-orange-50" value="male">Male</option>
+                            <option class="bg-orange-50" value="female">Female</option>
+                            <option class="bg-orange-50" value="other">Other</option>
+                            <option class="bg-orange-50" value="prefer_not">Prefer not to say</option>
                         </select>
                     </div>
                     <!-- Date of Birth -->
@@ -230,12 +230,13 @@
                     <a href="{% provider_login_url 'google' %}"
                        class="font-semibold text-amber-950 hover:text-orange-500 transition-colors">Continue with Google</a>
                 </p>
+                <p class="text-sm text-center text-amber-950">
+                  Already have an account?
+                  <a href="{% url 'login' %}"
+                    class="font-semibold text-amber-950 hover:text-orange-500 transition-colors">Log In</a>
+                </p>
             {% endif %}
-            <p class="text-sm text-center text-amber-950">
-                Already have an account?
-                <a href="{% url 'login' %}"
-                   class="font-semibold text-amber-950 hover:text-orange-500 transition-colors">Log In</a>
-            </p>
+            
         </div>
         <!-- PFP Preview + OTP + Validation Script -->
         <script>

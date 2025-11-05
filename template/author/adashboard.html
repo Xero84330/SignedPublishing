@@ -81,38 +81,46 @@
                  id="book-grid">
                 {# Increased gap #}
                 {% for book in books %}
-                    <div class="group relative w-32 md:w-40 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 bg-white cursor-pointer mx-auto transform hover:-translate-y-1">
-                        {# Adjusted width, increased rounded, stronger shadow, added group and hover transform, centered #}
-                        <!-- Cover Image -->
-                        <div class="w-full aspect-[2/3] relative">
-                            {% if book.coverimage %}
-                                <img src="{{ book.coverimage.url }}"
-                                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                     alt="{{ book.bname }} cover" />
-                                {# Added alt text and hover scale #}
-                            {% else %}
-                                <div class="absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-500 text-xs rounded-t-xl">
-                                    No Image
-                                </div>
-                                {# Adjusted bg-gray, added rounded-t-xl #}
-                            {% endif %}
-                            <!-- Gradient only at bottom -->
-                            <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/80 to-transparent"></div>
-                            {# Increased gradient height and opacity #}
-                            <!-- Book Title -->
-                            <div class="absolute bottom-2 left-0 right-0 px-3 text-white text-base font-semibold text-center drop-shadow-lg">
-                                {# Increased bottom, px, text size, and shadow #}
-                                <span class="line-clamp-1">{{ book.bname }}</span>
-                            </div>
-                        </div>
-                        <!-- Buttons below the card -->
-                        <div class="flex justify-center gap-3 py-3 bg-orange-50 border-t border-orange-100">
-                            <a href="{% url 'statistics' book.id %}"
-                               class="bg-amber-900 text-white text-xs px-4 py-2 rounded-full hover:bg-amber-700 transition-all shadow-sm hover:shadow-md">Info</a>
-                            <a href="{% url 'abookpage' book.id %}"
-                               class="bg-orange-500 text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition-all shadow-sm hover:shadow-md">Update</a> {# Increased px/py, rounded-full, added shadow #}
-                        </div>
-                    </div>
+                    <div class="group relative w-32 md:w-40 rounded-xl overflow-hidden bg-white border border-orange-100 hover:border-amber-300 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer mx-auto hover:-translate-y-2">
+    <!-- Cover Image -->
+    <div class="relative w-full aspect-[2/3] overflow-hidden rounded-t-xl">
+        {% if book.coverimage %}
+            <img src="{{ book.coverimage.url }}"
+                 alt="{{ book.bname }} cover"
+                 class="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500 ease-out" />
+        {% else %}
+            <div class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-orange-100 to-orange-200 text-amber-800 text-xs font-semibold tracking-wide">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" />
+                </svg>
+                No Image
+            </div>
+        {% endif %}
+
+        <!-- Soft gradient overlay -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500 rounded-t-xl"></div>
+
+        <!-- Book Title -->
+        <div class="absolute bottom-2 left-0 right-0 px-2 text-center">
+            <span class="text-white text-sm sm:text-base font-semibold tracking-tight drop-shadow-md line-clamp-1">
+                {{ book.bname }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Buttons below the card -->
+    <div class="flex justify-center gap-3 py-3 bg-gradient-to-r from-orange-50 to-amber-50 border-t border-orange-100">
+        <a href="{% url 'statistics' book.id %}"
+           class="bg-amber-900 text-white text-xs px-4 py-2 rounded-full shadow-sm hover:bg-amber-700 hover:shadow-md transition-all duration-300">
+            Info
+        </a>
+        <a href="{% url 'abookpage' book.id %}"
+           class="bg-orange-500 text-white text-xs px-4 py-2 rounded-full shadow-sm hover:bg-orange-600 hover:shadow-md transition-all duration-300">
+            Update
+        </a>
+    </div>
+</div>
+
                 {% empty %}
                     <p class="col-span-full text-center text-gray-500 p-8 bg-gray-50 rounded-lg shadow-inner">
                         You haven't added any books yet. Click "Add" to get started!
