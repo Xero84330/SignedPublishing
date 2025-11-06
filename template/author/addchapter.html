@@ -76,96 +76,187 @@
             </form>
         </div>
         <script>
-const titleInput = document.getElementById('chapter-title-input')
-const charCount = document.getElementById('char-count')
-const editor = document.getElementById('chapter-content-editor')
-const wordCount = document.getElementById('word-count')
+    // DOM Elements
+    const titleInput = document.getElementById('chapter-title-input');
+    const charCount   = document.getElementById('char-count');
+    const editor      = document.getElementById('chapter-content-editor');
+    const wordCount   = document.getElementById('word-count');
 
-// Initialize counts
-charCount.textContent = `${titleInput.value.length} / 100 characters`
-wordCount.textContent = `${editor.innerText.trim().split(/\s+/).filter(Boolean).length} words`
+    // -----------------------------------------------------------------
+    // 1. Word Count (reusable)
+    // -----------------------------------------------------------------
+    function updateWordCount() {
+        const text  = editor.innerText.trim();
+        const words = text.split(/\s+/).filter(Boolean).length;
+        wordCount.textContent = `${words} word${words !== 1 ? 's' : ''}`;
+    }
 
-// Count title characters
-titleInput.addEventListener('input', () => {
-  charCount.textContent = `${titleInput.value.length} / 100 characters`
-})
+    // -----------------------------------------------------------------
+    // 2. Init Counts
+    // -----------------------------------------------------------------
+    charCount.textContent = `${titleInput.value.length} / 100 characters`;
+    updateWordCount();
 
-// Count words in editor
-editor.addEventListener('input', () => {
-  wordCount.textContent = `${editor.innerText.trim().split(/\s+/).filter(Boolean).length} words`
-})
+    // -----------------------------------------------------------------
+    // 3. Title Character Counter
+    // -----------------------------------------------------------------
+    titleInput.addEventListener('input', () => {
+        charCount.textContent = `${titleInput.value.length} / 100 characters`;
+    });
 
-// Format toolbar
-function toggleFormat(button, command) {
-  editor.focus();
-  document.execCommand(command, false, null);
+    // -----------------------------------------------------------------
+    // 4. Editor Input → Word Count
+    // -----------------------------------------------------------------
+    editor.addEventListener('input', updateWordCount);
 
-  button.classList.toggle('bg-amber-600');
-  button.classList.toggle('text-white');
-  button.classList.toggle('text-amber-900');
-  button.classList.toggle('bg-white');
-  button.classList.toggle('hover:bg-amber-100');
-}
+    // -----------------------------------------------------------------
+    // 5. Toolbar: Bold / Italic / Underline
+    // -----------------------------------------------------------------
+    function toggleFormat(button, command) {
+        editor.focus();
+        document.execCommand(command, false, null);
 
-function setFont(font) {
-  document.execCommand('fontName', false, font)
-}
+        // Visual active state
+        button.classList.toggle('bg-amber-600');
+        button.classList.toggle('text-white');
+        button.classList.toggle('bg-white');
+        button.classList.toggle('text-amber-900');
+        button.classList.toggle('hover:bg-amber-100');
+    }
 
-// Close form
-function closeForm() {
-  window.history.back(); // or redirect
-}
+    // -----------------------------------------------------------------
+    // 6. Font Selector
+    // -----------------------------------------------------------------
+    function setFont(font) {
+        editor.focus();
+        document.execCommand('fontName', false, font);
+    }
 
-// On submit: copy editor HTML to hidden input
-document.getElementById('chapter-form').addEventListener('submit', function (e) {
-  let hiddenInput = document.querySelector('input[name="content"]')
-  if (!hiddenInput) {
-    hiddenInput = document.createElement('input')
-    hiddenInput.type = 'hidden'
-    hiddenInput.name = 'content'
-    this.appendChild(hiddenInput)
-  }
-  hiddenInput.value = editor.innerHTML.trim()
-})
+    // -----------------------------------------------------------------
+    // 7. Close Form
+    // -----------------------------------------------------------------
+    function closeForm() {
+        window.history.back();
+    }
 
-// 🧽 Clean pasted content
-function cleanPastedHTML(input) {
-  let html = input;
+    // -----------------------------------------------------------------
+    // 8. Paste Sanitizer – clean + enforce default style
+    // -----------------------------------------------------------------
+    editor.addEventListener('paste', function (e) {
+        e.preventDefault();
 
-  // Remove MS Office / Google Docs junk
-  html = html.replace(/<!--[\s\S]*?-->/gi, '');
-  html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
-  html = html.replace(/<(\/)?(meta|link|span|xml|st1:[^>]+|o:[^>]+|v:[^>]+|w:[^>]+|m:[^>]+)[^>]*>/gi, '');
+        const cd   = e.clipboardData || window.clipboardData;
+        const html = cd.getData('text/html');
+        const text = cd.getData('text/plain');
 
-  // Keep only safe tags
-  html = html.replace(/<(?!\/?(b|i|u|font|br|p)\b)[^>]*>/gi, '');
+        let cleaned = text; // fallback
 
-  // Remove MS Word styling and junk classes
-  html = html.replace(/\s*mso-[^:]+:[^;"]+;?/gi, '');
-  html = html.replace(/\s*class=(")?Mso.*?(")?/gi, '');
-  html = html.replace(/\s*style="[^"]*"/gi, '');
+        if (html) {
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
 
-  // Normalize line breaks → paragraphs
-  html = html.replace(/\r\n|\r/g, '\n');
-  html = html.replace(/\n{3,}/g, '\n\n');
-  html = html
-    .split(/\n{2,}/)
-    .map(p => `<p>${p.trim().replace(/\n+/g, '<br>')}</p>`)
-    .join('');
-  
-  html = html.replace(/<p>\s*<\/p>/g, '');
+            // Remove dangerous tags
+            ['SCRIPT','STYLE','META','LINK','IFRAME','OBJECT','EMBED','FORM']
+                .forEach(tag => temp.querySelectorAll(tag).forEach(el => el.remove()));
 
-  return html.trim();
-}
+            // Clean every node
+            temp.querySelectorAll('*').forEach(node => {
+                // Strip all attributes except href
+                Array.from(node.attributes).forEach(attr => {
+                    if (attr.name !== 'href') node.removeAttribute(attr.name);
+                });
 
-// Handle paste
-editor.addEventListener('paste', (e) => {
-  e.preventDefault();
-  const text = e.clipboardData.getData('text/html') || e.clipboardData.getData('text/plain');
-  const cleaned = cleanPastedHTML(text);
-  document.execCommand('insertHTML', false, cleaned);
-});
+                // Enforce default typography
+                node.style.fontFamily = 'Arial';
+                node.style.fontSize   = '';
+                node.style.lineHeight = '1.6';
+                node.style.margin     = '0';
+                node.style.padding    = '0';
+            });
+
+            cleaned = temp.innerHTML || text;
+        }
+
+        // Convert plain-text line breaks → <p>
+        if (!html || cleaned.trim() === '') {
+            cleaned = '<p>' + text.replace(/\n/g, '</p><p>') + '</p>';
+            cleaned = cleaned.replace(/<p><\/p>/g, '<p><br></p>');
+        }
+
+        // Insert
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const frag = range.createContextualFragment(cleaned);
+            range.insertNode(frag);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        setTimeout(updateWordCount, 0);
+    });
+
+    // -----------------------------------------------------------------
+    // 9. Submit → copy editor HTML to hidden field
+    // -----------------------------------------------------------------
+    document.getElementById('chapter-form').addEventListener('submit', function () {
+        let hidden = document.querySelector('input[name="content"]');
+        if (!hidden) {
+            hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'content';
+            this.appendChild(hidden);
+        }
+        hidden.value = editor.innerHTML.trim();
+    });
+
+    // -----------------------------------------------------------------
+    // 10. Sync toolbar button states (Ctrl+B, etc.)
+    // -----------------------------------------------------------------
+    document.addEventListener('selectionchange', () => {
+        if (document.activeElement !== editor) return;
+
+        ['bold','italic','underline'].forEach(cmd => {
+            const btn = document.querySelector(`button[onclick="toggleFormat(this, '${cmd}')"]`);
+            if (!btn) return;
+            const active = document.queryCommandState(cmd);
+            btn.classList.toggle('bg-amber-600', active);
+            btn.classList.toggle('text-white',   active);
+            btn.classList.toggle('bg-white',     !active);
+            btn.classList.toggle('text-amber-900', !active);
+            btn.classList.toggle('hover:bg-amber-100', !active);
+        });
+    });
+
+    // -----------------------------------------------------------------
+    // 11. Placeholder handling (optional visual cue)
+    // -----------------------------------------------------------------
+    const placeholder = editor.getAttribute('data-placeholder');
+    if (placeholder && !editor.innerText.trim()) {
+        editor.classList.add('placeholder');
+        editor.innerHTML = `<span class="text-gray-400">${placeholder}</span>`;
+    }
+
+    editor.addEventListener('focus', () => {
+        if (editor.classList.contains('placeholder')) {
+            editor.classList.remove('placeholder');
+            editor.innerHTML = '';
+        }
+    });
+
+    editor.addEventListener('blur', () => {
+        if (!editor.innerText.trim()) {
+            editor.classList.add('placeholder');
+            editor.innerHTML = `<span class="text-gray-400">${placeholder}</span>`;
+        }
+    });
+
+    // Initial placeholder check
+    if (editor.innerHTML.trim() === '' || editor.classList.contains('placeholder')) {
+        editor.dispatchEvent(new Event('blur'));
+    }
 </script>
-
     </body>
 </html>
