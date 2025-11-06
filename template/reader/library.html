@@ -39,9 +39,6 @@
                                         {{ h.book.bname }}
                                     </div>
                                 </div>
-                                <div class="p-2 text-center text-xs text-gray-600 font-medium group-hover:text-amber-800 transition-colors">
-                                    <span class="block line-clamp-1">{{ h.book.bname }}</span>
-                                </div>
                             </a>
                         {% endfor %}
                     </div>
@@ -90,10 +87,6 @@
                                         </div>
                                     </a>
                                     <div class="p-2 flex flex-col gap-2 bg-amber-50 border-t border-amber-100 rounded-b-lg">
-                                        <button onclick="window.location.href='{% url 'book' c.book.id %}'"
-                                                class="w-full text-xs bg-orange-500 text-white px-2 py-1.5 rounded-full hover:bg-orange-600 transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                                            About
-                                        </button>
                                         <button onclick="confirmRemove('{% url 'remove_from_collection' c.book.id %}')"
                                                 class="w-full text-xs bg-amber-900 text-white px-2 py-1.5 rounded-full hover:bg-amber-800 transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
                                             Remove
