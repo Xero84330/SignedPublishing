@@ -17,6 +17,63 @@
           content="Signed Publishing | Books, Contests & Authors">
     <meta name="twitter:description"
           content="Explore trending books and writing contests on Signed Publishing.">
+
+   <style>
+/* Base style — hidden scrollbar on all screens */
+.scrollbar-modern {
+  scrollbar-width: none; /* hides scrollbar for Firefox */
+  -ms-overflow-style: none; /* hides scrollbar for IE/Edge */
+}
+.scrollbar-modern::-webkit-scrollbar {
+  display: none; /* hides scrollbar for Chrome/Safari by default */
+}
+
+/* 🌟 Desktop only: show on hover */
+@media (min-width: 768px) {
+  .scrollbar-modern {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  .scrollbar-modern::-webkit-scrollbar {
+    display: block;
+    height: 10px;
+  }
+
+  .scrollbar-modern::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-modern::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+  }
+
+  /* Show scrollbar on hover */
+  .scrollbar-modern:hover {
+    scrollbar-color: #f59e0b transparent; /* amber-500 */
+  }
+
+  .scrollbar-modern:hover::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #fbbf24, #f97316); /* amber-400 → orange-500 */
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Brighter on thumb hover */
+  .scrollbar-modern::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #f59e0b, #ea580c); /* amber-500 → orange-600 */
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Darker on drag */
+  .scrollbar-modern::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #d97706, #c2410c);
+  }
+}
+</style>
+
+
 {% endblock %}
 {% block body %}
     <!-- Desktop + Tablet Section -->
@@ -123,7 +180,8 @@
                 More
             </button>
         </div>
-        <div class="overflow-x-auto whitespace-nowrap py-2 no-scrollbar">
+        <div class="overflow-x-auto whitespace-nowrap py-2 scrollbar-modern">
+
             {% for fb in top_books %}
                 {% if fb.book.chapters.exists %}
                     <a href="{% url 'book' fb.book.id %}"
@@ -175,7 +233,8 @@
                 More
             </button>
         </div>
-        <div class="overflow-x-auto whitespace-nowrap py-2 no-scrollbar">
+        <div class="overflow-x-auto whitespace-nowrap py-2 scrollbar-modern">
+
             {% for fb in featured_books %}
                 {% if fb.book.chapters.exists %}
                     <a href="{% url 'book' fb.book.id %}"
