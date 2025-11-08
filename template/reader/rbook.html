@@ -3,13 +3,13 @@
 {% block meta %}
     <title>{{ book.bname }} | Signed Publishing – Read Stories, Novels, and eBooks</title>
     <meta name="description"
-          content="{{ book.bname }} by {{ book.user.username }} — {{ book.description|truncatechars:150 }}" />
+          content="Name {{ book.bname }} by {{ book.user.username }} — {{ book.description|truncatechars:150 }}" />
     <meta name="keywords"
           content="{{ book.genre }}, {{ book.user.username }}, Signed Publishing, novels, eBooks, online reading" />
     <meta property="og:title"
           content="{{ book.bname }} | {{ book.user.username }}" />
     <meta property="og:description"
-          content="{{ book.description|truncatechars:150 }}" />
+          content="description{{ book.description|truncatechars:150 }}" />
     <meta property="og:url"
           content="https://www.signedpublishing.com/book/{{ book.id }}/" />
     <meta property="og:image" content="{{ book.coverimage.url }}" />
