@@ -9,7 +9,7 @@
     <meta property="og:title"
           content="{{ book.bname }} | {{ book.user.username }}" />
     <meta property="og:description"
-          content="description{{ book.description|truncatechars:150 }}" />
+          content="{{ book.description|truncatechars:150 }}" />
     <meta property="og:url"
           content="https://www.signedpublishing.com/book/{{ book.id }}/" />
     <meta property="og:image" content="{{ book.coverimage.url }}" />
