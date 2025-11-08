@@ -3,7 +3,7 @@
 {% block meta %}
     <title>{{ book.bname }} | Signed Publishing – Read Stories, Novels, and eBooks</title>
     <meta name="description"
-          content="Name {{ book.bname }} by {{ book.user.username }} — {{ book.description|truncatechars:150 }}" />
+          content="{{ book.bname }} by {{ book.user.username }} — {{ book.description|truncatechars:150 }}" />
     <meta name="keywords"
           content="{{ book.genre }}, {{ book.user.username }}, Signed Publishing, novels, eBooks, online reading" />
     <meta property="og:title"
