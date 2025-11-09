@@ -40,8 +40,8 @@
                 <label class="block text-amber-800 font-semibold mb-2" for="chapter-content">
                     Chapter Content
                 </label>
-                <textarea required id="chapter-content-editor" name="content"
-                    class="hidden">{{ chapter.content|safe }}</textarea>
+                <textarea id="chapter-content-editor" name="content"
+                    class="sr-only">{{ chapter.content|safe }}</textarea>
             </div>
 
             <button type="submit"
@@ -61,7 +61,7 @@
             toolbar:
                 'undo redo | formatselect | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | removeformat | fullscreen',
 
-            
+
             content_css: false,
 
             paste_as_text: false,
@@ -123,6 +123,10 @@
 
             init_instance_callback: function (editor) {
                 document.getElementById('chapter-form').addEventListener('submit', function (e) {
+                    // Ensure TinyMCE content is copied into the <textarea name="content">
+                    editor.save(); // <-- ADD THIS LINE
+
+                    // Now validate (textarea will contain editor HTML)
                     if (!editor.getContent({ format: 'text' }).trim()) {
                         e.preventDefault();
                         alert('Please write something before submitting your chapter!');
@@ -130,6 +134,7 @@
                     }
                 });
             }
+
         });
 
 
