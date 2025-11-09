@@ -2,11 +2,14 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Submit Chapter</title>
     <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/tinymce-custom.css' %}">
     <script src="https://cdn.tiny.cloud/1/vb9ejvgwxpqtg9gi7bvpie7h3grq2cbsmt5xhvuctb45ubun/tinymce/7/tinymce.min.js"
         referrerpolicy="origin"></script>
 </head>
@@ -59,12 +62,14 @@
             toolbar:
                 'undo redo | formatselect | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | removeformat | fullscreen',
 
+            
+            content_css: false,
+
             paste_as_text: false,
             paste_data_images: false,
             paste_enable_default_filters: false,
             branding: false,
             convert_urls: false,
-            content_css: false,
             placeholder: 'Start writing your chapter here...',
 
             // Add available fonts and sizes
